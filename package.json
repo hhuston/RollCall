@@ -1,0 +1,21 @@
+{
+  "name": "roll-call",
+  "version": "1.0.0",
+  "description": "A Roll Call system for communities to use to create, ammend, and vote on motions",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "start": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hhuston/RollCall.git"
+  },
+  "author": "Frank Barton, Harrison Huston, Jesse Knuckles, Joel Simon",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hhuston/RollCall/issues"
+  },
+  "homepage": "https://github.com/hhuston/RollCall#readme"
+}
