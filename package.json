@@ -17,5 +17,9 @@
   "bugs": {
     "url": "https://github.com/hhuston/RollCall/issues"
   },
-  "homepage": "https://github.com/hhuston/RollCall#readme"
+  "homepage": "https://github.com/hhuston/RollCall#readme",
+  "dependencies": {
+    "express": "^4.21.1",
+    "mongodb": "^6.11.0"
+  }
 }
