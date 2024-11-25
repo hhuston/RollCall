@@ -17,5 +17,10 @@
   "bugs": {
     "url": "https://github.com/hhuston/RollCall/issues"
   },
-  "homepage": "https://github.com/hhuston/RollCall#readme"
+  "homepage": "https://github.com/hhuston/RollCall#readme",
+  "dependencies": {
+    "axios": "^1.7.7",
+    "bcrypt": "^5.1.1",
+    "mongodb": "^6.11.0"
+  }
 }
