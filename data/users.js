@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt';
 import {is_str, is_number, is_arr, is_obj_id, exists, trim_obj, str_format, is_email, trim_arr} from './helpers.js'
 const saltRounds = 16;
 
-const createUser = async ( //enforce a minimum password length
+const createUser = async ( //enforce a minimum password length, make sure that the returns don't include password or id
     userName,
     password,
     firstName,
