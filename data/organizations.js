@@ -1,7 +1,7 @@
 import { ObjectId } from 'mongodb';
 import {users, organizations} from './../config/mongoCollections.js';
 import bcrypt from 'bcrypt';
-import validation from '../validation'
+import validation from '../validation.js'
 const saltRounds = 16;
 
 const createOrganization = async ( //enforce a minimum password length
@@ -73,7 +73,7 @@ const createOrganization = async ( //enforce a minimum password length
     //constraints: orgID must exist, be a string, and be a valid sessionID MUST ACCOUNT FOR LEADING 0s For the IDs
     validation.exists(orgID, "orgID")
     validation.is_str(orgID, "orgID")
-    let object_id = is_obj_id(orgID)
+    let object_id = validation.is_obj_id(orgID)
     const OrgCollection = await organizations();
     const Org = await OrgCollection.findOne({_id: object_id});
     if (!Org) {
@@ -96,7 +96,7 @@ const deleteOrganization = async (
     //constraints: orgID must exist, be a string, and be a valid sessionID MUST ACCOUNT FOR LEADING 0s For the IDs
     validation.exists(orgID, "orgID")
     validation.is_str(orgID, "orgID")
-    let object_id = is_obj_id(orgID)
+    let object_id = validation.is_obj_id(orgID)
     const UserCollection = await users();
     const OrgCollection = await organizations()
     const deletedOrg = await OrgCollection.findOneAndDelete({_id: object_id});
@@ -106,14 +106,13 @@ const deleteOrganization = async (
 
     let members_list = deletedOrg.members
     for (let member of members_list) {
-        let objectId = new ObjectId(member);
-        const User = await UserCollection.findOne({_id: objectId})
-        let newUserOrgs = User.memberOrganizations.filter(member => member !== deletedOrg._id.toString());
+        const User = await UserCollection.findOne({userName: member})
+        let newUserOrgs = User.memberOrganizations.filter(j => j !== deletedOrg._id.toString());
         let new_user_obj = {
             memberOrganizations: newUserOrgs
         }
         const updatedInfo = await UserCollection.findOneAndUpdate(
-            {_id: objectId},
+            {userName: member},
             {$set: new_user_obj},
             {returnDocument: 'after'}
         );
@@ -128,6 +127,7 @@ const updateOrganization = async (orgID, updateObject) => {
     validation.exists(orgID, "orgID")
     validation.exists(updateObject, "updateObject")
     validation.is_str(orgID, "orgID")
+    orgID = orgID.trim()
     let object_id = validation.is_obj_id(orgID)
     const UserCollection = await users();
     const OrgCollection = await organizations();
@@ -151,13 +151,40 @@ const updateOrganization = async (orgID, updateObject) => {
         new_hashed_password = await bcrypt.hash(updateObject.updatePassword.trim(), saltRounds);
     }
     if (updateObject.hasOwnProperty('updateMembers')) {//haven't made these changes apply to members, but may not need to
-        validation.is_arr(updateObject.updateMembers, "updateMembers")
-        validation.trim_arr(updateObject.updateMembers, "updateMembers")
-        new_members = updateObject.updateMembers
+        if (!Array.isArray(updateObject.updateMembers)) {
+            throw `updateMembers is not an array`
+        }
+        new_members = validation.trim_arr(updateObject.updateMembers, "updateMembers")
         for (let member of new_members) {
             let Mem = await UserCollection.findOne({userName: member})
             if (!Mem) {
                 throw 'A user in the updated list does not exist'
+            }
+            let newUserOrgs = []
+            newUserOrgs = [...Mem.memberOrganizations, orgID]
+            newUserOrgs = [...new Set(newUserOrgs)];
+            let new_user_obj = {
+                memberOrganizations: newUserOrgs
+            }
+            const updatedInfo = await UserCollection.findOneAndUpdate(
+                {userName: member},
+                {$set: new_user_obj},
+                {returnDocument: 'after'}
+            );
+        }
+        for (let member of Org.members) {
+            if (!new_members.includes(member)) {
+                let Mem = await UserCollection.findOne({userName: member})
+                let newUserOrgs = []
+                newUserOrgs = Mem.memberOrganizations.filter(item => item !== orgID);
+                let new_user_obj = {
+                    memberOrganizations: newUserOrgs
+                }
+                const updatedInfo = await UserCollection.findOneAndUpdate(
+                    {userName: member},
+                    {$set: new_user_obj},
+                    {returnDocument: 'after'}
+                );
             }
         }
     }

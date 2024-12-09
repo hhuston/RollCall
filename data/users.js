@@ -20,7 +20,7 @@ const createUser = async (
     validation.exists(lastName, "lastName")
     validation.exists(email, "email")
     validation.is_str(userName, "userName")
-    validaiton.is_str(password, "password")
+    validation.is_str(password, "password")
     validation.is_password(password, "password")
     validation.is_str(firstName, "firstName")
     validation.is_str(lastName, "lastName")
@@ -154,7 +154,7 @@ const loginUser = async (
 }
 
 const updateUser = async (userName, updateObject) => {
-    //Args: userName, object containing at least one of the following: updatePassword, updateFirstName, updateLastName, updateEmail, updateOrganizations
+    //Args: userName, object containing at least one of the following: updatePassword, updateFirstName, updateLastName, updateEmail, updateOrganizations, updateUserName
     //successful output: an object containing the added user's firstName, lastName, memberOrganizations, and userName
     //constraints: userName must exists and be a string, object must exist and can't be empty, object values must be proper types and abide by proper constraints
     validation.exists(userName, "userName")
@@ -165,7 +165,7 @@ const updateUser = async (userName, updateObject) => {
     const orgCollection = await organizations();
     const User = await userCollection.findOne({userName: userName});
     if (!User) {
-        throw 'The provided username or password is incorrect'
+        throw 'The provided username is incorrect'
     }
     let new_user_name = User.userName
     let new_hashed_password = User.password
@@ -176,12 +176,25 @@ const updateUser = async (userName, updateObject) => {
     if (Object.keys(updateObject).length < 1) {
         throw 'Nothing provided in the update object'
     }
-    if (updateObject.hasOwnProperty('updatePassword')) {
+    if (updateObject.hasOwnProperty('updateUserName')) {
         validation.is_str(updateObject.updateUserName, "updateUserName")
         new_user_name = updateObject.updateUserName.trim()
         const repeatedUser = await userCollection.findOne({userName: new_user_name});
         if (repeatedUser) {
             throw 'That username is already taken'
+        }
+        for (let org of User.memberOrganizations) {
+            const update_org = await orgCollection.findOne({_id: new ObjectId(org)})
+            let newOrgUsers = update_org.members.filter(j => j !== userName);
+            newOrgUsers = [...newOrgUsers, new_user_name]
+            let new_org_obj = {
+                members: newOrgUsers
+            }
+            const updatedInfo = await orgCollection.findOneAndUpdate(
+                {_id: update_org._id},
+                {$set: new_org_obj},
+                {returnDocument: 'after'}
+            );
         }
     }
     if (updateObject.hasOwnProperty('updatePassword')) {
@@ -191,11 +204,11 @@ const updateUser = async (userName, updateObject) => {
     }
     if (updateObject.hasOwnProperty('updateFirstName')) {
         validation.is_str(updateObject.updateFirstName, "updateFirstName")
-        new_first_name = str_format(updateObject.updateFirstName.trim())
+        new_first_name = validation.str_format(updateObject.updateFirstName.trim())
     }
     if (updateObject.hasOwnProperty('updateLastName')) {
         validation.is_str(updateObject.updateLastName, "updateLastName")
-        new_last_name = str_format(updateObject.updateLastName.trim())
+        new_last_name = validation.str_format(updateObject.updateLastName.trim())
     }
     if (updateObject.hasOwnProperty('updateEmail')) {
         validation.is_str(updateObject.updateEmail, "updateEmail")
@@ -203,14 +216,41 @@ const updateUser = async (userName, updateObject) => {
         new_email = updateObject.updateEmail.trim()
     }
     if (updateObject.hasOwnProperty('updateOrganizations')) {//haven't made these changes apply to organization, but may not need to
-        validation.is_arr(updateObject.updateOrganizations, "updateOrganizations")
-        validation.trim_arr(updateObject.updateOrganizations)
-        new_organizations = updateObject.updateOrganizations
+        if (!Array.isArray(updateObject.updateOrganizations)) {
+            throw `updateOrganizations is not an array`
+        }
+        new_organizations = validation.trim_arr(updateObject.updateOrganizations)
         for (let org of new_organizations) {
             let objectId = new ObjectId(org);
             let Org = await orgCollection.findOne({_id: objectId})
             if (!Org) {
                 throw 'An organization does not exist in the updated list'
+            }
+            let newOrgUsers = []
+            newOrgUsers = [...Org.members, new_user_name]
+            newOrgUsers = [...new Set(newOrgUsers)];
+            let new_org_obj = {
+                members: newOrgUsers
+            }
+            const updatedInfo = await orgCollection.findOneAndUpdate(
+                {_id: objectId},
+                {$set: new_org_obj},
+                {returnDocument: 'after'}
+            );
+        }
+        for (let org of User.memberOrganizations) {
+            if (!new_organizations.includes(org)) {
+                let Org = await orgCollection.findOne({_id: new ObjectId(org)})
+                let newOrgUsers = []
+                newOrgUsers = Org.members.filter(item => item !== userName);
+                let new_org_obj = {
+                    members: newOrgUsers
+                }
+                const updatedInfo = await orgCollection.findOneAndUpdate(
+                    {_id: new ObjectId(org)},
+                    {$set: new_org_obj},
+                    {returnDocument: 'after'}
+                );
             }
         }
     }
