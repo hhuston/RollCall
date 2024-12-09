@@ -105,5 +105,33 @@ let is_password = (password, arg) => {
   }
 }
 
+let checkId = (id) => {
+    if (!id) throw "Must provide an Id"
+    if (typeof id !== "string") throw "id must be a string"
+    id = id.trim()
 
-export {is_str, is_number, is_arr, is_obj_id, exists, trim_obj, str_format, is_email, trim_arr, is_password}
+    if (id.length === 0) throw "id must not be an empty string"
+    if (!ObjectId.isValid(id)) throw "invalid Object ID"
+
+    return id
+}
+
+let checkString = (str) => {
+    if (!str) throw "Must provide a string"
+    if (typeof str !== "string") throw "Must provide a string"
+    str = str.trim()
+
+    // We may decide to get rid of this
+    if (str.length === 0) throw "string must not be empty"
+    
+    return str
+}
+
+let checkDate = (date) => {
+    date = checkString(date)
+
+    //TODO: Check if its a valid MM/DD/YYYY
+    return date
+}
+
+export {is_str, is_number, is_arr, is_obj_id, exists, trim_obj, str_format, is_email, trim_arr, is_password, checkId, checkString, checkDate}
