@@ -9,6 +9,9 @@ const createOrganization = async ( //enforce a minimum password length
     password,
     userName
   ) => {
+    //Args: orgName, password, username
+    //successful output: an object containing the added org's orgName, its _id, its empty session list, and its member list with only one userName
+    //constraints: all inputs must exists and be strings no contraint to password or orgName beyonf that
     exists(orgName, "first")
     exists(password, "second")
     exists(userName, "fifth")
@@ -24,7 +27,7 @@ const createOrganization = async ( //enforce a minimum password length
     if (!User) {
         throw 'The provided username does not exist.'
     }
-    let members = [User._id.toString()]
+    let members = [User.userName]
     let sessions = []
     const hash_password = await bcrypt.hash(password, saltRounds);
     const orgCollection = await organizations();
@@ -51,7 +54,13 @@ const createOrganization = async ( //enforce a minimum password length
         {returnDocument: 'after'}
     );
     newOrg._id = orgID
-    return newOrg
+    const return_info = {
+        _id: orgID,
+        orgName: newOrg.orgName,
+        members: newOrg.members,
+        sessions: newOrg.sessions
+    }
+    return return_info
     
   
   };
@@ -59,6 +68,9 @@ const createOrganization = async ( //enforce a minimum password length
   const getOrganization = async (
     orgID
     ) => {
+    //Args: orgID
+    //successful output: an object containing the added org's orgName, its _id, its session list, and its member list
+    //constraints: orgID must exist, be a string, and be a valid sessionID MUST ACCOUNT FOR LEADING 0s For the IDs
     exists(orgID, "first")
     is_str(orgID, "first")
     let object_id = is_obj_id(orgID)
@@ -67,13 +79,21 @@ const createOrganization = async ( //enforce a minimum password length
     if (!Org) {
         throw 'No organization with that ID'
     }
-    Org['_id'] = Org['_id'].toString()
-    return Org
+    const return_info = {
+        _id: Org._id.toString(),
+        orgName: Org.orgName,
+        members: Org.members,
+        sessions: Org.sessions
+    }
+    return return_info
 }
 
 const deleteOrganization = async (
     orgID
 ) => {
+    //Args: orgID
+    //successful output: 'orgName has been successfully deleted!'
+    //constraints: orgID must exist, be a string, and be a valid sessionID MUST ACCOUNT FOR LEADING 0s For the IDs
     exists(orgID, "first")
     is_str(orgID, "first")
     let object_id = is_obj_id(orgID)
@@ -102,6 +122,9 @@ const deleteOrganization = async (
 }
 
 const updateOrganization = async (orgID, updateObject) => {
+    //Args: orgID, object containing at least one of the following fields: updateOrgName, updatePassword, updateMembers, updateSessions
+    //successful output: an object containing the added org's orgName, its _id, its session list, and its member list
+    //constraints: orgID must exist, be a string, and be a valid ID MUST ACCOUNT FOR LEADING 0s For the IDs, updated object can't be empty and must contain at least on of the fields, each value must also be of correct type
     exists(orgID, "first")
     exists(updateObject, "second")
     is_str(orgID, "first")
@@ -132,8 +155,7 @@ const updateOrganization = async (orgID, updateObject) => {
         trim_arr(updateObject.updateMembers, "updateMembers")
         new_members = updateObject.updateMembers
         for (let member of new_members) {
-            let objectId = new ObjectId(member);
-            let Mem = await UserCollection.findOne({_id: objectId})
+            let Mem = await UserCollection.findOne({userName: member})
             if (!Mem) {
                 throw 'A user in the updated list does not exist'
             }
@@ -155,8 +177,13 @@ const updateOrganization = async (orgID, updateObject) => {
         {$set: new_org_info},
         {returnDocument: 'after'}
       );
-    updatedInfo._id = updatedInfo._id.toString();
-    return updatedInfo;
+      const return_info = {
+        _id: updatedInfo._id.toString(),
+        orgName: updatedInfo.orgName,
+        members: updatedInfo.members,
+        sessions: updatedInfo.sessions
+    }
+    return return_info
 
 }
 

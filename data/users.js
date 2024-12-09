@@ -1,16 +1,19 @@
 import { ObjectId } from 'mongodb';
 import {organizations, users} from './../config/mongoCollections.js';
 import bcrypt from 'bcrypt';
-import {is_str, is_number, is_arr, is_obj_id, exists, trim_obj, str_format, is_email, trim_arr} from './helpers.js'
+import {is_str, is_number, is_arr, is_obj_id, exists, trim_obj, str_format, is_email, trim_arr, is_password} from './helpers.js'
 const saltRounds = 16;
 
-const createUser = async ( //enforce a minimum password length
+const createUser = async (
     userName,
     password,
     firstName,
     lastName,
     email
   ) => {
+    //Args: userName, password, firstName, lastName, email
+    //successful output: an object containing the added user's firstName, lastName, memberOrganizations, and userName
+    //constraints: all inputs must be strings and exist, email must be valid, password contraints from lab10, userName must be unique
     exists(userName, "first")
     exists(password, "second")
     exists(firstName, "third")
@@ -18,6 +21,7 @@ const createUser = async ( //enforce a minimum password length
     exists(email, "fifth")
     is_str(userName, "first")
     is_str(password, "second")
+    is_password(password, "second")
     is_str(firstName, "third")
     is_str(lastName, "fourth")
     is_str(email, "fifth")
@@ -43,7 +47,7 @@ const createUser = async ( //enforce a minimum password length
     const UserCollection = await users();
     const repeatUser = await UserCollection.findOne({userName: userName})
     if (repeatUser) {
-        throw 'The provided username is already used' //is this ok?
+        throw 'The provided username is already used'
     }
     const insertInfo = await UserCollection.insertOne(new_user_info);
     if (!insertInfo.acknowledged || !insertInfo.insertedId) {
@@ -51,14 +55,22 @@ const createUser = async ( //enforce a minimum password length
     }
     
     const newUser = await UserCollection.findOne({userName: userName})
-    newUser['_id'] = newUser['_id'].toString()
-    return newUser
+    let return_obj = {
+        userName: newUser.userName,
+        firstName: newUser.firstName,
+        lastName: newUser.lastName,
+        memberOrganizations: newUser.memberOrganizations
+    }
+    return return_obj
   
   };
 
 const getUser = async (
     userName
 ) => {
+    //args: userName
+    //successful output: an object containing the added user's firstName, lastName, memberOrganizations, userName
+    //constraints: userName must exist and be a string
     exists(userName, "first")
     is_str(userName, "first")
     userName = userName.trim()
@@ -67,13 +79,21 @@ const getUser = async (
     if (!User) {
         throw 'The provided username is incorrect'
     }
-    User['_id'] = User['_id'].toString()
-    return User
+    let return_obj = {
+        userName: User.userName,
+        firstName: User.firstName,
+        lastName: User.lastName,
+        memberOrganizations: User.memberOrganizations
+    }
+    return return_obj
 }
 
 const deleteUser = async (
     userName
 ) => {
+    //args: userName
+    //successful output: 'userName has been successfully deleted!'
+    //constraints: userName must exist and be a string
     exists(userName, "first")
     is_str(userName, "first")
     userName = userName.trim()
@@ -105,10 +125,14 @@ const loginUser = async (
     userName,
     password
 ) => {
+    //args: userName, password
+    //successful output: an object containing the added user's firstName, lastName, memberOrganizations, userName
+    //constraints: userName must exist and be a string, password must match, exist, and be a string, plus lab10 constraints
     exists(userName, "first")
     exists(password, "second")
     is_str(userName, "first")
     is_str(password, "second")
+    is_password(password, "second")
     userName = userName.trim()
     password = password.trim()
     const UserCollection = await users();
@@ -120,11 +144,19 @@ const loginUser = async (
     if (!compare_password) {
         throw 'The provided username or password is incorrect'
     }
-    User['_id'] = User['_id'].toString()
-    return User
+    let return_obj = {
+        userName: User.userName,
+        firstName: User.firstName,
+        lastName: User.lastName,
+        memberOrganizations: User.memberOrganizations
+    }
+    return return_obj
 }
 
-const updateUser = async (userName, updateObject) => { //may add password matching too
+const updateUser = async (userName, updateObject) => {
+    //Args: userName, object containing at least one of the following: updatePassword, updateFirstName, updateLastName, updateEmail, updateOrganizations
+    //successful output: an object containing the added user's firstName, lastName, memberOrganizations, and userName
+    //constraints: userName must exists and be a string, object must exist and can't be empty, object values must be proper types and abide by proper constraints
     exists(userName, "first")
     is_str(userName, "first")
     exists(updateObject, "second")
@@ -154,6 +186,7 @@ const updateUser = async (userName, updateObject) => { //may add password matchi
     }
     if (updateObject.hasOwnProperty('updatePassword')) {
         is_str(updateObject.updatePassword, "updatePassword")
+        is_password(updateObject.updatePassword, "updatePassword")
         new_hashed_password = await bcrypt.hash(updateObject.updatePassword.trim(), saltRounds);
     }
     if (updateObject.hasOwnProperty('updateFirstName')) {
@@ -194,8 +227,13 @@ const updateUser = async (userName, updateObject) => { //may add password matchi
         {$set: new_user_info},
         {returnDocument: 'after'}
       );
-    updatedInfo._id = updatedInfo._id.toString();
-    return updatedInfo;
+      let return_obj = {
+        userName: updatedInfo.userName,
+        firstName: updatedInfo.firstName,
+        lastName: updatedInfo.lastName,
+        memberOrganizations: updatedInfo.memberOrganizations
+    }
+    return return_obj
 
 }
 

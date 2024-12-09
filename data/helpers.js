@@ -78,6 +78,32 @@ let trim_arr = (arr) => {
         arr[i] = arr[i].trim()
     }
 }
+let is_password = (password) => {
+  password = password.trim()
+  let upper = true
+  let number = true
+  let special = true
+  if (password.length < 8) {
+      throw `${arg} is shorter than 8 characters`
+  }
+  if (password.split(' ').length > 1) {
+      throw `${arg} contains a space`
+  }
+  for (let char of password) {
+      if (!isNaN(char)) {
+          number = false
+      }
+      else if (char.charCodeAt(0) > 65 && char.charCodeAt(0) < 90) {
+          upper = false
+      }
+      else if (char.charCodeAt(0) < 97 || char.charCodeAt(0) > 122) {
+          special = false
+      }
+  }
+  if (upper || number || special) {
+      throw `${arg} must contain an uppercase letter, a number, and a special character`
+  }
+}
 
 
-export {is_str, is_number, is_arr, is_obj_id, exists, trim_obj, str_format, is_email, trim_arr}
+export {is_str, is_number, is_arr, is_obj_id, exists, trim_obj, str_format, is_email, trim_arr, is_password}
