@@ -107,6 +107,20 @@ let is_password = (password, arg) => {
       throw `${arg} must contain an uppercase letter, a number, and a special character`
   }
 }
+let is_name = (str, arg) => {
+  let name = str.trim()
+  if (name.length < 2) {
+      throw `${arg} is too short`
+  }
+  if (name.length > 25) {
+      throw `${arg} is too long`
+  }
+  for (let char of name) {
+      if (!isNaN(char)) {
+          throw `${arg} contains a number`
+      }
+  }
+}
 
 let checkId = (id) => {
     if (!id) throw "Must provide an Id"
@@ -150,6 +164,7 @@ let validation = {
   is_password:is_password, 
   checkId:checkId, 
   checkString:checkString, 
-  checkDate:checkDate
+  checkDate:checkDate,
+  is_name:is_name
 }
 export default validation
