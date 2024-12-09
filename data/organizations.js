@@ -1,7 +1,7 @@
 import { ObjectId } from 'mongodb';
 import {users, organizations} from './../config/mongoCollections.js';
 import bcrypt from 'bcrypt';
-import {is_str, is_number, is_arr, is_obj_id, exists, trim_obj, str_format, is_email, trim_arr} from './helpers.js'
+import validation from '../validation'
 const saltRounds = 16;
 
 const createOrganization = async ( //enforce a minimum password length
@@ -12,16 +12,16 @@ const createOrganization = async ( //enforce a minimum password length
     //Args: orgName, password, username
     //successful output: an object containing the added org's orgName, its _id, its empty session list, and its member list with only one userName
     //constraints: all inputs must exists and be strings no contraint to password or orgName beyonf that
-    exists(orgName, "first")
-    exists(password, "second")
-    exists(userName, "fifth")
-    is_str(orgName, "first")
-    is_str(password, "second")
-    is_str(userName, "fifth")
+    validation.is_str(orgName, "orgName")
+    validation.exists(password, "password")
+    validation.exists(userName, "userName")
+    validation.is_str(orgName, "orgName")
+    validation.is_str(password, "password")
+    validation.is_str(userName, "userName")
     userName = userName.trim()
     password = password.trim()
     orgName = orgName.trim()
-    orgName = str_format(orgName)
+    orgName = validation.str_format(orgName)
     let userCollection = await users();
     const User = await userCollection.findOne({userName: userName})
     if (!User) {
@@ -71,8 +71,8 @@ const createOrganization = async ( //enforce a minimum password length
     //Args: orgID
     //successful output: an object containing the added org's orgName, its _id, its session list, and its member list
     //constraints: orgID must exist, be a string, and be a valid sessionID MUST ACCOUNT FOR LEADING 0s For the IDs
-    exists(orgID, "first")
-    is_str(orgID, "first")
+    validation.exists(orgID, "orgID")
+    validation.is_str(orgID, "orgID")
     let object_id = is_obj_id(orgID)
     const OrgCollection = await organizations();
     const Org = await OrgCollection.findOne({_id: object_id});
@@ -94,8 +94,8 @@ const deleteOrganization = async (
     //Args: orgID
     //successful output: 'orgName has been successfully deleted!'
     //constraints: orgID must exist, be a string, and be a valid sessionID MUST ACCOUNT FOR LEADING 0s For the IDs
-    exists(orgID, "first")
-    is_str(orgID, "first")
+    validation.exists(orgID, "orgID")
+    validation.is_str(orgID, "orgID")
     let object_id = is_obj_id(orgID)
     const UserCollection = await users();
     const OrgCollection = await organizations()
@@ -125,10 +125,10 @@ const updateOrganization = async (orgID, updateObject) => {
     //Args: orgID, object containing at least one of the following fields: updateOrgName, updatePassword, updateMembers, updateSessions
     //successful output: an object containing the added org's orgName, its _id, its session list, and its member list
     //constraints: orgID must exist, be a string, and be a valid ID MUST ACCOUNT FOR LEADING 0s For the IDs, updated object can't be empty and must contain at least on of the fields, each value must also be of correct type
-    exists(orgID, "first")
-    exists(updateObject, "second")
-    is_str(orgID, "first")
-    let object_id = is_obj_id(orgID)
+    validation.exists(orgID, "orgID")
+    validation.exists(updateObject, "updateObject")
+    validation.is_str(orgID, "orgID")
+    let object_id = validation.is_obj_id(orgID)
     const UserCollection = await users();
     const OrgCollection = await organizations();
     const Org = await OrgCollection.findOne({_id: object_id});
@@ -143,16 +143,16 @@ const updateOrganization = async (orgID, updateObject) => {
         throw 'Nothing provided in the update object'
     }
     if (updateObject.hasOwnProperty('updateOrgName')) {
-        is_str(updateObject.updateOrgName, "updateOrgName")
+        validation.is_str(updateObject.updateOrgName, "updateOrgName")
         new_org_name = updateObject.updateOrgName.trim()
     }
     if (updateObject.hasOwnProperty('updatePassword')) {
-        is_str(updateObject.updatePassword, "updatePassword")
+        validation.is_str(updateObject.updatePassword, "updatePassword")
         new_hashed_password = await bcrypt.hash(updateObject.updatePassword.trim(), saltRounds);
     }
     if (updateObject.hasOwnProperty('updateMembers')) {//haven't made these changes apply to members, but may not need to
-        is_arr(updateObject.updateMembers, "updateMembers")
-        trim_arr(updateObject.updateMembers, "updateMembers")
+        validation.is_arr(updateObject.updateMembers, "updateMembers")
+        validation.trim_arr(updateObject.updateMembers, "updateMembers")
         new_members = updateObject.updateMembers
         for (let member of new_members) {
             let Mem = await UserCollection.findOne({userName: member})
@@ -162,8 +162,8 @@ const updateOrganization = async (orgID, updateObject) => {
         }
     }
     if (updateObject.hasOwnProperty('updateSessions')) {//haven't made these changes apply to session, but may not need to
-        is_arr(updateObject.updateSessions, "updateSessions")
-        trim_arr(updateObject.updateSessions, "updateSessions")
+        validation.is_arr(updateObject.updateSessions, "updateSessions")
+        validation.trim_arr(updateObject.updateSessions, "updateSessions")
         new_sessions = updateObject.updateSessions
     }
     const new_org_info = {
