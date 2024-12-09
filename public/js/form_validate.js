@@ -3,34 +3,34 @@ let is_str = (str, arg) => {
       let trim_str = str.trim()
       if (!trim_str) {
         if (str.length > 0) {
-          throw `error (${arg} parameter is a string with just spaces)`
+          throw `${arg} is a string with just spaces`
         }
         else {
-          throw `error (${arg} parameter is an empty string)`
+          throw `${arg} is an empty string`
         }
       }
     }
     else {
-      throw `error (${arg} parameter isn't a string)`
+      throw `${arg} isn't a string`
     }
 }
 let is_number = (num, arg) => {
     if (typeof num !== 'number' || isNaN(num)) {
-      throw `error (${arg} parameter is not a number)`
+      throw `${arg} is not a number`
     }
 }
 let is_arr = (arr, arg) => {
     if (!Array.isArray(arr)) {
-      throw `error (${arg} parameter is not an array)`
+      throw `${arg} is not an array`
     }
     if (arr.length == 0) {
-      throw `error (${arg} parameter is an empty array)`
+      throw `${arg} is an empty array`
     }
 }
 let is_obj_id = (id, arg) => {
     id = id.trim()
     if (!ObjectId.isValid(id)) {
-      throw `error (${arg} parameter is not a valid ObjectId string)`
+      throw `${arg} is not a valid ObjectId string`
     }
     return new ObjectId(id)
 }
@@ -45,10 +45,10 @@ let exists = (elem, arg) => {
     if (!elem) {
       if (typeof elem === 'undefined'){
         if (arg == "first") {
-          throw `error (no input provided)`
+          throw `no input provided`
         }
         else {
-          throw `error (no input provided for the ${arg} parameter)`
+          throw `no input provided for ${arg}`
         }
       }
   }
@@ -62,6 +62,7 @@ let str_format = (str) => {
 }
 
 let is_email = (email) => {
+    email = email.trim()
     const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     
     if (!regex.test(email)) {
@@ -233,11 +234,13 @@ button.addEventListener('click', function(event) {
     try {
         exists(userName, "UserName")
       exists(password, "Password")
+      exists(confirmPassword, "Confirm Password")
       exists(firstName, "First Name")
       exists(lastName, "Last Name")
       exists(email, "Email")
       is_str(userName, "UserName")
       is_str(password, "Password")
+      is_str(confirmPassword, "Confirm Password")
       is_str(firstName, "First Name")
       is_str(lastName, "Last Name")
       is_str(email, "Email")
@@ -246,6 +249,8 @@ button.addEventListener('click', function(event) {
       is_name(lastName, "Last Name")
       is_password(password, "Password")
       is_password(confirmPassword, "Confirm Password")
+      password = password.trim()
+      confirmPassword = confirmPassword.trim()
       if (password != confirmPassword) {
         throw 'passwords must match'
       }

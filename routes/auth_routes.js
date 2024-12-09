@@ -27,11 +27,13 @@ router
     try {
       validation.exists(userName, "UserName")
       validation.exists(password, "Password")
+      validation.exists(confirmPassword, "Confirm Password")
       validation.exists(firstName, "First Name")
       validation.exists(lastName, "Last Name")
       validation.exists(email, "Email")
       validation.is_str(userName, "UserName")
       validation.is_str(password, "Password")
+      validation.is_str(confirmPassword, "Confirm Password")
       validation.is_str(firstName, "First Name")
       validation.is_str(lastName, "Last Name")
       validation.is_str(email, "Email")
