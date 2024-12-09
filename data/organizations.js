@@ -11,7 +11,7 @@ const createOrganization = async ( //enforce a minimum password length
   ) => {
     //Args: orgName, password, username
     //successful output: an object containing the added org's orgName, its _id, its empty session list, and its member list with only one userName
-    //constraints: all inputs must exists and be strings no contraint to password or orgName beyonf that
+    //constraints: all inputs must exists and be strings. orgName must be unique
     validation.is_str(orgName, "orgName")
     validation.exists(password, "password")
     validation.exists(userName, "userName")
@@ -31,6 +31,10 @@ const createOrganization = async ( //enforce a minimum password length
     let sessions = []
     const hash_password = await bcrypt.hash(password, saltRounds);
     const orgCollection = await organizations();
+    const repeatOrg = await orgCollection.findOne({orgName: orgName})
+    if (repeatOrg) {
+        throw `There is an org with that name`
+    }
     const new_org_info = {
         orgName: orgName,
         password: hash_password,
@@ -123,7 +127,7 @@ const deleteOrganization = async (
 const updateOrganization = async (orgID, updateObject) => {
     //Args: orgID, object containing at least one of the following fields: updateOrgName, updatePassword, updateMembers, updateSessions
     //successful output: an object containing the added org's orgName, its _id, its session list, and its member list
-    //constraints: orgID must exist, be a string, and be a valid ID MUST ACCOUNT FOR LEADING 0s For the IDs, updated object can't be empty and must contain at least on of the fields, each value must also be of correct type
+    //constraints: orgID must exist, be a string, and be a valid ID MUST ACCOUNT FOR LEADING 0s For the IDs, updated object can't be empty and must contain at least on of the fields, each value must also be of correct type, newOrgName must be unique
     validation.exists(orgID, "orgID")
     validation.exists(updateObject, "updateObject")
     validation.is_str(orgID, "orgID")
@@ -145,6 +149,10 @@ const updateOrganization = async (orgID, updateObject) => {
     if (updateObject.hasOwnProperty('updateOrgName')) {
         validation.is_str(updateObject.updateOrgName, "updateOrgName")
         new_org_name = updateObject.updateOrgName.trim()
+        const repeatOrg = await OrgCollection.findOne({orgName: new_org_name})
+        if (repeatOrg) {
+            throw `There is an org with that name`
+        }
     }
     if (updateObject.hasOwnProperty('updatePassword')) {
         validation.is_str(updateObject.updatePassword, "updatePassword")
