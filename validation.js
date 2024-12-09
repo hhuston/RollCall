@@ -71,12 +71,15 @@ let is_email = (email) => {
     }
 }
 
-let trim_arr = (arr) => {
+let trim_arr = (arr, arg) => {
     for (let i = 0; i < arr.length; i++) {
-        is_str(arr[i], "element in organizations list") 
-        is_obj_id(arr[i], "element in organizations list")
+        is_str(arr[i], `element in ${arg} list`)
+        if (arg != "updateMembers") {
+          is_obj_id(arr[i], `element in ${arg} list`)
+        }
         arr[i] = arr[i].trim()
     }
+    return arr
 }
 let is_password = (password, arg) => {
   password = password.trim()
@@ -134,4 +137,19 @@ let checkDate = (date) => {
     return date
 }
 
-export {is_str, is_number, is_arr, is_obj_id, exists, trim_obj, str_format, is_email, trim_arr, is_password, checkId, checkString, checkDate}
+let validation = {
+  is_str: is_str, 
+  is_number: is_number, 
+  is_arr: is_arr, 
+  is_obj_id: is_obj_id, 
+  exists:exists, 
+  trim_obj:trim_obj, 
+  str_format:str_format, 
+  is_email:is_email, 
+  trim_arr:trim_arr, 
+  is_password:is_password, 
+  checkId:checkId, 
+  checkString:checkString, 
+  checkDate:checkDate
+}
+export default validation
