@@ -235,20 +235,20 @@ button2.addEventListener('click', function(event) {
       is_str(password, "Password")
       is_user_id(userName, "UserName")
       is_password(password, "Password")
+      let form = document.getElementById('signin-form');
+      form.submit()
       } catch(e) {
         const h1 = document.querySelector('h1');
         const new_item = document.createElement('h2')
         new_item.textContent = e
         h1.insertAdjacentElement('afterend', new_item);
       }
-      let form = document.getElementById('signin-form');
-      form.submit()
 });
 }
 
 let button3 = document.getElementById('org_submit_button');
-if (button2) {
-button2.addEventListener('click', function(event) {
+if (button3) {
+button3.addEventListener('click', function(event) {
     event.preventDefault()
     const delete_item = document.querySelector('h2');
     if (delete_item) {
@@ -270,21 +270,21 @@ button2.addEventListener('click', function(event) {
 }
 
 const button4 = document.getElementById('submitButtonOrg');
-if (button) {
-button.addEventListener('click', function(event) {
+if (button4) {
+button4.addEventListener('click', function(event) {
     event.preventDefault()
     const delete_item = document.querySelector('h2');
     if (delete_item) {
         delete_item.remove()
     }
-    let userName = document.getElementById("orgName").value
+    let orgName = document.getElementById("orgName").value
     let password = document.getElementById("password").value
     let confirmPassword = document.getElementById("confirmPassword").value
     try {
-        exists(userName, "OrgName")
+        exists(orgName, "OrgName")
       exists(password, "Password")
       exists(confirmPassword, "Confirm Password")
-      is_str(userName, "OrgName")
+      is_str(orgName, "OrgName")
       is_str(password, "Password")
       is_str(confirmPassword, "Confirm Password")
       password = password.trim()
@@ -302,4 +302,35 @@ button.addEventListener('click', function(event) {
       }
 });
 
+}
+
+const button5 = document.getElementById('orgSubmit');
+if (button5) {
+button5.addEventListener('click', function(event) {
+    event.preventDefault()
+
+    const text = document.getElementById("org_search_term")
+    let orgName = text.value
+    orgName = orgName.trim()
+
+    let error = document.getElementById('searchError')
+    error.setAttribute('hidden', true);
+    error.innerHTML = "";
+    
+    if (!orgName) {
+      error.innerHTML = `Must provide an input!`;
+      error.removeAttribute('hidden');
+    }
+    try {
+      exists(orgName, "OrgName")
+      is_str(orgName, "OrgName")
+      let form = document.getElementById('searchOrgForm');
+      form.submit()
+    }catch(e) {
+      text.value = ""
+      error.innerHTML = e;
+      error.removeAttribute('hidden');
+    }
+
+});
 }

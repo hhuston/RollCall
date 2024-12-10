@@ -60,6 +60,12 @@ router
   .route('/signinorganization/:orgName')
   .get(async (req, res) => {
     //code here for GET
+    if (!req.session.currentPage) {
+        req.session.currentPage = "/"
+    }
+    if (!req.session.user) {
+        return res.status(403).render("error.handlebars", { error_class: "input_error", message: "You must sign in to access this page!", error_route: req.session.currentPage});
+    }
     try {
     validation.exists(req.params.orgName, "orgName")
     validation.is_str(req.params.orgName, "orgName")
@@ -71,7 +77,7 @@ router
     }
     let orgName = req.params.orgName.trim()
     req.session.currentPage = `/signinorganization/${orgName}`
-    return res.status(200).render("signinuser.handlebars", {orgName: orgName});
+    return res.status(200).render("signinorganization.handlebars", {orgName: orgName});
   })
   .post(async (req, res) => {
     //code here for POST
@@ -103,6 +109,25 @@ router
 
   });
 
+router
+.route('/organization')
+.post(async (req, res) => {
+    try {
+        if (!req.session.currentPage) {
+            req.session.currentPage = "/"
+        }
+        if (!req.session.user) {
+            return res.status(403).render("error.handlebars", { error_class: "input_error", message: "You must sign in to access this page!", error_route: req.session.currentPage});
+        }
+        validation.exists(req.body.org_search_term, "orgName")
+        validation.is_str(req.body.org_search_term, "orgName")
+        let orgName = req.body.org_search_term.trim()
+        return res.redirect(`/organization/${orgName.toLowerCase()}`);
+    } catch (e) {
+      return res.status(400).render("error.handlebars", { error_class: "input_error", message: e, error_route: req.session.currentPage});
+    }
+});
+
   router
   .route('/organization/:orgName')
   .get(async (req, res) => {
@@ -125,11 +150,11 @@ router
             return res.status(400).render("error.handlebars", { error_class: "input_error", message: `Organization ${orgName} does not exist`, error_route: req.session.currentPage});
         }
         if (Org.members.includes(req.session.user.userName)) {
+            req.session.currentPage = `/organization/${orgName}`
             return res.status(200).render("organization.handlebars", {orgData: Org, userData: req.session.user});
         }
         else {
-            req.session.currentPage = `/signinorganization/${orgName}`
-            return res.status(200).render("signinorganization.handlebars", {orgName: orgName});
+            return res.redirect(`/signinorganization/${orgName}`);
         }
     } catch (e) {
       return res.status(400).render("error.handlebars", { error_class: "input_error", message: e, error_route: req.session.currentPage});

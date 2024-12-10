@@ -21,13 +21,13 @@
     </div>
     {{/if}}
     <div id="discover_orgs">
-    <form id="searchOrgForm">
-        <label for="org_search_term">Discover Organizations</label>
-        <input id="org_search_term" type="text">
-        <button id="orgSubmit" type="submit">Search</button>
+    <form id="searchOrgForm" method="POST" action="/organization">
+        <label for="org_search_term">Search for an Organization</label>
+        <input id="org_search_term" name="org_search_term" type="text">
+        <button id="orgSubmit" name="orgSubmit" type="submit">Enter</button>
     </form>
-    <ul id="searchResult" hidden></ul>
+    <h2 id="searchError" hidden></h2>
     </div>
     <a id="signoutLink" href="/signoutuser">Sign out</a>
-    <script src='/public/js/main.js'></script>
+    <script src='/public/js/form_validate.js'></script>
     </body>
