@@ -19,6 +19,7 @@ const createOrganization = async ( //enforce a minimum password length
     validation.is_str(password, "password")
     validation.is_str(userName, "userName")
     userName = userName.trim()
+    validation.is_user_id(userName, "userName")
     password = password.trim()
     orgName = orgName.trim()
     orgName = validation.str_format(orgName)
@@ -164,6 +165,7 @@ const updateOrganization = async (orgID, updateObject) => {
         }
         new_members = validation.trim_arr(updateObject.updateMembers, "updateMembers")
         for (let member of new_members) {
+            validation.is_user_id(member, "an updateMember")
             let Mem = await UserCollection.findOne({userName: member})
             if (!Mem) {
                 throw 'A user in the updated list does not exist'

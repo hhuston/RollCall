@@ -87,26 +87,11 @@ let is_name = (str, arg) => {
         throw `${arg} is too long`
     }
     for (let char of name) {
-        if (!isNaN(char)) {
-            throw `${arg} contains a number`
+        if (char == ' ') {
+            continue
         }
-    }
-}
-
-let is_user_id = (str) => {
-    let name = str.trim()
-    if (name.length < 5) {
-        throw `userId is too short`
-    }
-    if (name.length > 10) {
-        throw `userId is too long`
-    }
-    if (name.split(' ').length > 1) {
-        throw 'userId contains a space'
-    }
-    for (let char of name) {
-        if (!isNaN(char)) {
-            throw `userId contains a number`
+        else if (!isNaN(char)) {
+            throw `${arg} contains a number`
         }
     }
 }
@@ -136,45 +121,6 @@ let is_password = (password, arg) => {
     if (upper || number || special) {
         throw `${arg} must contain an uppercase letter, a number, and a special character`
     }
-}
-
-let is_quote = (quote) => {
-    quote = quote.trim()
-    if (quote.length < 20) {
-        throw 'quote is shorter than 20 characters long'
-    }
-    if (quote.length > 255) {
-        throw 'quote is longer than 255 characters long'
-    }
-}
-
-let is_color = (code, arg) => {
-    is_str(code, arg)
-    code = code.trim().toLowerCase()
-    let color_list = code.split("#")
-    if (color_list[0]) {
-        throw `${arg} is not a valid color code`
-    }
-    if (color_list.length != 2) {
-        throw `${arg} is not a valid color code`
-    }
-    if (color_list[1].length != 6) {
-        throw `${arg} is not a valid color code`
-    }
-    for (let char of color_list[1]) {
-        if (isNaN(char) && (char.charCodeAt(0) < 97 || char.charCodeAt(0) > 102)) {
-            throw `${arg} is not a valid color code`
-        }
-    }
-}
-
-let standard_format = (color_code, arg) => {
-    let color = (color_code.split("#")[1]).trim().toLowerCase()
-    let final_color = color
-    if (color.length == 3) {
-        final_color = color[0] + color[0] + color[1] + color[1] + color[2] + color[2]
-    }
-    return final_color
 }
 
 let is_obj = (obj) => {
@@ -209,13 +155,18 @@ let is_obj = (obj) => {
     return new_obj
 }
 
-let is_role = (role) => {
-    role = role.trim().toLowerCase()
-    if (role != 'admin' && role != 'user') {
-        throw 'role is not admin or user'
+let is_user_id = (str) => {
+    let name = str.trim()
+    if (name.length < 5) {
+      throw `userId is too short`
     }
-    return role
-}
+    if (name.length > 25) {
+      throw `userId is too long`
+    }
+    if (name.split(' ').length > 1) {
+        throw 'userId contains a space'
+    }
+  }
 
 const button = document.getElementById('submitButton');
 if (button) {
@@ -239,6 +190,7 @@ button.addEventListener('click', function(event) {
       exists(lastName, "Last Name")
       exists(email, "Email")
       is_str(userName, "UserName")
+      is_user_id(userName, "UserName")
       is_str(password, "Password")
       is_str(confirmPassword, "Confirm Password")
       is_str(firstName, "First Name")
@@ -281,6 +233,7 @@ button2.addEventListener('click', function(event) {
       exists(password, "Password")
       is_str(userName, "UserName")
       is_str(password, "Password")
+      is_user_id(userName, "UserName")
       is_password(password, "Password")
         let form = document.getElementById('signin-form');
         form.submit()

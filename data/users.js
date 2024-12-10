@@ -13,7 +13,7 @@ const createUser = async (
   ) => {
     //Args: userName, password, firstName, lastName, email
     //successful output: an object containing the added user's firstName, lastName, memberOrganizations, and userName
-    //constraints: all inputs must be strings and exist, email must be valid, password contraints from lab10, userName must be unique
+    //constraints: all inputs must be strings and exist, email must be valid, password contraints from lab10, userName must be unique and between 5 and 25 chars with no spaces
     validation.exists(userName, "userName")
     validation.exists(password, "password")
     validation.exists(firstName, "firstName")
@@ -28,6 +28,7 @@ const createUser = async (
     validation.is_name(lastName, "lastName")
     validation.is_str(email, "email")
     userName = userName.trim()
+    validation.is_user_id(userName, "userName")
     password = password.trim()
     firstName = firstName.trim()
     lastName = lastName.trim()
@@ -70,10 +71,11 @@ const getUser = async (
 ) => {
     //args: userName
     //successful output: an object containing the added user's firstName, lastName, memberOrganizations, userName
-    //constraints: userName must exist and be a string
+    //constraints: userName must exist and be a string and be between 5 and 25 chars with no spaces
     validation.exists(userName, "userName")
     validation.is_str(userName, "userName")
     userName = userName.trim()
+    validation.is_user_id(userName, "userName")
     const UserCollection = await users();
     const User = await UserCollection.findOne({userName: userName});
     if (!User) {
@@ -93,10 +95,11 @@ const deleteUser = async (
 ) => {
     //args: userName
     //successful output: 'userName has been successfully deleted!'
-    //constraints: userName must exist and be a string
+    //constraints: userName must exist and be a string and be between 5 and 25 chars with no spaces
     validation.exists(userName, "userName")
     validation.is_str(userName, "userName")
     userName = userName.trim()
+    validation.is_user_id(userName, "userName")
     const UserCollection = await users();
     const deletedUser = await UserCollection.findOneAndDelete({userName: userName});
     if (!deletedUser) {
@@ -127,13 +130,14 @@ const loginUser = async (
 ) => {
     //args: userName, password
     //successful output: an object containing the added user's firstName, lastName, memberOrganizations, userName
-    //constraints: userName must exist and be a string, password must match, exist, and be a string, plus lab10 constraints
+    //constraints: userName must exist and be a string and be between 5 and 25 chars with no spaces, password must match, exist, and be a string, plus lab10 constraints
     validation.exists(userName, "userName")
     validation.exists(password, "password")
     validation.is_str(userName, "userName")
     validation.is_str(password, "password")
     validation.is_password(password, "password")
     userName = userName.trim()
+    validation.is_user_id(userName, "userName")
     password = password.trim()
     const UserCollection = await users();
     const User = await UserCollection.findOne({userName: userName});
@@ -156,11 +160,12 @@ const loginUser = async (
 const updateUser = async (userName, updateObject) => {
     //Args: userName, object containing at least one of the following: updatePassword, updateFirstName, updateLastName, updateEmail, updateOrganizations, updateUserName
     //successful output: an object containing the added user's firstName, lastName, memberOrganizations, and userName
-    //constraints: userName must exists and be a string, object must exist and can't be empty, object values must be proper types and abide by proper constraints
+    //constraints: userName must exists and be a string and be between 5 and 25 chars with no spaces, object must exist and can't be empty, object values must be proper types and abide by proper constraints
     validation.exists(userName, "userName")
     validation.is_str(userName, "userName")
     validation.exists(updateObject, "updateObject")
     userName = userName.trim()
+    validation.is_user_id(userName, "userName")
     const userCollection = await users();
     const orgCollection = await organizations();
     const User = await userCollection.findOne({userName: userName});
@@ -179,6 +184,7 @@ const updateUser = async (userName, updateObject) => {
     if (updateObject.hasOwnProperty('updateUserName')) {
         validation.is_str(updateObject.updateUserName, "updateUserName")
         new_user_name = updateObject.updateUserName.trim()
+        validation.is_user_id(new_user_name, "userName")
         const repeatedUser = await userCollection.findOne({userName: new_user_name});
         if (repeatedUser) {
             throw 'That username is already taken'
@@ -204,11 +210,11 @@ const updateUser = async (userName, updateObject) => {
     }
     if (updateObject.hasOwnProperty('updateFirstName')) {
         validation.is_str(updateObject.updateFirstName, "updateFirstName")
-        new_first_name = validation.str_format(updateObject.updateFirstName.trim())
+        new_first_name = updateObject.updateFirstName.trim()
     }
     if (updateObject.hasOwnProperty('updateLastName')) {
         validation.is_str(updateObject.updateLastName, "updateLastName")
-        new_last_name = validation.str_format(updateObject.updateLastName.trim())
+        new_last_name = updateObject.updateLastName.trim()
     }
     if (updateObject.hasOwnProperty('updateEmail')) {
         validation.is_str(updateObject.updateEmail, "updateEmail")

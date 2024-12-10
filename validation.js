@@ -117,9 +117,25 @@ let is_name = (str, arg) => {
       throw `${arg} is too long`
   }
   for (let char of name) {
-      if (!isNaN(char)) {
-          throw `${arg} contains a number`
-      }
+    if (char == ' ') {
+      continue
+  }
+  else if (!isNaN(char)) {
+      throw `${arg} contains a number`
+  }
+  }
+}
+
+let is_user_id = (str) => {
+  let name = str.trim()
+  if (name.length < 5) {
+    throw `userId is too short`
+  }
+  if (name.length > 25) {
+    throw `userId is too long`
+  }
+  if (name.split(' ').length > 1) {
+      throw 'userId contains a space'
   }
 }
 
@@ -166,6 +182,7 @@ let validation = {
   checkId:checkId, 
   checkString:checkString, 
   checkDate:checkDate,
-  is_name:is_name
+  is_name:is_name,
+  is_user_id:is_user_id
 }
 export default validation
