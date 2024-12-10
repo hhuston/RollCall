@@ -129,13 +129,13 @@ let is_name = (str, arg) => {
 let is_user_id = (str) => {
   let name = str.trim()
   if (name.length < 5) {
-    throw `userId is too short`
+    throw `${arg} is too short`
   }
   if (name.length > 25) {
-    throw `userId is too long`
+    throw `${arg} is too long`
   }
   if (name.split(' ').length > 1) {
-      throw 'userId contains a space'
+      throw `${arg} contains a space`
   }
 }
 
