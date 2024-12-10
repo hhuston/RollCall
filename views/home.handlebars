@@ -1,10 +1,33 @@
 <head>
     <meta charset="utf-8">
-    <title>Home</title>
+    <title>Organizations</title>
     <link rel="stylesheet" href="/public/css/sitestyles.css">
 </head>
-
 <body>
-<h1>Home</h1>
-<script src='/public/js/main.js'></script>
-</body>
+    <header>
+        <h1>Organizations</h1>
+    </header>
+    <a class="create_org" href="/createorganization">Create a new organization</a>
+    {{#if orgList}}
+    <div id="user_orgs">
+        <h2>Your Organizations</h2>
+        <ul id="user_orgs">
+            {{#each orgList}}
+            <li>
+                <a href="/organization/{{this.orgName}}">{{this.orgName}}</a>
+            </li>
+            {{/each}}
+        </ul>
+    </div>
+    {{/if}}
+    <div id="discover_orgs">
+    <form id="searchOrgForm">
+        <label for="org_search_term">Discover Organizations</label>
+        <input id="org_search_term" type="text">
+        <button id="orgSubmit" type="submit">Search</button>
+    </form>
+    <ul id="searchResult" hidden></ul>
+    </div>
+    <a id="signoutLink" href="/signoutuser">Sign out</a>
+    <script src='/public/js/main.js'></script>
+    </body>

@@ -33,5 +33,5 @@ let deleteSession = async (id) => {
     return {...deletionInfo, deleted: true}
 }
 
-export {createSession, deleteSession}
+export default {createSession, deleteSession}
 

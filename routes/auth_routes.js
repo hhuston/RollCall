@@ -1,5 +1,4 @@
-import * as users from "../data/users.js";
-import * as organizations from "../data/organizations.js";
+import {userData, organizationData} from "../data/index.js";
 import validation from '../validation.js'
 import {Router} from 'express';
 const router = Router();
@@ -54,8 +53,8 @@ router
       lastName = lastName.trim()
       email = email.trim()
     
-      let resp = await users.createUser(userName, password, firstName, lastName, email)
-      if (!resp.userName) {
+      let resp = await userData.createUser(userName, password, firstName, lastName, email)
+      if (!resp) {
         return res.status(500).render("error.handlebars", { error_class: "server_error", message: "Internal Server Error", error_route: "/signupuser"});
       }
       return res.redirect('/signinuser');
@@ -85,8 +84,8 @@ router
       password = password.trim()
       validation.is_password(password, "Password")
       userName = userName.toLowerCase()
-      let resp = await users.loginUser(userName, password)
-      if (!resp.userName) {
+      let resp = await userData.loginUser(userName, password)
+      if (!resp) {
         return res.status(500).render("error.handlebars", { error_class: "server_error", message: "Internal Server Error", error_route: "/signinuser"});
       }
       req.session.user = resp
@@ -107,8 +106,16 @@ router.route('/home').get(async (req, res) => {
   if(!req.session.user) {
     return res.status(403).render("error.handlebars", { error_class: "input_error", message: "You must sign in to access this page!", error_route: req.session.currentPage});
   }
+  let orgNames = []
+  for (let id of req.session.user.memberOrganizations) {
+    let Org = await organizationData.getOrganization(id)
+    if (!Org) {
+      throw 'User belongs to an organization that does not exist'
+    }
+    orgNames.push(Org)
+  }
   req.session.currentPage = "/home"
-  return res.status(200).render("home.handlebars");
+  return res.status(200).render("home.handlebars", {orgList: orgNames});
 
 
 });

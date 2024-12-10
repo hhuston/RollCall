@@ -283,4 +283,4 @@ const updateUser = async (userName, updateObject) => {
 
 }
 
-export {createUser, getUser, deleteUser, loginUser, updateUser}
+export default {createUser, getUser, deleteUser, loginUser, updateUser}

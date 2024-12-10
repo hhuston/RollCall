@@ -1,7 +1,9 @@
 import authRoutes from './auth_routes.js';
+import orgRoutes from './organizations.js';
 
 const constructorMethod = (app) => {
   app.use('/', authRoutes)
+  app.use('/', orgRoutes)
 
   app.use('*', (req, res) => {
     if (!req.session.currentPage) {

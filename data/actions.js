@@ -44,5 +44,5 @@ let getAction = async (id) => {
     return action
 }
 
-export {createAction, deleteAction, getAction}
+export default {createAction, deleteAction, getAction}
 

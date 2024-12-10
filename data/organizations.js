@@ -32,12 +32,12 @@ const createOrganization = async ( //enforce a minimum password length
     let sessions = []
     const hash_password = await bcrypt.hash(password, saltRounds);
     const orgCollection = await organizations();
-    const repeatOrg = await orgCollection.findOne({orgName: orgName})
+    const repeatOrg = await orgCollection.findOne({orgName: orgName.toLowerCase()})
     if (repeatOrg) {
-        throw `There is an org with that name`
+        throw `There is an organization with that name`
     }
     const new_org_info = {
-        orgName: orgName,
+        orgName: orgName.toLowerCase(),
         password: hash_password,
         members: members,
         sessions: sessions
@@ -92,6 +92,101 @@ const createOrganization = async ( //enforce a minimum password length
     }
     return return_info
 }
+const getOrganizationByName = async (
+    orgName
+    ) => {
+    //Args: orgName
+    //successful output: an object containing the added org's orgName, its _id, its session list, and its member list
+    //constraints: orgName must exist and be a string
+    validation.exists(orgName, "orgName")
+    validation.is_str(orgName, "orgName")
+    orgName = orgName.trim()
+    const OrgCollection = await organizations();
+    const Org = await OrgCollection.findOne({orgName: orgName.toLowerCase()});
+    if (!Org) {
+        throw 'No organization with that Name'
+    }
+    const return_info = {
+        _id: Org._id.toString(),
+        orgName: Org.orgName,
+        members: Org.members,
+        sessions: Org.sessions
+    }
+    return return_info
+}
+
+const loginOrg = async (
+    userName,
+    password,
+    orgName
+
+) => {
+    //Args: userName, password, orgName
+    //successful output: a tuple containing the same outputs found in both the getorg by name and get user by name functions
+    //constraints: userName must exist, be a string, and be a valid userName, password must exist and be a string, orgName must exist in the db and be a string
+    validation.exists(userName, "userName")
+    validation.is_str(userName, "userName")
+    validation.is_user_id(userName, "userName")
+    validation.exists(password, "password")
+    validation.is_str(password, "password")
+    validation.exists(orgName, "orgName")
+    validation.is_str(orgName, "orgName")
+    orgName = orgName.trim()
+    userName = userName.trim()
+    password = password.trim()
+    const UserCollection = await users();
+    const OrgCollection = await organizations()
+    const Org = await OrgCollection.findOne({orgName: orgName});
+    if (!Org) {
+        throw 'No organization matches the provided orgName'
+    }
+
+    let members_list = Org.members
+    const User = await UserCollection.findOne({userName: userName})
+    if (!User) {
+        throw 'No user matches the provided userName'
+    }
+    members_list.push(User.userName)
+    let newUserOrgs = User.memberOrganizations
+    newUserOrgs.push(Org._id.toString())
+    newUserOrgs = [...new Set(newUserOrgs)];
+
+    let new_user_obj = {
+        memberOrganizations: newUserOrgs
+    }
+    let new_org_obj = {
+        members: members_list
+    }
+    //may need to check for errors below
+    const updatedInfoUser = await UserCollection.findOneAndUpdate(
+        {userName: User.userName},
+        {$set: new_user_obj},
+        {returnDocument: 'after'}
+    );
+
+    const updatedInfoOrg = await OrgCollection.findOneAndUpdate(
+        {orgName: orgName},
+        {$set: new_org_obj},
+        {returnDocument: 'after'}
+    );
+
+    const return_info_org = {
+        _id: updatedInfoOrg._id,
+        orgName: updatedInfoOrg.orgName,
+        members: updatedInfoOrg.members,
+        sessions: updatedInfoOrg.sessions
+    }
+
+    let return_info_user = {
+        userName: updatedInfoUser.userName,
+        firstName: updatedInfoUser.firstName,
+        lastName: updatedInfoUser.lastName,
+        memberOrganizations: updatedInfoUser.memberOrganizations
+    }
+
+    return [return_info_user, return_info_org]
+}
+
 
 const deleteOrganization = async (
     orgID
@@ -226,4 +321,4 @@ const updateOrganization = async (orgID, updateObject) => {
 
 
 
-export {createOrganization, getOrganization, deleteOrganization, updateOrganization}
+export default {createOrganization, getOrganization, getOrganizationByName, deleteOrganization, updateOrganization, loginOrg}
