@@ -69,9 +69,6 @@ router
     try {
     validation.exists(req.params.orgName, "orgName")
     validation.is_str(req.params.orgName, "orgName")
-    if (!req.session.currentPage) {
-        req.session.currentPage = "/"
-    }
     }catch(e){
         return res.status(400).render("error.handlebars", { error_class: "input_error", message: e, error_route: req.session.currentPage});
     }
@@ -105,6 +102,69 @@ router
       
     }catch(e) {
       return res.status(400).render("error.handlebars", { error_class: "input_error", message: e, error_route: "/signinuser"});
+    }
+
+  });
+
+  router
+  .route('/leaveorganization/:orgName')
+  .get(async (req, res) => {
+    //code here for GET
+    if (!req.session.currentPage) {
+        req.session.currentPage = "/"
+    }
+    if (!req.session.user) {
+        return res.status(403).render("error.handlebars", { error_class: "input_error", message: "You must sign in to access this page!", error_route: req.session.currentPage});
+    }
+    try {
+    validation.exists(req.params.orgName, "orgName")
+    validation.is_str(req.params.orgName, "orgName")
+    if (!req.session.currentPage) {
+        req.session.currentPage = "/"
+    }
+    let orgName = req.params.orgName.trim()
+    const Org = await organizationData.getOrganizationByName(orgName);
+        if (!Org) {
+            if (!req.session.currentPage) {
+                req.session.currentPage = "/"
+            }
+            return res.status(400).render("error.handlebars", { error_class: "input_error", message: `Organization ${orgName} does not exist`, error_route: req.session.currentPage});
+        }
+        if (Org.members.includes(req.session.user.userName)) {
+          req.session.currentPage = `/leaveorganization/${orgName}`
+          return res.status(200).render("leaveorganization.handlebars", {orgName: orgName});
+        } else {
+          return res.status(403).render("error.handlebars", { error_class: "input_error", message: "You must be a member of this organization in order to leave it!", error_route: req.session.currentPage});
+        }
+    }catch(e){
+        return res.status(400).render("error.handlebars", { error_class: "input_error", message: e, error_route: req.session.currentPage});
+    }
+    let orgName = req.params.orgName.trim()
+    req.session.currentPage = `/leaveorganization/${orgName}`
+    return res.status(200).render("leaveorganization.handlebars", {orgName: orgName});
+  })
+  .post(async (req, res) => {
+    //code here for POST
+    if (!req.session.currentPage) {
+        req.session.currentPage = "/"
+    }
+    try {
+      validation.exists(req.params.orgName, "orgName")
+      validation.is_str(req.params.orgName, "orgName")
+      let orgName = req.params.orgName.trim()
+      if (!req.session.user) {
+        return res.status(403).render("error.handlebars", { error_class: "input_error", message: "You must sign in to access this page!", error_route: req.session.currentPage});
+      }
+      let userName = req.session.user.userName
+      let resp = await organizationData.leaveOrg(userName, orgName)
+      if (!resp) {
+        return res.status(500).render("error.handlebars", { error_class: "server_error", message: "Internal Server Error", error_route: req.session.currentPage});
+      }
+      req.session.user = resp[0]
+      return res.redirect(`/home`);
+      
+    }catch(e) {
+      return res.status(400).render("error.handlebars", { error_class: "input_error", message: e, error_route: req.session.currentPage});
     }
 
   });

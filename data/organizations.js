@@ -140,6 +140,10 @@ const loginOrg = async (
     if (!Org) {
         throw 'No organization matches the provided orgName'
     }
+    let compare_password = await bcrypt.compare(password, Org.password);
+    if (!compare_password) {
+        throw 'The provided password is incorrect'
+    }
 
     let members_list = Org.members
     const User = await UserCollection.findOne({userName: userName})
@@ -150,6 +154,74 @@ const loginOrg = async (
     let newUserOrgs = User.memberOrganizations
     newUserOrgs.push(Org._id.toString())
     newUserOrgs = [...new Set(newUserOrgs)];
+
+    let new_user_obj = {
+        memberOrganizations: newUserOrgs
+    }
+    let new_org_obj = {
+        members: members_list
+    }
+    //may need to check for errors below
+    const updatedInfoUser = await UserCollection.findOneAndUpdate(
+        {userName: User.userName},
+        {$set: new_user_obj},
+        {returnDocument: 'after'}
+    );
+
+    const updatedInfoOrg = await OrgCollection.findOneAndUpdate(
+        {orgName: orgName},
+        {$set: new_org_obj},
+        {returnDocument: 'after'}
+    );
+
+    const return_info_org = {
+        _id: updatedInfoOrg._id,
+        orgName: updatedInfoOrg.orgName,
+        members: updatedInfoOrg.members,
+        sessions: updatedInfoOrg.sessions
+    }
+
+    let return_info_user = {
+        userName: updatedInfoUser.userName,
+        firstName: updatedInfoUser.firstName,
+        lastName: updatedInfoUser.lastName,
+        memberOrganizations: updatedInfoUser.memberOrganizations
+    }
+
+    return [return_info_user, return_info_org]
+}
+
+const leaveOrg = async (
+    userName,
+    orgName
+
+) => {
+    //Args: userName, orgName
+    //successful output: a tuple containing the same outputs found in both the getorg by name and get user by name functions
+    //constraints: userName must exist, be a string, and be a valid userName, orgName must exist in the db and be a string
+    validation.exists(userName, "userName")
+    validation.is_str(userName, "userName")
+    validation.is_user_id(userName, "userName")
+    validation.exists(orgName, "orgName")
+    validation.is_str(orgName, "orgName")
+    orgName = orgName.trim()
+    userName = userName.trim()
+    userName.toLowerCase()
+    const UserCollection = await users();
+    const OrgCollection = await organizations()
+    const Org = await OrgCollection.findOne({orgName: orgName});
+    if (!Org) {
+        throw 'No organization matches the provided orgName'
+    }
+
+    let members_list = Org.members
+    const User = await UserCollection.findOne({userName: userName})
+    if (!User) {
+        throw 'No user matches the provided userName'
+    }
+    members_list = members_list.filter(item => item !== User.userName);
+    let newUserOrgs = User.memberOrganizations
+    newUserOrgs = newUserOrgs.filter(item => item !== Org._id.toString());
 
     let new_user_obj = {
         memberOrganizations: newUserOrgs
@@ -321,4 +393,4 @@ const updateOrganization = async (orgID, updateObject) => {
 
 
 
-export default {createOrganization, getOrganization, getOrganizationByName, deleteOrganization, updateOrganization, loginOrg}
+export default {createOrganization, getOrganization, getOrganizationByName, deleteOrganization, updateOrganization, loginOrg, leaveOrg}
