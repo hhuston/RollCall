@@ -111,7 +111,7 @@ const deleteUser = async (
     for (let org of organizations_list) {
         let objectId = new ObjectId(org);
         const Org = await OrgCollection.findOne({_id: objectId})
-        let newOrgMembers = Org.members.filter(member => member !== deletedUser._id.toString());
+        let newOrgMembers = Org.members.filter(member => member.userName !== deletedUser._id.toString());
         let new_org_obj = {
             members: newOrgMembers
         }
@@ -191,8 +191,9 @@ const updateUser = async (userName, updateObject) => {
         }
         for (let org of User.memberOrganizations) {
             const update_org = await orgCollection.findOne({_id: new ObjectId(org)})
-            let newOrgUsers = update_org.members.filter(j => j !== userName);
-            newOrgUsers = [...newOrgUsers, new_user_name]
+            let newOrgUsers = update_org.members.filter(j => j.userName !== userName);
+            let oldOrgUsers = update_org.members.filter(j => j.userName == userName);
+            newOrgUsers = [...newOrgUsers, {userName: new_user_name, role: oldOrgUsers[0].role}]
             let new_org_obj = {
                 members: newOrgUsers
             }
@@ -220,45 +221,6 @@ const updateUser = async (userName, updateObject) => {
         validation.is_str(updateObject.updateEmail, "updateEmail")
         validation.is_email(updateObject.updateEmail.trim())
         new_email = updateObject.updateEmail.trim()
-    }
-    if (updateObject.hasOwnProperty('updateOrganizations')) {//haven't made these changes apply to organization, but may not need to
-        if (!Array.isArray(updateObject.updateOrganizations)) {
-            throw `updateOrganizations is not an array`
-        }
-        new_organizations = validation.trim_arr(updateObject.updateOrganizations)
-        for (let org of new_organizations) {
-            let objectId = new ObjectId(org);
-            let Org = await orgCollection.findOne({_id: objectId})
-            if (!Org) {
-                throw 'An organization does not exist in the updated list'
-            }
-            let newOrgUsers = []
-            newOrgUsers = [...Org.members, new_user_name]
-            newOrgUsers = [...new Set(newOrgUsers)];
-            let new_org_obj = {
-                members: newOrgUsers
-            }
-            const updatedInfo = await orgCollection.findOneAndUpdate(
-                {_id: objectId},
-                {$set: new_org_obj},
-                {returnDocument: 'after'}
-            );
-        }
-        for (let org of User.memberOrganizations) {
-            if (!new_organizations.includes(org)) {
-                let Org = await orgCollection.findOne({_id: new ObjectId(org)})
-                let newOrgUsers = []
-                newOrgUsers = Org.members.filter(item => item !== userName);
-                let new_org_obj = {
-                    members: newOrgUsers
-                }
-                const updatedInfo = await orgCollection.findOneAndUpdate(
-                    {_id: new ObjectId(org)},
-                    {$set: new_org_obj},
-                    {returnDocument: 'after'}
-                );
-            }
-        }
     }
     const new_user_info = {
         userName: new_user_name,

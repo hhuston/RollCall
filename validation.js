@@ -138,6 +138,12 @@ let is_user_id = (str) => {
       throw `${arg} contains a space`
   }
 }
+let is_role = (role) => {
+  role = role.trim().toLowerCase()
+  if (role != 'member' && role != 'owner' && role != 'moderator') {
+    throw `Role is not 'member', 'owner', or 'moderator'`
+  }
+}
 
 let checkId = (id) => {
     if (!id) throw "Must provide an Id"
@@ -183,6 +189,7 @@ let validation = {
   checkString:checkString, 
   checkDate:checkDate,
   is_name:is_name,
-  is_user_id:is_user_id
+  is_user_id:is_user_id,
+  is_role:is_role
 }
 export default validation

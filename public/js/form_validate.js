@@ -168,6 +168,13 @@ let is_user_id = (str, arg) => {
     }
   }
 
+  let is_role = (role) => {
+    role = role.trim().toLowerCase()
+    if (role != 'member' && role != 'owner' && role != 'moderator') {
+      throw `Role is not 'member', 'owner', or 'moderator'`
+    }
+  }
+
 const button = document.getElementById('submitButton');
 if (button) {
 button.addEventListener('click', function(event) {
@@ -247,6 +254,7 @@ button2.addEventListener('click', function(event) {
 }
 
 let button3 = document.getElementById('org_submit_button');
+//this button is for org sign-in
 if (button3) {
 button3.addEventListener('click', function(event) {
     event.preventDefault()
@@ -255,9 +263,13 @@ button3.addEventListener('click', function(event) {
         delete_item.remove()
     }
     let password = document.getElementById("password").value
+    let role = document.getElementById("role").value
     try {
       exists(password, "Org Password")
       is_str(password, "Org Password")
+      exists(role, "Role")
+      is_str(role, "Role")
+      is_role(role)
         let form = document.getElementById('org-signin-form');
         form.submit()
       } catch(e) {
@@ -270,6 +282,7 @@ button3.addEventListener('click', function(event) {
 }
 
 const button4 = document.getElementById('submitButtonOrg');
+//this button is for org creation
 if (button4) {
 button4.addEventListener('click', function(event) {
     event.preventDefault()
@@ -305,6 +318,7 @@ button4.addEventListener('click', function(event) {
 }
 
 const button5 = document.getElementById('orgSubmit');
+//this button is for leaving org
 if (button5) {
 button5.addEventListener('click', function(event) {
     event.preventDefault()

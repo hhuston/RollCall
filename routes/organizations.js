@@ -73,8 +73,16 @@ router
         return res.status(400).render("error.handlebars", { error_class: "input_error", message: e, error_route: req.session.currentPage});
     }
     let orgName = req.params.orgName.trim()
+    const Org = await organizationData.getOrganizationByName(orgName);
+    if (!Org) {
+      return res.status(400).render("error.handlebars", { error_class: "input_error", message: `Organization ${orgName} does not exist`, error_route: req.session.currentPage});
+  }
+  if (Org.members.some(mem => mem.userName === req.session.user.userName)) {
+    return res.status(403).render("error.handlebars", { error_class: "input_error", message: "You are already signin in to this organization!", error_route: req.session.currentPage});
+  } else {
     req.session.currentPage = `/signinorganization/${orgName}`
     return res.status(200).render("signinorganization.handlebars", {orgName: orgName});
+  }
   })
   .post(async (req, res) => {
     //code here for POST
@@ -89,11 +97,17 @@ router
       validation.exists(password, "Password")
       validation.is_str(password, "Password")
       password = password.trim()
+      let role = req.body.role
+      validation.exists(role, "Role")
+      validation.is_str(password, "Role")
+      validation.is_role(role)
+      role = role.trim().toLowerCase()
+      password = password.trim()
       if (!req.session.user) {
         return res.status(403).render("error.handlebars", { error_class: "input_error", message: "You must sign in to access this page!", error_route: req.session.currentPage});
       }
       let userName = req.session.user.userName
-      let resp = await organizationData.loginOrg(userName, password, orgName)
+      let resp = await organizationData.loginOrg(userName, password, orgName, role)
       if (!resp) {
         return res.status(500).render("error.handlebars", { error_class: "server_error", message: "Internal Server Error", error_route: "/signinuser"});
       }
@@ -130,7 +144,7 @@ router
             }
             return res.status(400).render("error.handlebars", { error_class: "input_error", message: `Organization ${orgName} does not exist`, error_route: req.session.currentPage});
         }
-        if (Org.members.includes(req.session.user.userName)) {
+        if (Org.members.some(mem => mem.userName === req.session.user.userName)) {
           req.session.currentPage = `/leaveorganization/${orgName}`
           return res.status(200).render("leaveorganization.handlebars", {orgName: orgName});
         } else {
@@ -139,9 +153,6 @@ router
     }catch(e){
         return res.status(400).render("error.handlebars", { error_class: "input_error", message: e, error_route: req.session.currentPage});
     }
-    let orgName = req.params.orgName.trim()
-    req.session.currentPage = `/leaveorganization/${orgName}`
-    return res.status(200).render("leaveorganization.handlebars", {orgName: orgName});
   })
   .post(async (req, res) => {
     //code here for POST
@@ -209,7 +220,7 @@ router
             }
             return res.status(400).render("error.handlebars", { error_class: "input_error", message: `Organization ${orgName} does not exist`, error_route: req.session.currentPage});
         }
-        if (Org.members.includes(req.session.user.userName)) {
+        if (Org.members.some(mem => mem.userName === req.session.user.userName)) {
             req.session.currentPage = `/organization/${orgName}`
             return res.status(200).render("organization.handlebars", {orgData: Org, userData: req.session.user});
         }

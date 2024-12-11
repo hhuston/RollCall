@@ -22,13 +22,12 @@ const createOrganization = async ( //enforce a minimum password length
     validation.is_user_id(userName, "userName")
     password = password.trim()
     orgName = orgName.trim()
-    orgName = validation.str_format(orgName)
     let userCollection = await users();
     const User = await userCollection.findOne({userName: userName})
     if (!User) {
         throw 'The provided username does not exist.'
     }
-    let members = [User.userName]
+    let members = [{userName: User.userName, role: "owner"}]
     let sessions = []
     const hash_password = await bcrypt.hash(password, saltRounds);
     const orgCollection = await organizations();
@@ -118,7 +117,8 @@ const getOrganizationByName = async (
 const loginOrg = async (
     userName,
     password,
-    orgName
+    orgName, 
+    role
 
 ) => {
     //Args: userName, password, orgName
@@ -131,9 +131,16 @@ const loginOrg = async (
     validation.is_str(password, "password")
     validation.exists(orgName, "orgName")
     validation.is_str(orgName, "orgName")
+    validation.exists(role, "Role")
+    validation.is_str(role, "Role")
+    validation.is_role(role)
     orgName = orgName.trim()
     userName = userName.trim()
     password = password.trim()
+    role.trim().toLowerCase()
+    if (role == 'owner') {
+        throw 'There is already an owner for this organization'
+    }
     const UserCollection = await users();
     const OrgCollection = await organizations()
     const Org = await OrgCollection.findOne({orgName: orgName});
@@ -150,7 +157,7 @@ const loginOrg = async (
     if (!User) {
         throw 'No user matches the provided userName'
     }
-    members_list.push(User.userName)
+    members_list.push({userName: User.userName, role: role})
     let newUserOrgs = User.memberOrganizations
     newUserOrgs.push(Org._id.toString())
     newUserOrgs = [...new Set(newUserOrgs)];
@@ -219,7 +226,7 @@ const leaveOrg = async (
     if (!User) {
         throw 'No user matches the provided userName'
     }
-    members_list = members_list.filter(item => item !== User.userName);
+    members_list = members_list.filter(item => item.userName !== User.userName);
     let newUserOrgs = User.memberOrganizations
     newUserOrgs = newUserOrgs.filter(item => item !== Org._id.toString());
 
@@ -278,13 +285,13 @@ const deleteOrganization = async (
 
     let members_list = deletedOrg.members
     for (let member of members_list) {
-        const User = await UserCollection.findOne({userName: member})
+        const User = await UserCollection.findOne({userName: member.userName})
         let newUserOrgs = User.memberOrganizations.filter(j => j !== deletedOrg._id.toString());
         let new_user_obj = {
             memberOrganizations: newUserOrgs
         }
         const updatedInfo = await UserCollection.findOneAndUpdate(
-            {userName: member},
+            {userName: member.userName},
             {$set: new_user_obj},
             {returnDocument: 'after'}
         );
@@ -333,7 +340,7 @@ const updateOrganization = async (orgID, updateObject) => {
         new_members = validation.trim_arr(updateObject.updateMembers, "updateMembers")
         for (let member of new_members) {
             validation.is_user_id(member, "an updateMember")
-            let Mem = await UserCollection.findOne({userName: member})
+            let Mem = await UserCollection.findOne({userName: member.userName})
             if (!Mem) {
                 throw 'A user in the updated list does not exist'
             }
@@ -344,21 +351,21 @@ const updateOrganization = async (orgID, updateObject) => {
                 memberOrganizations: newUserOrgs
             }
             const updatedInfo = await UserCollection.findOneAndUpdate(
-                {userName: member},
+                {userName: member.userName},
                 {$set: new_user_obj},
                 {returnDocument: 'after'}
             );
         }
         for (let member of Org.members) {
             if (!new_members.includes(member)) {
-                let Mem = await UserCollection.findOne({userName: member})
+                let Mem = await UserCollection.findOne({userName: member.userName})
                 let newUserOrgs = []
                 newUserOrgs = Mem.memberOrganizations.filter(item => item !== orgID);
                 let new_user_obj = {
                     memberOrganizations: newUserOrgs
                 }
                 const updatedInfo = await UserCollection.findOneAndUpdate(
-                    {userName: member},
+                    {userName: member.userName},
                     {$set: new_user_obj},
                     {returnDocument: 'after'}
                 );
