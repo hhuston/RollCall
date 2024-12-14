@@ -178,6 +178,31 @@ router
       return res.status(400).render("error.handlebars", { error_class: "input_error", message: e, error_route: req.session.currentPage});
     }
 
+  })
+  .patch(async (req, res) => {
+    if (!req.session.currentPage) {
+      req.session.currentPage = "/"
+    }
+    try {
+      validation.exists(req.params.orgName, "orgName")
+      validation.is_str(req.params.orgName, "orgName")
+      let orgName = req.params.orgName.trim()
+      if (!req.session.user) {
+        return res.status(403).render("error.handlebars", { error_class: "input_error", message: "You must sign in to access this page!", error_route: req.session.currentPage});
+      }
+      let userName = req.body.userName
+      console.log(req)
+      let resp = await organizationData.leaveOrg(userName, orgName)
+      console.log(resp)
+      if (!resp) {
+        return res.status(500).render("error.handlebars", { error_class: "server_error", message: "Internal Server Error", error_route: req.session.currentPage});
+      }
+      return resp[1]
+      
+    }catch(e) {
+      return res.status(400).render("error.handlebars", { error_class: "input_error", message: e, error_route: req.session.currentPage});
+    }
+
   });
 
 router
@@ -221,8 +246,21 @@ router
             return res.status(400).render("error.handlebars", { error_class: "input_error", message: `Organization ${orgName} does not exist`, error_route: req.session.currentPage});
         }
         if (Org.members.some(mem => mem.userName === req.session.user.userName)) {
+            let curr_member = Org.members.filter(mem => mem.userName === req.session.user.userName)
+            let members = Org.members.filter(mem => mem.userName !== req.session.user.userName)
+            curr_member = curr_member[0]
+            let owner = ""
+            let moderator = ""
+            if (curr_member.role == "owner") {
+              owner = "true"
+              moderator = "true"
+            }
+            if (curr_member.role == "moderator") {
+              moderator = "true"
+            }
+
             req.session.currentPage = `/organization/${orgName}`
-            return res.status(200).render("organization.handlebars", {orgData: Org, userData: req.session.user});
+            return res.status(200).render("organization.handlebars", {orgData: Org, userData: req.session.user, moderator: moderator, owner: owner, role:curr_member.role, members: members});
         }
         else {
             return res.redirect(`/signinorganization/${orgName}`);

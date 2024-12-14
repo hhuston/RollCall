@@ -5,8 +5,35 @@
 </head>
 
 <body>
-<a class="home" href="/home">Back Home</a>
-<a class="leaveOrg" href="/leaveorganization/{{orgData.orgName}}">Leave This Org</a>
-<h1>{{orgData.orgName}}</h1>
+<a class="home" id="home" href="/home">Back Home</a>
+<a class="leaveOrg" id="leave" href="/leaveorganization/{{orgData.orgName}}">Leave This Org</a>
+<h1 id="orgTitle">{{orgData.orgName}}</h1>
+<h2>You are a {{role}} in this organization!</h2>
+{{#if owner}}
+<div>
+    <ul id="membersList">
+        {{#each members}}
+        <li><a href='javascript:void(0)' data-name='{{this.userName}}' data-role="{{this.role}}">{{this.userName}}:{{this.role}}</a></li>
+        {{/each}}
+    </ul>
+    <form id="update_form" hidden>
+        <button id ="switch_role">Change Role</button>
+        <button id ="kick_out">Kick Out</button>
+    </form>
+    <form id="switch_form" hidden>
+        <select id="update_role">
+            <option value="member">Member</option>
+            <option value="moderator">Moderator</option>
+            <option value="owner">owner</option>
+        </select>
+    </form>
+    <form id="kickout_user" hidden>
+        <button id="kickout_yes" value="kickout">Kick Out</button>
+        <button id ="kickout_no">Nevermind</button>
+    </form>
+</div>
+{{/if}}
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"
+        integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
 <script src='/public/js/main.js'></script>
 </body>
