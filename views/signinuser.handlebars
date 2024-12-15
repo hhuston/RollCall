@@ -1,0 +1,20 @@
+<head>
+    <meta charset="utf-8">
+    <title>Sign In</title>
+    <link rel="stylesheet" href="/public/css/sitestyles.css">
+</head>
+
+<body id = "in">
+<a class="sign_up" href="/signupuser">Click here to signup!</a>
+<h1>Sign In</h1>
+<main>
+    <form id="signin-form" method="POST" action="/signinuser">
+        <label for="user_name">Enter UserName: </label>
+        <input type="text" id="user_name" name="user_name">
+        <label for="password">Enter Password: </label>
+        <input type="password" id="password" name="password">
+        <button id="submit_button" name="submit_button" type="submit">Submit</button>
+    </form>
+    <script src='/public/js/form_validate.js'></script>
+</main>
+</body>

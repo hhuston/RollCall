@@ -1,34 +1,39 @@
 import { ObjectId } from 'mongodb';
 import {organizations, users} from './../config/mongoCollections.js';
 import bcrypt from 'bcrypt';
-import {is_str, is_number, is_arr, is_obj_id, exists, trim_obj, str_format, is_email, trim_arr} from './helpers.js'
+import validation from '../validation.js'
 const saltRounds = 16;
 
-const createUser = async ( //enforce a minimum password length
+const createUser = async (
     userName,
     password,
     firstName,
     lastName,
     email
   ) => {
-    exists(userName, "first")
-    exists(password, "second")
-    exists(firstName, "third")
-    exists(lastName, "fourth")
-    exists(email, "fifth")
-    is_str(userName, "first")
-    is_str(password, "second")
-    is_str(firstName, "third")
-    is_str(lastName, "fourth")
-    is_str(email, "fifth")
+    //Args: userName, password, firstName, lastName, email
+    //successful output: an object containing the added user's firstName, lastName, memberOrganizations, and userName
+    //constraints: all inputs must be strings and exist, email must be valid, password contraints from lab10, userName must be unique and between 5 and 25 chars with no spaces
+    validation.exists(userName, "userName")
+    validation.exists(password, "password")
+    validation.exists(firstName, "firstName")
+    validation.exists(lastName, "lastName")
+    validation.exists(email, "email")
+    validation.is_str(userName, "userName")
+    validation.is_str(password, "password")
+    validation.is_password(password, "password")
+    validation.is_str(firstName, "firstName")
+    validation.is_str(lastName, "lastName")
+    validation.is_name(firstName, "firstName")
+    validation.is_name(lastName, "lastName")
+    validation.is_str(email, "email")
     userName = userName.trim()
+    validation.is_user_id(userName, "userName")
     password = password.trim()
     firstName = firstName.trim()
-    firstName = str_format(firstName)
     lastName = lastName.trim()
-    lastName = str_format(lastName)
     email = email.trim()
-    is_email(email)
+    validation.is_email(email)
     let member_organizations = []
     const hash_password = await bcrypt.hash(password, saltRounds);
     const new_user_info = {
@@ -43,7 +48,7 @@ const createUser = async ( //enforce a minimum password length
     const UserCollection = await users();
     const repeatUser = await UserCollection.findOne({userName: userName})
     if (repeatUser) {
-        throw 'The provided username is already used' //is this ok?
+        throw 'The provided username is already used'
     }
     const insertInfo = await UserCollection.insertOne(new_user_info);
     if (!insertInfo.acknowledged || !insertInfo.insertedId) {
@@ -51,32 +56,50 @@ const createUser = async ( //enforce a minimum password length
     }
     
     const newUser = await UserCollection.findOne({userName: userName})
-    newUser['_id'] = newUser['_id'].toString()
-    return newUser
+    let return_obj = {
+        userName: newUser.userName,
+        firstName: newUser.firstName,
+        lastName: newUser.lastName,
+        memberOrganizations: newUser.memberOrganizations
+    }
+    return return_obj
   
   };
 
 const getUser = async (
     userName
 ) => {
-    exists(userName, "first")
-    is_str(userName, "first")
+    //args: userName
+    //successful output: an object containing the added user's firstName, lastName, memberOrganizations, userName
+    //constraints: userName must exist and be a string and be between 5 and 25 chars with no spaces
+    validation.exists(userName, "userName")
+    validation.is_str(userName, "userName")
     userName = userName.trim()
+    validation.is_user_id(userName, "userName")
     const UserCollection = await users();
     const User = await UserCollection.findOne({userName: userName});
     if (!User) {
         throw 'The provided username is incorrect'
     }
-    User['_id'] = User['_id'].toString()
-    return User
+    let return_obj = {
+        userName: User.userName,
+        firstName: User.firstName,
+        lastName: User.lastName,
+        memberOrganizations: User.memberOrganizations
+    }
+    return return_obj
 }
 
 const deleteUser = async (
     userName
 ) => {
-    exists(userName, "first")
-    is_str(userName, "first")
+    //args: userName
+    //successful output: 'userName has been successfully deleted!'
+    //constraints: userName must exist and be a string and be between 5 and 25 chars with no spaces
+    validation.exists(userName, "userName")
+    validation.is_str(userName, "userName")
     userName = userName.trim()
+    validation.is_user_id(userName, "userName")
     const UserCollection = await users();
     const deletedUser = await UserCollection.findOneAndDelete({userName: userName});
     if (!deletedUser) {
@@ -88,7 +111,7 @@ const deleteUser = async (
     for (let org of organizations_list) {
         let objectId = new ObjectId(org);
         const Org = await OrgCollection.findOne({_id: objectId})
-        let newOrgMembers = Org.members.filter(member => member !== deletedUser._id.toString());
+        let newOrgMembers = Org.members.filter(member => member.userName !== deletedUser._id.toString());
         let new_org_obj = {
             members: newOrgMembers
         }
@@ -105,11 +128,16 @@ const loginUser = async (
     userName,
     password
 ) => {
-    exists(userName, "first")
-    exists(password, "second")
-    is_str(userName, "first")
-    is_str(password, "second")
+    //args: userName, password
+    //successful output: an object containing the added user's firstName, lastName, memberOrganizations, userName
+    //constraints: userName must exist and be a string and be between 5 and 25 chars with no spaces, password must match, exist, and be a string, plus lab10 constraints
+    validation.exists(userName, "userName")
+    validation.exists(password, "password")
+    validation.is_str(userName, "userName")
+    validation.is_str(password, "password")
+    validation.is_password(password, "password")
     userName = userName.trim()
+    validation.is_user_id(userName, "userName")
     password = password.trim()
     const UserCollection = await users();
     const User = await UserCollection.findOne({userName: userName});
@@ -120,20 +148,29 @@ const loginUser = async (
     if (!compare_password) {
         throw 'The provided username or password is incorrect'
     }
-    User['_id'] = User['_id'].toString()
-    return User
+    let return_obj = {
+        userName: User.userName,
+        firstName: User.firstName,
+        lastName: User.lastName,
+        memberOrganizations: User.memberOrganizations
+    }
+    return return_obj
 }
 
-const updateUser = async (userName, updateObject) => { //may add password matching too
-    exists(userName, "first")
-    is_str(userName, "first")
-    exists(updateObject, "second")
+const updateUser = async (userName, updateObject) => {
+    //Args: userName, object containing at least one of the following: updatePassword, updateFirstName, updateLastName, updateEmail, updateOrganizations, updateUserName
+    //successful output: an object containing the added user's firstName, lastName, memberOrganizations, and userName
+    //constraints: userName must exists and be a string and be between 5 and 25 chars with no spaces, object must exist and can't be empty, object values must be proper types and abide by proper constraints
+    validation.exists(userName, "userName")
+    validation.is_str(userName, "userName")
+    validation.exists(updateObject, "updateObject")
     userName = userName.trim()
+    validation.is_user_id(userName, "userName")
     const userCollection = await users();
     const orgCollection = await organizations();
     const User = await userCollection.findOne({userName: userName});
     if (!User) {
-        throw 'The provided username or password is incorrect'
+        throw 'The provided username is incorrect'
     }
     let new_user_name = User.userName
     let new_hashed_password = User.password
@@ -144,42 +181,46 @@ const updateUser = async (userName, updateObject) => { //may add password matchi
     if (Object.keys(updateObject).length < 1) {
         throw 'Nothing provided in the update object'
     }
-    if (updateObject.hasOwnProperty('updatePassword')) {
-        is_str(updateObject.updateUserName, "updateUserName")
+    if (updateObject.hasOwnProperty('updateUserName')) {
+        validation.is_str(updateObject.updateUserName, "updateUserName")
         new_user_name = updateObject.updateUserName.trim()
+        validation.is_user_id(new_user_name, "userName")
         const repeatedUser = await userCollection.findOne({userName: new_user_name});
         if (repeatedUser) {
             throw 'That username is already taken'
         }
+        for (let org of User.memberOrganizations) {
+            const update_org = await orgCollection.findOne({_id: new ObjectId(org)})
+            let newOrgUsers = update_org.members.filter(j => j.userName !== userName);
+            let oldOrgUsers = update_org.members.filter(j => j.userName == userName);
+            newOrgUsers = [...newOrgUsers, {userName: new_user_name, role: oldOrgUsers[0].role}]
+            let new_org_obj = {
+                members: newOrgUsers
+            }
+            const updatedInfo = await orgCollection.findOneAndUpdate(
+                {_id: update_org._id},
+                {$set: new_org_obj},
+                {returnDocument: 'after'}
+            );
+        }
     }
     if (updateObject.hasOwnProperty('updatePassword')) {
-        is_str(updateObject.updatePassword, "updatePassword")
+        validation.is_str(updateObject.updatePassword, "updatePassword")
+        validation.is_password(updateObject.updatePassword, "updatePassword")
         new_hashed_password = await bcrypt.hash(updateObject.updatePassword.trim(), saltRounds);
     }
     if (updateObject.hasOwnProperty('updateFirstName')) {
-        is_str(updateObject.updateFirstName, "updateFirstName")
-        new_first_name = str_format(updateObject.updateFirstName.trim())
+        validation.is_str(updateObject.updateFirstName, "updateFirstName")
+        new_first_name = updateObject.updateFirstName.trim()
     }
     if (updateObject.hasOwnProperty('updateLastName')) {
-        is_str(updateObject.updateLastName, "updateLastName")
-        new_last_name = str_format(updateObject.updateLastName.trim())
+        validation.is_str(updateObject.updateLastName, "updateLastName")
+        new_last_name = updateObject.updateLastName.trim()
     }
     if (updateObject.hasOwnProperty('updateEmail')) {
-        is_str(updateObject.updateEmail, "updateEmail")
-        is_email(updateObject.updateEmail.trim())
+        validation.is_str(updateObject.updateEmail, "updateEmail")
+        validation.is_email(updateObject.updateEmail.trim())
         new_email = updateObject.updateEmail.trim()
-    }
-    if (updateObject.hasOwnProperty('updateOrganizations')) {//haven't made these changes apply to organization, but may not need to
-        is_arr(updateObject.updateOrganizations, "updateOrganizations")
-        trim_arr(updateObject.updateOrganizations)
-        new_organizations = updateObject.updateOrganizations
-        for (let org of new_organizations) {
-            let objectId = new ObjectId(org);
-            let Org = await orgCollection.findOne({_id: objectId})
-            if (!Org) {
-                throw 'An organization does not exist in the updated list'
-            }
-        }
     }
     const new_user_info = {
         userName: new_user_name,
@@ -194,9 +235,14 @@ const updateUser = async (userName, updateObject) => { //may add password matchi
         {$set: new_user_info},
         {returnDocument: 'after'}
       );
-    updatedInfo._id = updatedInfo._id.toString();
-    return updatedInfo;
+      let return_obj = {
+        userName: updatedInfo.userName,
+        firstName: updatedInfo.firstName,
+        lastName: updatedInfo.lastName,
+        memberOrganizations: updatedInfo.memberOrganizations
+    }
+    return return_obj
 
 }
 
-export {createUser, getUser, deleteUser, loginUser, updateUser}
+export default {createUser, getUser, deleteUser, loginUser, updateUser}
