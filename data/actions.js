@@ -11,6 +11,7 @@ let createAction = async (type, value, actionOwner) => {
     action.actionOwner = validation.checkUserName(actionOwner);
     action.votingRecord = {"Yay": [], "Nay": [], "Abstain": []}
 
+
     const actionCollection = await actions();
     const newInsertInformation = await actionCollection.insertOne(action);
 

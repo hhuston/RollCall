@@ -14,7 +14,7 @@ router.route("/deleteorganization/:orgName").post(async (req, res) => {
             return res.status(403).render("error.handlebars", { error_class: "input_error", message: "You must sign in to access this page!", error_route: req.session.currentPage });
         }
 
-        let orgName = validation.checkString(req.params.orgName, "Org Name");
+        let orgName = validation.checkOrgName(req.params.orgName);
         const Org = await organizationData.getOrganizationByName(orgName);
         if (!Org) {
             return res.status(400).render("error.handlebars", { error_class: "input_error", message: `Organization ${orgName} does not exist`, error_route: req.session.currentPage });
@@ -61,7 +61,7 @@ router
                 return res.status(403).render("error.handlebars", { error_class: "input_error", message: "You must sign in to access this page!", error_route: req.session.currentPage });
             }
 
-            let orgName = validation.checkString(req.body.orgName, "Org Name");
+            let orgName = validation.checkOrgName(req.body.orgName);
 
             let password = req.body.password;
             let confirmPassword = req.body.confirmPassword;
@@ -99,7 +99,7 @@ router
             return res.status(403).render("error.handlebars", { error_class: "input_error", message: "You must sign in to access this page!", error_route: req.session.currentPage });
         }
         try {
-            orgName = validation.checkString(req.params.orgName, "Org Name");
+            orgName = validation.checkOrgName(req.params.orgName);
         } catch (e) {
             return res.status(400).render("error.handlebars", { error_class: "input_error", message: e, error_route: req.session.currentPage });
         }
@@ -125,7 +125,7 @@ router
                 return res.status(403).render("error.handlebars", { error_class: "input_error", message: "You must sign in to access this page!", error_route: req.session.currentPage });
             }
 
-            let orgName = validation.checkString(req.params.orgName, "Org Name");
+            let orgName = validation.checkOrgName(req.params.orgName);
             let password = validation.checkPassword(req.body.password, "Password");
             let role = validation.checkOrgRole(req.body.role);
             let userName = req.session.user.userName;
@@ -155,7 +155,7 @@ router
             if (!req.session.currentPage) {
                 req.session.currentPage = "/";
             }
-            let orgName = validation.checkString(req.params.orgName, "Org Name");
+            let orgName = validation.checkOrgName(req.params.orgName);
             const Org = await organizationData.getOrganizationByName(orgName);
             if (!Org) {
                 if (!req.session.currentPage) {
@@ -189,7 +189,7 @@ router
             req.session.currentPage = "/";
         }
         try {
-            let orgName = validation.checkString(req.params.orgName);
+            let orgName = validation.checkOrgName(req.params.orgName);
             if (!req.session.user) {
                 return res.status(403).render("error.handlebars", { error_class: "input_error", message: "You must sign in to access this page!", error_route: req.session.currentPage });
             }
@@ -209,7 +209,7 @@ router
             req.session.currentPage = "/";
         }
         try {
-            let orgName = validation.checkString(req.params.orgName);
+            let orgName = validation.checkOrgName(req.params.orgName);
 
             if (!req.session.user) {
                 return res.status(403).render("error.handlebars", { error_class: "input_error", message: "You must sign in to access this page!", error_route: req.session.currentPage });
@@ -237,7 +237,7 @@ router.route("/organization").post(async (req, res) => {
             return res.status(403).render("error.handlebars", { error_class: "input_error", message: "You must sign in to access this page!", error_route: req.session.currentPage });
         }
 
-        let orgName = validation.checkString(req.body.org_search_term, "Org Search");
+        let orgName = validation.checkOrgName(req.body.org_search_term);
         return res.redirect(`/organization/${orgName.toLowerCase()}`);
     } catch (e) {
         return res.status(400).render("error.handlebars", { error_class: "input_error", message: e, error_route: req.session.currentPage });
@@ -256,7 +256,7 @@ router
                 return res.status(403).render("error.handlebars", { error_class: "input_error", message: "You must sign in to access this page!", error_route: req.session.currentPage });
             }
 
-            let orgName = validation.checkString(req.params.orgName, "Org Name");
+            let orgName = validation.checkOrgName(req.params.orgName);
             const Org = await organizationData.getOrganizationByName(orgName);
             if (!Org) {
                 if (!req.session.currentPage) {
@@ -305,7 +305,7 @@ router
             req.session.currentPage = "/";
         }
         try {
-            let orgName = validation.checkString(req.params.orgName, "Org Name");
+            let orgName = validation.checkOrgName(req.params.orgName);
             if (!req.session.user) {
                 return res.status(403).render("error.handlebars", { error_class: "input_error", message: "You must sign in to access this page!", error_route: req.session.currentPage });
             }

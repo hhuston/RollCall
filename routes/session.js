@@ -14,7 +14,7 @@ router
             return res.status(403).render("error.handlebars", { error_class: "input_error", message: "You must sign in to access this page!", error_route: req.session.currentPage });
         }
         try {
-            let orgName = validation.checkString(req.params.orgName, "Org Name");
+            let orgName = validation.checkOrgName(req.params.orgName);
             let Org = await organizationData.getOrganizationByName(orgName);
             if (!Org.members.some((mem) => mem.userName === req.session.user.userName)) {
                 return res.status(403).render("error.handlebars", { error_class: "input_error", message: "You are not a member of this organization", error_route: req.session.currentPage });
@@ -33,7 +33,7 @@ router
             return res.status(403).render("error.handlebars", { error_class: "input_error", message: "You must sign in to access this page!", error_route: req.session.currentPage });
         }
         try {
-            let orgName = validation.checkString(req.params.orgName, "Org Name");
+            let orgName = validation.checkOrgName(req.params.orgName);
             let proposal = validation.checkString(req.body.firstProposal, "Original Proposal");
             let seshName = validation.checkString(req.body.seshName, "Session Name");
             let resp = sessionData.createSession(proposal, req.session.user.userName, orgName, seshName);
