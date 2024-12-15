@@ -84,7 +84,7 @@ let checkName = (str, arg) => {
     }
 
     if (str.includes("  ")) throw ``;
-    if (!str.test(/[a-zA-Z ]/)) throw `${arg} must only contain letters`;
+    if (!/[a-zA-Z ]/.test(str)) throw `${arg} must only contain letters`;
     return str;
 };
 
