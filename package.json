@@ -24,8 +24,6 @@
     "express": "^4.21.2",
     "express-handlebars": "^8.0.1",
     "express-session": "^1.18.1",
-    "mongodb": "^6.11.0",
-    "roll-call": "file:",
-    "xss": "^1.0.15"
+    "mongodb": "^6.11.0"
   }
 }
