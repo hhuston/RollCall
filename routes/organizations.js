@@ -2,8 +2,42 @@ import validation from "../validation.js"
 import {Router} from 'express';
 const router = Router();
 import {organizationData, userData} from '../data/index.js';
-// 
 //when patching game, should game stay same place in the array
+
+router
+  .route('/deleteorganization/:orgName')
+  .post(async (req, res) => {
+    //code here for GET
+    let orgName = req.params.orgName
+    try {
+        if (!req.session.currentPage) {
+            req.session.currentPage = "/"
+        }
+        if (!req.session.user) {
+            return res.status(403).render("error.handlebars", { error_class: "input_error", message: "You must sign in to access this page!", error_route: req.session.currentPage});
+        }
+    validation.exists(orgName, "OrgName")
+    validation.is_str(orgName, "OrgName")
+    orgName = orgName.trim()
+    const Org = await organizationData.getOrganizationByName(orgName);
+    if (!Org) {
+      return res.status(400).render("error.handlebars", { error_class: "input_error", message: `Organization ${orgName} does not exist`, error_route: req.session.currentPage});
+    }
+    if (!Org.members.some(mem => mem.userName === req.session.user.userName)) {
+      return res.status(403).render("error.handlebars", { error_class: "input_error", message: "You are not a member of this organization", error_route: req.session.currentPage});
+    } else {
+      let memberRole = Org.members.filter(mem => mem.userName === req.session.user.userName)[0].role
+      if (memberRole != "owner") {
+        return res.status(403).render("error.handlebars", { error_class: "input_error", message: "You are not the owner of this organization", error_route: req.session.currentPage});
+      }
+      else {
+        const result = await organizationData.deleteOrganization(orgName);
+        return res.render("deleteorganization.handlebars", {orgName: orgName})
+      }
+  }
+  }catch(e) {
+    return res.status(400).render("error.handlebars", { error_class: "input_error", message: e, error_route: "/createorganization"});
+  }})
 
 router
   .route('/createorganization')
@@ -76,11 +110,11 @@ router
     const Org = await organizationData.getOrganizationByName(orgName);
     if (!Org) {
       return res.status(400).render("error.handlebars", { error_class: "input_error", message: `Organization ${orgName} does not exist`, error_route: req.session.currentPage});
-  }
-  if (Org.members.some(mem => mem.userName === req.session.user.userName)) {
-    return res.status(403).render("error.handlebars", { error_class: "input_error", message: "You are already signin in to this organization!", error_route: req.session.currentPage});
-  } else {
-    req.session.currentPage = `/signinorganization/${orgName}`
+    }
+    if (Org.members.some(mem => mem.userName === req.session.user.userName)) {
+      return res.status(403).render("error.handlebars", { error_class: "input_error", message: "You are already signed-in in to this organization!", error_route: req.session.currentPage});
+    } else {
+      req.session.currentPage = `/signinorganization/${orgName}`
     return res.status(200).render("signinorganization.handlebars", {orgName: orgName});
   }
   })
@@ -145,6 +179,10 @@ router
             return res.status(400).render("error.handlebars", { error_class: "input_error", message: `Organization ${orgName} does not exist`, error_route: req.session.currentPage});
         }
         if (Org.members.some(mem => mem.userName === req.session.user.userName)) {
+          let member_role = Org.members.filter(mem => mem.userName === req.session.user.userName)[0].role
+          if (member_role == "owner") {
+            return res.status(403).render("error.handlebars", { error_class: "input_error", message: "you can't leave if you are the owner! Must make someone else the Owner first!", error_route: req.session.currentPage});
+          }
           req.session.currentPage = `/leaveorganization/${orgName}`
           return res.status(200).render("leaveorganization.handlebars", {orgName: orgName});
         } else {
@@ -192,12 +230,17 @@ router
       }
       let userName = req.body.userName
       console.log(req)
+      validation.exists(userName, "userName")
+      validation.is_str(userName, "userName")
+      validation.is_user_id(userName)
       let resp = await organizationData.leaveOrg(userName, orgName)
       console.log(resp)
       if (!resp) {
         return res.status(500).render("error.handlebars", { error_class: "server_error", message: "Internal Server Error", error_route: req.session.currentPage});
       }
-      return resp[1]
+      return res.json({
+        responseMessage: resp[1]
+    })
       
     }catch(e) {
       return res.status(400).render("error.handlebars", { error_class: "input_error", message: e, error_route: req.session.currentPage});
@@ -269,6 +312,51 @@ router
       return res.status(400).render("error.handlebars", { error_class: "input_error", message: e, error_route: req.session.currentPage});
     }
 
+  })
+  .patch(async (req, res) => {
+    if (!req.session.currentPage) {
+      req.session.currentPage = "/"
+    }
+    try {
+      validation.exists(req.params.orgName, "orgName")
+      validation.is_str(req.params.orgName, "orgName")
+      let orgName = req.params.orgName.trim()
+      if (!req.session.user) {
+        return res.status(403).render("error.handlebars", { error_class: "input_error", message: "You must sign in to access this page!", error_route: req.session.currentPage});
+      }
+      let resp = null
+      if (req.body.type == "members") {
+        let userName = req.body.userName
+        let role = req.body.role
+        validation.exists(userName, "userName")
+        validation.exists(role, "role")
+        validation.is_str(userName, "userName")
+        validation.is_str(role, "role")
+        validation.is_user_id(userName)
+        validation.is_role(role)
+        resp = await organizationData.updateRoleOrg(userName, role, orgName)
+      }
+      if (req.body.type == "members_owner") {
+        let userName = req.session.user.userName
+        let role = req.body.role
+        validation.exists(userName, "userName")
+        validation.exists(role, "role")
+        validation.is_str(userName, "userName")
+        validation.is_str(role, "role")
+        validation.is_user_id(userName)
+        validation.is_role(role)
+        resp = await organizationData.updateRoleOrg(userName, role, orgName)
+      }
+      if (!resp) {
+        return res.status(500).render("error.handlebars", { error_class: "server_error", message: "Internal Server Error", error_route: req.session.currentPage});
+      }
+      return res.json({
+        responseMessage: resp
+    })
+      
+    }catch(e) {
+      return res.status(400).render("error.handlebars", { error_class: "input_error", message: e, error_route: req.session.currentPage});
+    }
   })
 
 export default router;

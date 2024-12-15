@@ -221,6 +221,10 @@ const leaveOrg = async (
         throw 'No organization matches the provided orgName'
     }
 
+    let role = members_list.filter(item => item.userName == User.userName)[0].role
+    if (role == "owner") {
+        throw "you can't leave if you are the owner! Must make someone else the Owner first!"
+    }
     let members_list = Org.members
     const User = await UserCollection.findOne({userName: userName})
     if (!User) {
@@ -268,17 +272,16 @@ const leaveOrg = async (
 
 
 const deleteOrganization = async (
-    orgID
+    orgName
 ) => {
-    //Args: orgID
+    //Args: orgName
     //successful output: 'orgName has been successfully deleted!'
-    //constraints: orgID must exist, be a string, and be a valid sessionID MUST ACCOUNT FOR LEADING 0s For the IDs
-    validation.exists(orgID, "orgID")
-    validation.is_str(orgID, "orgID")
-    let object_id = validation.is_obj_id(orgID)
+    //constraints: orgName must exist, and be a string
+    validation.exists(orgName, "orgName")
+    validation.is_str(orgName, "orgName")
     const UserCollection = await users();
     const OrgCollection = await organizations()
-    const deletedOrg = await OrgCollection.findOneAndDelete({_id: object_id});
+    const deletedOrg = await OrgCollection.findOneAndDelete({orgName: orgName});
     if (!deletedOrg) {
         throw 'No organization matches the provided id'
     }
@@ -398,6 +401,54 @@ const updateOrganization = async (orgID, updateObject) => {
 
 }
 
+let updateRoleOrg = async (
+    userName,
+    role,
+    orgName
+) => {
+    validation.exists(userName, "userName")
+    validation.exists(role, "role")
+    validation.is_str(userName, "userName")
+    validation.is_str(role, "role")
+    validation.is_user_id(userName)
+    validation.is_role(role)
+    validation.exists(orgName, "orgName")
+    validation.is_str(orgName, "orgName")
+    orgName = orgName.trim()
+    userName = userName.trim()
+    userName = userName.toLowerCase()
+    role = role.trim().toLowerCase()
+    const UserCollection = await users();
+    const OrgCollection = await organizations()
+    const Org = await OrgCollection.findOne({orgName: orgName});
+    if (!Org) {
+        throw 'No organization matches the provided orgName'
+    }
+
+    let members_list = Org.members
+    const User = await UserCollection.findOne({userName: userName})
+    if (!User) {
+        throw 'No user matches the provided userName'
+    }
+    members_list.forEach(item => {if (item.userName == userName) {item.role = role}});
+    let new_org_obj = {
+        members: members_list
+    }
+    const updatedInfoOrg = await OrgCollection.findOneAndUpdate(
+        {orgName: orgName},
+        {$set: new_org_obj},
+        {returnDocument: 'after'}
+    );
+
+    const return_info_org = {
+        _id: updatedInfoOrg._id,
+        orgName: updatedInfoOrg.orgName,
+        members: updatedInfoOrg.members,
+        sessions: updatedInfoOrg.sessions
+    }
+    return return_info_org
+}
 
 
-export default {createOrganization, getOrganization, getOrganizationByName, deleteOrganization, updateOrganization, loginOrg, leaveOrg}
+
+export default {createOrganization, getOrganization, getOrganizationByName, deleteOrganization, updateOrganization, loginOrg, leaveOrg, updateRoleOrg}
