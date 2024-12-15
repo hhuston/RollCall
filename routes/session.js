@@ -1,6 +1,7 @@
 import Router from "express";
 const router = Router();
-import { sessionData, organizationData } from "../data/index.js";
+import { sessionData, organizationData, actionData } from "../data/index.js";
+import xss from 'xss';
 
 import validation from "../validation.js";
 
@@ -137,5 +138,28 @@ router.route('/:sessionId') // /session/asd8987dsf
     }
     return res.render("session.handlebars");
 });
+
+// AJAX call routes
+// TODO: verify validation and error checking (include exists for all?)
+router
+    .route('api/sendvote/:sessionId')
+    .patch(async (req, res) => {
+        let actionId = xss(req.body.actionId);
+        let vote = xss(req.body.vote);
+        let voterId = req.session.user.userName;
+        try {
+            validation.is_obj_id(actionId, "actionId");
+            validation.exists(vote, "vote");
+            validation.is_str(vote, "vote");
+            validation.is_vote(vote, "vote");
+            validation.exists(voterId, "voterId");
+            validation.is_str(voterId, "voterId");
+            validation.is_user_id(voterId, "voterId");
+            let resp = actionData.addVote(actionId, vote, voterId);
+            return res.json(resp);
+        } catch (e) {
+            res.status(400).json({error: e});
+        }
+    });
 
 export default router;
