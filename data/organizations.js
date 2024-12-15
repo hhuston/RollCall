@@ -59,7 +59,7 @@ const createOrganization = async ( //enforce a minimum password length
     );
     newOrg._id = orgID
     const return_info = {
-        _id: orgID,
+        _id: orgID.toString(),
         orgName: newOrg.orgName,
         members: newOrg.members,
         sessions: newOrg.sessions
@@ -134,7 +134,7 @@ const loginOrg = async (
     validation.exists(role, "Role")
     validation.is_str(role, "Role")
     validation.is_role(role)
-    orgName = orgName.trim()
+    orgName = orgName.trim().toLowerCase();
     userName = userName.trim()
     password = password.trim()
     role.trim().toLowerCase()
