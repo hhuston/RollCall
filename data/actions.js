@@ -8,7 +8,7 @@ let createAction = async (type, value, actionOwner) => {
     //Could have a checkType function to make sure it is a specific type of action
     action.type = validation.checkString(type, "Type");
     action.value = validation.checkString(value, "Value");
-    action.actionOwner = validation.checkId(actionOwner);
+    action.actionOwner = validation.checkUserName(actionOwner);
     action.votingRecord = { yes: [], no: [], abstain: [] };
 
     const actionCollection = await actions();
