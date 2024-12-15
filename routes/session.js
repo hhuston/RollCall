@@ -62,7 +62,7 @@ router.route('/:sessionId') // /session/asd8987dsf
     let sessionId = req.params.sessionId
     try {
         sessionId = validation.checkId(sessionId);
-        Sesh = await sessionData.getSession(sessionId)
+        let Sesh = await sessionData.getSession(sessionId)
         if (!Sesh) {
             throw `no session with id ${sessionId}`
         }
