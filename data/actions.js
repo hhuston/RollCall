@@ -1,64 +1,46 @@
-import { actions } from "../config/mongoCollections.js"
-import { ObjectId } from "mongodb"
-import validation from "../validation.js"
-import session from "express-session"
+import { actions } from "../config/mongoCollections.js";
+import { ObjectId } from "mongodb";
+import validation from "../validation.js";
 
 let createAction = async (type, value, actionOwner) => {
-    let action = {}
-    action.type = validation.is_action_type(type)
-    action.value = validation.checkString(value)
-    action.actionOwner = validation.is_user_id(actionOwner)
+    let action = {};
+
+    //Could have a checkType function to make sure it is a specific type of action
+    action.type = validation.checkString(type, "Type");
+    action.value = validation.checkString(value, "Value");
+    action.actionOwner = validation.checkUserName(actionOwner);
     action.votingRecord = {"Yay": [], "Nay": [], "Abstain": []}
 
-    const actionCollection = await actions()
-    const newInsertInformation = await actionCollection.insertOne(action)
-    
-    //What do I return here?
+    const actionCollection = await actions();
+    const newInsertInformation = await actionCollection.insertOne(action);
+
     return newInsertInformation.insertedId.toString();
-}
+};
 
 let deleteAction = async (id) => {
-    id = validation.checkId(id)
+    id = validation.checkId(id);
 
-    const actionCollection = await actions()
+    const actionCollection = await sessions();
     const deletionInfo = await actionCollection.findOneAndDelete({
-        _id: new ObjectId(id)
-    })
+        _id: id,
+    });
 
-    if (!deletionInfo) throw "Could not delete action with that id"
+    if (!deletionInfo) throw "Could not delete action with that id";
 
-    return {...deletionInfo, deleted: true}
-}
+    return { ...deletionInfo, deleted: true };
+};
 
 let getAction = async (id) => {
-    id = validation.checkId(id)
+    id = validation.checkId(id);
 
-    const actionCollection = await actions()
+    const actionCollection = await sessions();
     const action = await actionCollection.findOne({
-        _id: new ObjectId(id)
-    })
+        _id: id,
+    });
 
-    if (!action) throw "Could not find action with that id"
+    if (!action) throw "Could not find action with that id";
 
-    return action
-}
+    return action;
+};
 
-let addVote = async (actionID, vote, voterId) => {
-    actionID = validation.checkId(actionID)
-    vote = validation.checkString(vote)
-    vote = validation.is_vote(vote)
-    voterId = validation.is_user_id(voterId)
-
-    const actionCollection = await actions()
-    const updatedAction = await actionCollection.findOneAndUpdate(
-        {_id: new ObjectId(actionID)},
-        {$push: {votingRecord: {[vote]: voterId}}}
-    )
-
-    if (!updatedAction) throw "Could not update voting record of action with that id"
-    
-    return {action: updatedAction, vote: vote, voterId: voterId}
-}
-
-export default {createAction, deleteAction, getAction, addVote}
-
+export default { createAction, deleteAction, getAction };
