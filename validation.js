@@ -180,13 +180,6 @@ let is_session_role = (role) => {
   }
 }
 
-let is_vote = (vote) => {
-  vote = vote.trim().toLowerCase()
-  if (vote != 'yay' && vote != 'nay' && vote != 'abstain') {
-    throw `Vote is not 'yay', 'nay', or 'abstain'`
-  }
-}
-
 let validation = {
   is_str: is_str, 
   is_number: is_number, 
@@ -204,7 +197,6 @@ let validation = {
   is_name:is_name,
   is_user_id:is_user_id,
   is_role:is_role,
-  is_session_role:is_session_role,
-  is_vote:is_vote
+  is_session_role:is_session_role
 }
 export default validation

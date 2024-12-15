@@ -13,14 +13,13 @@
         <h3>On Call</h3>
         <div class="greyPanel">
             {{!-- Change this with client side JS and AJAX --}}
-            <p id="votingPrompt" data-action-id=""></p>
+            <p id="currentVoteP"></p>
             {{#if isVoter}}
                 {{!-- Add button functionality with JS --}}
-                <div id="votingOptions"> 
+                <div> 
                     <button id="yayVote">Yay</button>
                     <button id="nayVote">Nay</button>
                     <button id="absVote">Abstain</button>
-                    <p id="voteCast" hidden></p>
                 </div>
             {{/if}}
         </div>
