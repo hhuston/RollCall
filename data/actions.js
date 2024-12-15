@@ -5,9 +5,7 @@ import session from "express-session"
 
 let createAction = async (type, value, actionOwner) => {
     let action = {}
-
-    //Could have a checkType function to make sure it is a specific type of action
-    action.type = validation.checkString(type)
+    action.type = validation.is_action_type(type)
     action.value = validation.checkString(value)
     action.actionOwner = validation.is_user_id(actionOwner)
     action.votingRecord = {"Yay": [], "Nay": [], "Abstain": []}

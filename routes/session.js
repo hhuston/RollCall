@@ -139,10 +139,11 @@ router.route('/:sessionId') // /session/asd8987dsf
     return res.render("session.handlebars");
 });
 
-// AJAX call routes
+// AJAX call routes to handle actions
 // TODO: verify validation and error checking (include exists for all?)
+
 router
-    .route('api/sendvote/:sessionId')
+    .route('sendvote/')
     .patch(async (req, res) => {
         let actionId = xss(req.body.actionId);
         let vote = xss(req.body.vote);
@@ -161,5 +162,20 @@ router
             res.status(400).json({error: e});
         }
     });
+
+router
+.route('createAction/')
+.post(async (req, res) => {
+    let type = xss(req.body.type);
+    let value = xss(req.body.value);
+    let actionOwner = req.session.user.userName;
+    // TODO: implement
+});
+
+router.route('endSession/')
+.patch(async (req, res) => {
+    let sessionId = xss(req.body.sessionId);
+    // TODO: implement
+});
 
 export default router;

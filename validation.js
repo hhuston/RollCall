@@ -187,6 +187,13 @@ let is_vote = (vote) => {
   }
 }
 
+let is_action_type = (type) => {
+  type = checkString(type)
+  if (type != 'motion' && type != 'amendment') {
+    throw `Type is not 'motion' or 'amendment'`
+  }
+}
+
 let validation = {
   is_str: is_str, 
   is_number: is_number, 
@@ -205,6 +212,7 @@ let validation = {
   is_user_id:is_user_id,
   is_role:is_role,
   is_session_role:is_session_role,
-  is_vote:is_vote
+  is_vote:is_vote,
+  is_action_type:is_action_type
 }
 export default validation
