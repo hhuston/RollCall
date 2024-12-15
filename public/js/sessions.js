@@ -11,7 +11,7 @@ if (yayVote) {
     yayVote.addEventListener('click', async (event) => {
         const votingPrompt = document.getElementById('votingPrompt')
         const voteCast = document.getElementById('voteCast');
-        const data = await fetch('Action vote route', {
+        const data = await fetch('/session/sendvote', {
             method: 'PATCH',
             data: JSON.stringify({
                 vote: 'Yay',
@@ -19,7 +19,11 @@ if (yayVote) {
             })
         });
         
-        // Check if the response is successful
+        if (!data) {
+            voteCast.innerHTML = 'Failed to cast vote. Please try again.';
+            voteCast.hidden = false;
+            return;
+        }
 
         yayVote.hidden = true;
         nayVote.hidden = true;
@@ -42,7 +46,11 @@ if (nayVote) {
             })
         });
         
-        // Check if the response is successful
+        if (!data) {
+            voteCast.innerHTML = 'Failed to cast vote. Please try again.';
+            voteCast.hidden = false;
+            return;
+        }
 
         yayVote.hidden = true;
         nayVote.hidden = true;
@@ -65,7 +73,11 @@ if (absVote) {
             })
         });
         
-        // Check if the response is successful
+        if (!data) {
+            voteCast.innerHTML = 'Failed to cast vote. Please try again.';
+            voteCast.hidden = false;
+            return;
+        }
 
         yayVote.hidden = true;
         nayVote.hidden = true;
