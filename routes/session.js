@@ -89,6 +89,19 @@ router
         }
     });
 
+// AJAX call routes to handle actions
+// TODO: verify validation and error checking (include exists for all?)
+
+// THIS ROUTE GOT FUCKED UP IN THE MERGE, MAY HAVE TO REIMPLEMENT
+// router
+//     .route('sendvote/')
+//     .patch(async (req, res) => {
+//         let actionId = xss(req.body.actionId);
+//         let vote = xss(req.body.vote);
+//         let voterId = req.session.user.userName;
+
+// THIS ROUTE GOT FUCKED UP WITH THE ABOVE IN THE MERGE
+// MAY HAVE TO FIX BUGS HERE
 router
     .route("/:sessionId") // /session/asd8987dsf
     .get(async (req, res) => {
@@ -137,5 +150,20 @@ router
         }
         return res.render("session.handlebars");
     });
+
+router
+.route('createAction/')
+.post(async (req, res) => {
+    let type = xss(req.body.type);
+    let value = xss(req.body.value);
+    let actionOwner = req.session.user.userName;
+    // TODO: implement
+});
+
+router.route('endSession/')
+.patch(async (req, res) => {
+    let sessionId = xss(req.body.sessionId);
+    // TODO: implement
+});
 
 export default router;

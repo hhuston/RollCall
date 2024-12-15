@@ -177,6 +177,13 @@ let validation = {
     is_session_role: is_session_role,
 }; */
 
+let is_action_type = (type) => {
+  type = checkString(type)
+  if (type != 'motion' && type != 'amendment') {
+    throw `Type is not 'motion' or 'amendment'`
+  }
+}
+
 let validation = {
     isNumber: isNumber,
     isArr: isArr,

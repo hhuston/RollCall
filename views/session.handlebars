@@ -8,19 +8,21 @@
     <h1 id="sessionTitle">{{sessionData.Proposal}}</h1>
     <h2>Your are a {{Role}} in this session</h2>
     <h2>Use this link to share the session page: <a href="javscript:void(0)">{{sessionLink}}</a></h2>
+    <form method="PATCH" action="/session/leavesession/{{Sesh._id}}">
+        <input type="submit" value="Leave Session">
+    </form>
 
     <div id="currentVoteDiv">
         <h3>On Call</h3>
         <div class="greyPanel">
             {{!-- Change this with client side JS and AJAX --}}
-            <p id="votingPrompt" data-action-id=""></p>
+            <p id="currentVoteP"></p>
             {{#if isVoter}}
                 {{!-- Add button functionality with JS --}}
-                <div id="votingOptions"> 
+                <div> 
                     <button id="yayVote">Yay</button>
                     <button id="nayVote">Nay</button>
                     <button id="absVote">Abstain</button>
-                    <p id="voteCast" hidden></p>
                 </div>
             {{/if}}
         </div>
@@ -66,7 +68,9 @@
         {{/if}}
         {{#if isModerator}}
             {{!-- Add functionality with JS and AJAX --}}
-            <button id="endSession">End Session</button>
+            <form method="PATCH" action="/session/endSession/{{Sesh._id}}">
+                <input type="submit" value="End Session">
+            </form>
         {{/if}}
     </div>
     <script src="https://code.jquery.com/jquery-2.2.4.min.js"
