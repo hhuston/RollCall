@@ -8,14 +8,14 @@ let createAction = async (type, value, actionOwner) => {
     //Could have a checkType function to make sure it is a specific type of action
     action.type = validation.checkString(type)
     action.value = validation.checkString(value)
-    action.actionOwner = validation.checkId(actionOwner)
+    action.actionOwner = validation.is_user_id(actionOwner)
     action.votingRecord = {"yes": [], "no": [], "abstain": []}
 
     const actionCollection = await actions()
     const newInsertInformation = await actionCollection.insertOne(action)
     
     //What do I return here?
-    return newInsertInformation.insertedId
+    return newInsertInformation.insertedId.toString();
 }
 
 let deleteAction = async (id) => {

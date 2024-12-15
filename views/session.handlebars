@@ -1,0 +1,74 @@
+<head>
+    <meta charset="utf-8">
+    <title>Error Page</title>
+    <link rel="stylesheet" href="/public/css/sitestyles.css">
+</head>
+<body>
+    <a class="home" id="home" href="/home">Back Home</a>
+    <h1 id="sessionTitle">{{sessionData.Proposal}}</h1>
+    <h2>Your are a {{Role}} in this session</h2>
+    <h2>Use this link to share the session page: <a href="javscript:void(0)">{{sessionLink}}</a></h2>
+
+    <div id="currentVoteDiv">
+        <h3>On Call</h3>
+        <div class="greyPanel">
+            {{!-- Change this with client side JS and AJAX --}}
+            <p id="currentVoteP"></p>
+            {{#if isVoter}}
+                {{!-- Add button functionality with JS --}}
+                <div> 
+                    <button id="yayVote">Yay</button>
+                    <button id="nayVote">Nay</button>
+                    <button id="absVote">Abstain</button>
+                </div>
+            {{/if}}
+        </div>
+    </div>
+    <div id="sessionLog">
+        <h3>Session Log</h3>
+        <div class="greyPanel">
+            {{!-- Populate this with JS --}}
+        </div>
+    </div>
+    <div id="queue">
+        <h3>Queue</h3>
+        <div class="greyPanel">
+            <h4>Next up:</h4>
+            <div id="upcoming">
+                {{!-- Populate with JS --}}
+                {{!-- Example of what it will look like
+                <div class="action">
+                    <h5>Filled with action type</h5>
+                    <p>Filled with descripiton</p>
+                    <h5>By</h5>
+                    <p>Filled with proposer name</p>
+
+                    (If they are a moderator)
+                    <button id="callVote">Call Vote</button>
+                    <button id="deleteAction>Delete Action</button>"
+                </div>
+                 --}}
+            </div>
+        </div>
+    </div>
+    <div id="buttons">
+        {{!-- Have to do separate if for vote and guest bc handlebars is annoying --}}
+        {{#if isVoter}}
+            {{!-- Add functionality with JS and AJAX --}}
+            <button id="createMotion">Create Motion</button>
+            <button id="createAmendment">Create Amendment</button>
+        {{/if}}
+        {{#if isGuest}}
+            {{!-- Add functionality with JS and AJAX --}}
+            <button id="createMotion">Create Motion</button>
+            <button id="createAmendment">Create Amendment</button>
+        {{/if}}
+        {{#if isOrgModerator}}
+            {{!-- Add functionality with JS and AJAX --}}
+            <button id="endSession">End Session</button>
+        {{/if}}
+    </div>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"
+        integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+    <script src="/public/js/sessions.js"></script>
+</body>

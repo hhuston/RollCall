@@ -7,7 +7,7 @@ let createSession = async (proposal, proposalOwner, sessionDate) => {
 
     session.members = []
     session.proposal = validation.checkString(proposal)
-    session.proposalOwner = validation.checkId(proposalOwner)
+    session.proposalOwner = validation.is_user_id(proposalOwner)
     session.actionQueue = []
     session.sessionDate = validation.checkDate(sessionDate)
     session.open = true
@@ -17,7 +17,7 @@ let createSession = async (proposal, proposalOwner, sessionDate) => {
 
     //What do we want to return here?
     //Also, this should be error checked
-    return newInsertInformation.insertedId
+    return newInsertInformation.insertedId.toString();
 }
 
 let deleteSession = async (id) => {
