@@ -4,7 +4,8 @@ import bcrypt from 'bcrypt';
 import validation from '../validation.js'
 const saltRounds = 16;
 
-const createUser = async (
+
+const createUser = async ( //enforce a minimum password length, make sure that the returns don't include password or id
     userName,
     password,
     firstName,
