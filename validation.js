@@ -192,7 +192,7 @@ let strFormat = (str) => {
 };
 
 let checkEmail = (email) => {
-    email = checkString(email).toLowerCase();
+    email = checkString(email, "Email").toLowerCase();
     const regex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
 
     if (!regex.test(email)) {
@@ -219,7 +219,7 @@ let checkPassword = (password, arg) => {
     if (typeof password !== "string") throw `${arg} must be of type string`;
 
     //Password max length?
-    if (password.length < 8 || password.test(/^[0-9] | ^[A-Z] | [0-9a-zA-Z]+/)) throw `${arg} must be 8+ characters and contain an uppercase letter, a number, and a special character`;
+    if (password.length < 8 || /^[0-9] | ^[A-Z] | [0-9a-zA-Z]+/.test(password)) throw `${arg} must be 8+ characters and contain an uppercase letter, a number, and a special character`;
 
     return password;
 };

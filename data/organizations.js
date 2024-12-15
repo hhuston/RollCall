@@ -26,8 +26,8 @@ const createOrganization = async (
     let sessions = [];
     const hash_password = await bcrypt.hash(password, saltRounds);
     const orgCollection = await organizations();
-    //Maybe can find a way to not need to make orgName lowercase
-    const repeatOrg = await orgCollection.findOne({ orgName: orgName.toLowerCase() }).collation({ locale: "en", strength: 2 });
+
+    const repeatOrg = await orgCollection.findOne({ orgName: new RegExp(orgName, "i") });
     if (repeatOrg) {
         throw `There is an organization with that name`;
     }
@@ -83,7 +83,7 @@ const getOrganizationByName = async (orgName) => {
     //constraints: orgName must exist and be a string
     orgName = validation.checkString(orgName, "Org Name");
     const OrgCollection = await organizations();
-    const Org = await OrgCollection.findOne({ orgName: orgName }).collation({ locale: "en", strength: 2 });
+    const Org = await OrgCollection.findOne({ orgName: new RegExp(orgName, "i") });
     if (!Org) {
         throw "No organization with that Name";
     }
@@ -109,7 +109,7 @@ const loginOrg = async (userName, password, orgName, role) => {
     }
     const UserCollection = await users();
     const OrgCollection = await organizations();
-    const Org = await OrgCollection.findOne({ orgName: orgName }).collation({ locale: "en", strength: 2 });
+    const Org = await OrgCollection.findOne({ orgName: new RegExp(orgName, "i") });
     if (!Org) {
         throw "No organization matches the provided orgName";
     }
@@ -137,7 +137,7 @@ const loginOrg = async (userName, password, orgName, role) => {
     //may need to check for errors below
     const updatedInfoUser = await UserCollection.findOneAndUpdate({ userName: User.userName }, { $set: new_user_obj }, { returnDocument: "after" });
 
-    const updatedInfoOrg = await OrgCollection.findOneAndUpdate({ orgName: orgName }, { $set: new_org_obj }, { returnDocument: "after" }).collation({ locale: "en", strength: 2 });
+    const updatedInfoOrg = await OrgCollection.findOneAndUpdate({ orgName: new RegExp(orgName, "i") }, { $set: new_org_obj }, { returnDocument: "after" });
 
     const return_info_org = {
         _id: updatedInfoOrg._id,
@@ -168,7 +168,7 @@ const leaveOrg = async (userName, orgName) => {
 
     const UserCollection = await users();
     const OrgCollection = await organizations();
-    const Org = await OrgCollection.findOne({ orgName: orgName }).collation({ locale: "en", strength: 2 });
+    const Org = await OrgCollection.findOne({ orgName: new RegExp(orgName, "i") });
     if (!Org) {
         throw "No organization matches the provided orgName";
     }
@@ -194,7 +194,7 @@ const leaveOrg = async (userName, orgName) => {
     //may need to check for errors below
     const updatedInfoUser = await UserCollection.findOneAndUpdate({ userName: User.userName }, { $set: new_user_obj }, { returnDocument: "after" });
 
-    const updatedInfoOrg = await OrgCollection.findOneAndUpdate({ orgName: orgName }, { $set: new_org_obj }, { returnDocument: "after" }).collation({ locale: "en", strength: 2 });
+    const updatedInfoOrg = await OrgCollection.findOneAndUpdate({ orgName: new RegExp(orgName, "i") }, { $set: new_org_obj }, { returnDocument: "after" });
 
     const return_info_org = {
         _id: updatedInfoOrg._id,
@@ -221,7 +221,7 @@ const deleteOrganization = async (orgName) => {
     orgName = validation.checkString(orgName, "Org Name");
     const UserCollection = await users();
     const OrgCollection = await organizations();
-    const deletedOrg = await OrgCollection.findOneAndDelete({ orgName: orgName }).collation({ locale: "en", strength: 2 });
+    const deletedOrg = await OrgCollection.findOneAndDelete({ orgName: new RegExp(orgName, "i") });
     if (!deletedOrg) {
         throw "No organization matches the provided id";
     }
@@ -259,7 +259,7 @@ const updateOrganization = async (orgID, updateObject) => {
     }
     if (updateObject.hasOwnProperty("updateOrgName")) {
         new_org_name = validation.checkString(updateObject.updateOrgName, "updateOrgName");
-        const repeatOrg = await OrgCollection.findOne({ orgName: new_org_name }).collation({ locale: "en", strength: 2 });
+        const repeatOrg = await OrgCollection.findOne({ orgName: new RegExp(new_org_name, "i") });
         if (repeatOrg) {
             throw `There is an org with that name`;
         }
@@ -329,7 +329,7 @@ let updateRoleOrg = async (userName, role, orgName) => {
 
     const UserCollection = await users();
     const OrgCollection = await organizations();
-    const Org = await OrgCollection.findOne({ orgName: orgName }).collation({ locale: "en", strength: 2 });
+    const Org = await OrgCollection.findOne({ orgName: new RegExp(orgName, "i") });
     if (!Org) {
         throw "No organization matches the provided orgName";
     }
@@ -347,7 +347,7 @@ let updateRoleOrg = async (userName, role, orgName) => {
     let new_org_obj = {
         members: members_list,
     };
-    const updatedInfoOrg = await OrgCollection.findOneAndUpdate({ orgName: orgName }, { $set: new_org_obj }, { returnDocument: "after" }).collation({ locale: "en", strength: 2 });
+    const updatedInfoOrg = await OrgCollection.findOneAndUpdate({ orgName: new RegExp(orgName, "i") }, { $set: new_org_obj }, { returnDocument: "after" });
 
     const return_info_org = {
         _id: updatedInfoOrg._id,
