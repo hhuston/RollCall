@@ -66,7 +66,9 @@
         {{/if}}
         {{#if isModerator}}
             {{!-- Add functionality with JS and AJAX --}}
-            <button id="endSession">End Session</button>
+            <form id="endSession" method="PATCH" action="/session/endSession">
+                <input type="submit" value="End Session">
+            </form>
         {{/if}}
     </div>
     <script src="https://code.jquery.com/jquery-2.2.4.min.js"

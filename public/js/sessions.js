@@ -101,7 +101,9 @@ if (createAmendment) {
 }
 
 if (endSession) {
-    endSession.addEventListener('click', async (event) => {
-
+    endSession.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        
+        
     });
 }
