@@ -1,7 +1,7 @@
 import validation from "../validation.js"
 import {Router} from 'express';
 const router = Router();
-import {organizationData, userData} from '../data/index.js';
+import {organizationData, userData, sessionData} from '../data/index.js';
 //when patching game, should game stay same place in the array
 
 router
@@ -300,9 +300,14 @@ router
             if (curr_member.role == "moderator") {
               moderator = "true"
             }
+            let sessions_name_id = []
+            for (let sessionId of Org.sessions) {
+              let Sesh = await sessionData.getSession(sessionId)
+              sessions_name_id.push({id: sessionId, name: Sesh.seshName})
+            }
 
             req.session.currentPage = `/organization/${orgName}`
-            return res.status(200).render("organization.handlebars", {orgData: Org, userData: req.session.user, moderator: moderator, owner: owner, role:curr_member.role, members: members});
+            return res.status(200).render("organization.handlebars", {orgData: Org, userData: req.session.user, moderator: moderator, owner: owner, role:curr_member.role, members: members, sessions_list: sessions_name_id});
         }
         else {
             return res.redirect(`/signinorganization/${orgName}`);

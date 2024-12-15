@@ -52,7 +52,7 @@ let is_user_id = (str) => {
 //error check in these event listeners? even if it is just buttons pressed and no user inputs? account for html changes?
 document.addEventListener('click', function(event) {
     //for clicking on the name:role of an organization member
-    if (event.target.tagName.toLowerCase() === 'a' && event.target.id != 'home' && event.target.id != 'leave' && event.target.id != 'delete' && event.target.id != "back_to_signin" && event.target.id != "create_session") {
+    if (event.target.tagName.toLowerCase() === 'a' && event.target.id != 'home' && event.target.id != 'leave' && event.target.id != 'delete' && event.target.id != "back_to_signin" && event.target.id != "create_session" && event.target.id != "session_elem") {
         event.preventDefault()
         const delete_item = document.querySelector('h4');
         if (delete_item) {

@@ -69,9 +69,9 @@ const getSession = async (
     //Args: seshID
     //successful output: whole object
     //constraints: seshID must be a valid objectId
-    validation.exists(seshID, "orgID")
-    validation.is_str(seshID, "orgID")
-    let object_id = validation.is_obj_id(seshID)
+    validation.exists(seshID, "seshID")
+    validation.is_str(seshID, "seshID")
+    let object_id = validation.is_obj_id(seshID, "seshID")
     const SeshCollection = await sessions();
     const Sesh = await SeshCollection.findOne({_id: object_id});
     if (!Sesh) {

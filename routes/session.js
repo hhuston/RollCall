@@ -20,13 +20,13 @@ router.route("/createsession/:orgName") // /session/orgId
         if (!Org.members.some(mem => mem.userName === req.session.user.userName)) {
             return res.status(403).render("error.handlebars", { error_class: "input_error", message: "You are not a member of this organization", error_route: req.session.currentPage});
         }
+        req.session.currentPage = `/session/createsession/${orgName}`
         return res.render("createsession.handlebars", {orgName: orgName})
     } catch (e) {
         res.status(400).render("error.handlebars", { error_class: `bad_param`, message: e, error_route: req.session.currentPage});
     }
 })
 .post(async (req, res) => {
-    //TODO add share url logic
     let orgName = req.params.orgName
     let proposal = req.body.firstProposal
     let seshName = req.body.seshName
@@ -44,8 +44,7 @@ router.route("/createsession/:orgName") // /session/orgId
         validation.exists(seshName, "seshName");
         validation.is_str(seshName, "seshName")
         let resp = sessionData.createSession(proposal, req.session.user.userName, orgName, seshName)
-        req.session.currentPage = `/session/${resp._id}`
-        res.render('session.handlebars', {sessionData: resp, Role:"moderator", is_moderator: "true"})
+        return res.redirect(`/session/${resp._id}`)
     } catch (e) {
         res.status(400).render("error.handlebars", { error_class: `bad_param`, message: e, error_route: req.session.currentPage});
     }
@@ -67,7 +66,8 @@ router.route('/:sessionId') // /session/asd8987dsf
         if (!Sesh) {
             throw `no session with id ${sessionId}`
         }
-        if (!Sesh.members.some(mem => mem.userName === req.session.user.userName)) {
+        let Org = await organizationData.getOrganizationByName(Sesh.orgName)
+        if (!Org.members.some(mem => mem.userName === req.session.user.userName)) {
             return res.status(403).render("error.handlebars", { error_class: "input_error", message: "You are not a member of this organization", error_route: req.session.currentPage});
         }
         let role = Sesh.members.filter(mem => mem.userName === req.session.user.userName)
@@ -88,7 +88,7 @@ router.route('/:sessionId') // /session/asd8987dsf
         if (role == "observer") {
             observer = "true"
         }
-
+        req.session.currentPage = `/session/${Sesh._id}`
         return res.render("session.handlebars", {sessionData: Sesh, Role:role, isModerator: moderator, isVoter: voter, isGuest: guest, isObserver: observer});
     } catch (e) {
         res.status(400).render("error.handlebars", { error_class: `bad_param`, message: e, error_route: req.session.currentPage});
