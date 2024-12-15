@@ -50,6 +50,45 @@ router.route("/createsession/:orgName") // /session/orgId
     }
 })
 
+router.route("/joinsession/:sessionId") // /session/orgId
+.get(async (req, res) => {
+    let orgName = req.params.sessionId
+    if (!req.session.currentPage) {
+        req.session.currentPage = "/";
+    }
+    if (!req.session.user) {
+        return res.status(403).render("error.handlebars", { error_class: "input_error", message: "You must sign in to access this page!", error_route: req.session.currentPage});
+    }
+    try {
+        let sessionId = validation.checkId(sessionId);
+        let Sesh = await sessionData.getOrganizationByName(sessionId)
+        req.session.currentPage = `/session/joinsession/${sessionId}`
+        return res.render("joinsession.handlebars", {sessionInfo: Sesh})
+    } catch (e) {
+        res.status(400).render("error.handlebars", { error_class: `bad_param`, message: e, error_route: req.session.currentPage});
+    }
+})
+.post(async (req, res) => {
+    let sessionId = req.params.sessionId
+    let role = req.body.session_role
+    if (!req.session.currentPage) {
+        req.session.currentPage = "/";
+    }
+    if (!req.session.user) {
+        return res.status(403).render("error.handlebars", { error_class: "input_error", message: "You must sign in to access this page!", error_route: req.session.currentPage});
+    }
+    try {
+        validation.exists(role, "role");
+        validation.is_str(role, "role")
+        validation.is_session_role(role, "role");
+        validation.is_obj_id(sessionId, "seshID")
+        let resp = sessionData.joinSession(sessionId, role, req.session.user.userName)
+        return res.redirect(`/session/${resp._id}`)
+    } catch (e) {
+        res.status(400).render("error.handlebars", { error_class: `bad_param`, message: e, error_route: req.session.currentPage});
+    }
+})
+
 router.route('/:sessionId') // /session/asd8987dsf
 .get(async (req, res) => {
     //TODO add share url logic
@@ -65,6 +104,9 @@ router.route('/:sessionId') // /session/asd8987dsf
         let Sesh = await sessionData.getSession(sessionId)
         if (!Sesh) {
             throw `no session with id ${sessionId}`
+        }
+        if (!Sesh.members.some(mem => mem.userName === req.session.user.userName)) {
+            return res.status(403).render("error.handlebars", { error_class: "input_error", message: "You are not a member of this session", error_route: req.session.currentPage});
         }
         let Org = await organizationData.getOrganizationByName(Sesh.orgName)
         if (!Org.members.some(mem => mem.userName === req.session.user.userName)) {

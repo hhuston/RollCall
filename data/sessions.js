@@ -17,7 +17,7 @@ let createSession = async (proposal, proposalOwner, orgName, seshName) => {
     validation.exists(proposalOwner, "proposalOwner");
     validation.is_str(proposalOwner, "proposalOwner")
     validation.is_user_id(proposalOwner, "proposalOwner")
-    session.members = [{userName: proposalOwner, role:"moderator"}]
+    session.members = [{userName: proposalOwner.trim().toLowerCase(), role:"moderator"}]
     session.proposal = proposal.trim()
     session.proposalOwner = proposalOwner.trim().toLowerCase()
     session.actionQueue = []
@@ -77,6 +77,34 @@ const getSession = async (
     if (!Sesh) {
         throw 'No session with that ID'
     }
+    Sesh._id = Sesh._id.toString()
+    return Sesh
+}
+
+const joinSession = async (
+    sessionId,
+    role,
+    userName
+    ) => {
+    //Args: seshID
+    //successful output: whole object
+    //constraints: seshID must be a valid objectId
+        validation.exists(role, "role");
+        validation.is_str(role, "role")
+        validation.is_session_role(role, "role");
+    let object_id = validation.is_obj_id(sessionId, "seshID")
+    validation.exists(userName, "sessionId");
+        validation.is_str(userName, "sessionId")
+        validation.is_user_id(userName, "sessionId")
+    const SeshCollection = await sessions();
+    const Sesh = await SeshCollection.findOne({_id: object_id});
+    if (!Sesh) {
+        throw 'No session with that ID'
+    }
+    if (Sesh.members.some(mem => mem.userName === userName)) {
+        throw 'You are already in the session'
+    }
+    Sesh.members.push({userName: userName.trim().toLowerCase(), role: role.trim().toLowerCase()})
     Sesh._id = Sesh._id.toString()
     return Sesh
 }
