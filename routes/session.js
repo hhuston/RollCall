@@ -89,19 +89,6 @@ router
         }
     });
 
-// AJAX call routes to handle actions
-// TODO: verify validation and error checking (include exists for all?)
-
-// THIS ROUTE GOT FUCKED UP IN THE MERGE, MAY HAVE TO REIMPLEMENT
-// router
-//     .route('sendvote/')
-//     .patch(async (req, res) => {
-//         let actionId = xss(req.body.actionId);
-//         let vote = xss(req.body.vote);
-//         let voterId = req.session.user.userName;
-
-// THIS ROUTE GOT FUCKED UP WITH THE ABOVE IN THE MERGE
-// MAY HAVE TO FIX BUGS HERE
 router
     .route("/:sessionId") // /session/asd8987dsf
     .get(async (req, res) => {
@@ -151,14 +138,40 @@ router
         return res.render("session.handlebars");
     });
 
-router
-.route('createAction/')
-.post(async (req, res) => {
-    let type = xss(req.body.type);
-    let value = xss(req.body.value);
-    let actionOwner = req.session.user.userName;
-    // TODO: implement
-});
+// AJAX call routes to handle actions
+// TODO: verify validation and error checking (include exists for all?)
+
+// THIS ROUTE GOT FUCKED UP IN THE MERGE, MAY HAVE TO REIMPLEMENT
+// router
+//     .route('sendvote/')
+//     .patch(async (req, res) => {
+//         let actionId = xss(req.body.actionId);
+//         let vote = xss(req.body.vote);
+//         let voterId = req.session.user.userName;
+
+// THIS ROUTE GOT FUCKED UP WITH THE ABOVE IN THE MERGE
+// MAY HAVE TO FIX BUGS HERE
+
+// router
+// .route('createAction/')
+// .post(async (req, res) => {
+//     let type = xss(req.body.type);
+//     let value = xss(req.body.value);
+//     let actionOwner = req.session.user.userName;
+//     try {
+//         validation.exists(type, "type");
+//         validation.is_str(type, "type");
+//         validation.exists(value, "value");
+//         validation.is_str(value, "value");
+//         validation.exists(actionOwner, "actionOwner");
+//         validation.is_str(actionOwner, "actionOwner");
+//         validation.is_user_id(actionOwner, "actionOwner");
+//         let resp = actionData.createAction(type, value, actionOwner);
+//         return res.json(resp);
+//     } catch (e) {
+//         res.status(400).json({error: e});
+//     }
+// });
 
 router.route('endSession/')
 .patch(async (req, res) => {
