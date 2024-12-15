@@ -38,7 +38,7 @@ if (nayVote) {
     nayVote.addEventListener('click', async (event) => {
         const votingPrompt = document.getElementById('votingPrompt')
         const voteCast = document.getElementById('voteCast');
-        const data = await fetch('Action vote route', {
+        const data = await fetch('/session/sendvote', {
             method: 'PATCH',
             data: JSON.stringify({
                 vote: 'Nay',
@@ -65,7 +65,7 @@ if (absVote) {
     absVote.addEventListener('click', async (event) => {
         const votingPrompt = document.getElementById('votingPrompt')
         const voteCast = document.getElementById('voteCast');
-        const data = await fetch('Action vote route', {
+        const data = await fetch('/session/sendvote', {
             method: 'PATCH',
             data: JSON.stringify({
                 vote: 'Abstain',
