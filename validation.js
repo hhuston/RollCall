@@ -173,6 +173,12 @@ let checkDate = (date) => {
     //TODO: Check if its a valid MM/DD/YYYY
     return date
 }
+let is_session_role = (role) => {
+  role = role.trim().toLowerCase()
+  if (role != 'observer' && role != 'guest' && role != "voter") {
+    throw `Role is not 'observer', 'guest', or 'voter'`
+  }
+}
 
 let validation = {
   is_str: is_str, 
@@ -190,6 +196,7 @@ let validation = {
   checkDate:checkDate,
   is_name:is_name,
   is_user_id:is_user_id,
-  is_role:is_role
+  is_role:is_role,
+  is_session_role:is_session_role
 }
 export default validation

@@ -174,6 +174,12 @@ let is_user_id = (str, arg) => {
       throw `Role is not 'member', 'owner', or 'moderator'`
     }
   }
+  let is_session_role = (role) => {
+    role = role.trim().toLowerCase()
+    if (role != 'observer' && role != 'guest' && role != "voter") {
+      throw `Role is not 'observer', 'guest', or 'voter'`
+    }
+  }
 
 const button = document.getElementById('submitButton');
 if (button) {
@@ -294,7 +300,7 @@ button4.addEventListener('click', function(event) {
     let password = document.getElementById("password").value
     let confirmPassword = document.getElementById("confirmPassword").value
     try {
-        exists(orgName, "OrgName")
+      exists(orgName, "OrgName")
       exists(password, "Password")
       exists(confirmPassword, "Confirm Password")
       is_str(orgName, "OrgName")
@@ -346,5 +352,30 @@ button5.addEventListener('click', function(event) {
       error.removeAttribute('hidden');
     }
 
+});
+}
+
+let button6 = document.getElementById('session_submit_button');
+//this button is for org sign-in
+if (button6) {
+button6.addEventListener('click', function(event) {
+    event.preventDefault()
+    const delete_item = document.querySelector('h2');
+    if (delete_item) {
+        delete_item.remove()
+    }
+    let role = document.getElementById("session_role").value
+    try {
+      exists(role, "Role")
+      is_str(role, "Role")
+      is_session_role(role)
+        let form = document.getElementById('session-signin-form');
+        form.submit()
+      } catch(e) {
+        const h1 = document.querySelector('h1');
+        const new_item = document.createElement('h2')
+        new_item.textContent = e
+        h1.insertAdjacentElement('afterend', new_item);
+      }
 });
 }

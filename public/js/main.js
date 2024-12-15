@@ -52,7 +52,7 @@ let is_user_id = (str) => {
 //error check in these event listeners? even if it is just buttons pressed and no user inputs? account for html changes?
 document.addEventListener('click', function(event) {
     //for clicking on the name:role of an organization member
-    if (event.target.tagName.toLowerCase() === 'a' && event.target.id != 'home' && event.target.id != 'leave' && event.target.id != 'delete' && event.target.id != "back_to_signin") {
+    if (event.target.tagName.toLowerCase() === 'a' && event.target.id != 'home' && event.target.id != 'leave' && event.target.id != 'delete' && event.target.id != "back_to_signin" && event.target.id != "create_session" && event.target.id != "session_elem") {
         event.preventDefault()
         const delete_item = document.querySelector('h4');
         if (delete_item) {
@@ -220,12 +220,13 @@ if (button3) {
             data: data
         };
         $.ajax(requestConfig).then(function (responseMessage) {
-            let orgData = responseMessage
-            console.log(orgData)
+            let orgData = responseMessage.responseMessage
             let ul = document.getElementById("membersList")
             ul.innerHTML = ""
             for (let member of orgData.members) {
-                ul.innerHTML += `<li><a href='javascript:void(0)' data-name='${member.userName}' data-role="${member.role}">${member.userName}:${member.role}</a></li>`
+                if (member.role != 'owner') {
+                    ul.innerHTML += `<li><a href='javascript:void(0)' data-name='${member.userName}' data-role="${member.role}">${member.userName}:${member.role}</a></li>`
+                }
             }
         })
     } catch (e) {
@@ -238,7 +239,7 @@ if (button3) {
 }
 
 button4 = document.getElementById('switch_value')
-//when you confirm that you wanna kickout a user
+//when you choose the new role of a member
 if (button4) {
     button4.addEventListener('click', function(event) {
         event.preventDefault()
@@ -288,7 +289,7 @@ if (button4) {
         const data = {
             userName: name,
             type: "members",
-            role: updatedRole
+            role: updateRole
         };
         requestConfig = {
             method: 'PATCH',
@@ -298,11 +299,13 @@ if (button4) {
             data: data
         };
         $.ajax(requestConfig).then(function (responseMessage) {
-            let orgData = responseMessage
+            let orgData = responseMessage.responseMessage
             let ul = document.getElementById("membersList")
             ul.innerHTML = ""
             for (let member of orgData.members) {
+                if (member.role != 'owner') {
                 ul.innerHTML += `<li><a href='javascript:void(0)' data-name='${member.userName}' data-role="${member.role}">${member.userName}:${member.role}</a></li>`
+                }
             }
         })
     }
@@ -334,8 +337,6 @@ if (button5) {
         let role = form4.getAttribute('data-role');
         let updateRole = document.getElementById('update_owner_role').value
         try {
-            console.log(name)
-            console.log(role)
         exists(updateRole, "updated role")
         is_str(updateRole, "updated role")
         is_role(updateRole, "updated role")
@@ -378,11 +379,13 @@ if (button5) {
             data: data
         };
         $.ajax(requestConfig).then(function (responseMessage) {
-            let orgData = responseMessage
+            let orgData = responseMessage.responseMessage
             let ul = document.getElementById("membersList")
             ul.innerHTML = ""
             for (let member of orgData.members) {
+                if (member.role != 'owner') {
                 ul.innerHTML += `<li><a href='javascript:void(0)' data-name='${member.userName}' data-role="${member.role}">${member.userName}:${member.role}</a></li>`
+                }
             }
         })
         const data_owner = {
@@ -397,12 +400,15 @@ if (button5) {
             data: data_owner
         };
         $.ajax(requestConfig).then(function (responseMessage) {
-            let orgData = responseMessage
-            let ul = document.getElementById("membersList")
-            ul.innerHTML = ""
-            for (let member of orgData.members) {
-                ul.innerHTML += `<li><a href='javascript:void(0)' data-name='${member.userName}' data-role="${member.role}">${member.userName}:${member.role}</a></li>`
-            }
+            // let orgData = responseMessage.responseMessage
+            // let ul = document.getElementById("membersList")
+            // ul.innerHTML = ""
+            // for (let member of orgData.members) {
+            //     if (member.role != 'owner') {
+            //     ul.innerHTML += `<li><a href='javascript:void(0)' data-name='${member.userName}' data-role="${member.role}">${member.userName}:${member.role}</a></li>`
+            //     }
+            // }
+            form4.submit()
         })
     }
     }

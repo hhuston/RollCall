@@ -1,0 +1,20 @@
+<head>
+    <meta charset="utf-8">
+    <title>Create Session</title>
+    <link rel="stylesheet" href="/public/css/sitestyles.css">
+</head>
+
+<body id = "up">
+<a class="home" href="/organization/{{orgName}}">Back to Organization</a>
+<h1>Create Session</h1>
+<main>
+    <form id="create-sesh-form" name="create-sesh-form" method="POST" action="/session/createsession/{{orgName}}">
+        <label for="seshName">Session Name: </label>
+        <input type="text" id="seshName" name="seshName">
+        <label for="firstProposal">First Proposal: </label>
+        <input type="text" id="firstProposal" name="firstProposal">
+        <button id="submitButtonSesh" name="submitButtonSesh" type="submit">Submit</button>
+    </form>
+    <script src='/public/js/form_validate.js'></script>
+</main>
+</body>
