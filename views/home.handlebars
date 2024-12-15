@@ -1,0 +1,33 @@
+<head>
+    <meta charset="utf-8">
+    <title>Organizations</title>
+    <link rel="stylesheet" href="/public/css/sitestyles.css">
+</head>
+<body>
+    <header>
+        <h1>Organizations</h1>
+    </header>
+    <a class="create_org" href="/createorganization">Create a new organization</a>
+    {{#if orgList}}
+    <div id="user_orgs">
+        <h2>Your Organizations</h2>
+        <ul id="user_orgs">
+            {{#each orgList}}
+            <li>
+                <a href="/organization/{{this.orgName}}">{{this.orgName}}</a>
+            </li>
+            {{/each}}
+        </ul>
+    </div>
+    {{/if}}
+    <div id="discover_orgs">
+    <form id="searchOrgForm" method="POST" action="/organization">
+        <label for="org_search_term">Search for an Organization</label>
+        <input id="org_search_term" name="org_search_term" type="text">
+        <button id="orgSubmit" name="orgSubmit" type="submit">Enter</button>
+    </form>
+    <h2 id="searchError" hidden></h2>
+    </div>
+    <a id="signoutLink" href="/signoutuser">Sign out</a>
+    <script src='/public/js/form_validate.js'></script>
+    </body>
