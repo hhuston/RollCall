@@ -16,10 +16,11 @@
             <p id="currentVoteP"></p>
             {{#if isVoter}}
                 {{!-- Add button functionality with JS --}}
-                <div> 
+                <div id="votingOptions"> 
                     <button id="yayVote">Yay</button>
                     <button id="nayVote">Nay</button>
                     <button id="absVote">Abstain</button>
+                    <p id="voteCast" hidden></p>
                 </div>
             {{/if}}
         </div>
