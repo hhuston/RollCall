@@ -41,9 +41,9 @@
         <button id="kickout_yes" value="kickout">Kick Out</button>
         <button id ="kickout_no">Nevermind</button>
     </form>
-    <form id="switch_owner_form" hidden>
+    <form id="switch_owner_form" method="GET" action="/organization/{{orgData.orgName}}" hidden>
         <label for="update_owner_role">Now, Select a role for yourself:</label>
-        <select id="update_role_owner_role">
+        <select id="update_owner_role">
             <option value="member">Member</option>
             <option value="moderator">Moderator</option>
         </select>

@@ -345,6 +345,7 @@ router
         validation.is_user_id(userName)
         validation.is_role(role)
         resp = await organizationData.updateRoleOrg(userName, role, orgName)
+        // return res.redirect(`/organization/${orgName}`)
       }
       if (!resp) {
         return res.status(500).render("error.handlebars", { error_class: "server_error", message: "Internal Server Error", error_route: req.session.currentPage});
