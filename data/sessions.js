@@ -8,7 +8,7 @@ let createSession = async (proposal, proposalOwner, orgName, seshName) => {
     //constraints: the usual
     let session = {};
 
-    orgName = validation.checkString(orgName, "Org Name");
+    orgName = validation.checkOrgName(orgName);
     proposal = validation.checkString(proposal, "Proposal");
     seshName = validation.checkString(seshName, "Session Name");
     proposalOwner = validation.checkUserName(proposalOwner);

@@ -14,7 +14,7 @@ router
             return res.status(403).render("error.handlebars", { error_class: "input_error", message: "You must sign in to access this page!", error_route: req.session.currentPage });
         }
         try {
-            let orgName = validation.checkString(req.params.orgName, "Org Name");
+            let orgName = validation.checkOrgName(req.params.orgName);
             let Org = await organizationData.getOrganizationByName(orgName);
             if (!Org.members.some((mem) => mem.userName === req.session.user.userName)) {
                 return res.status(403).render("error.handlebars", { error_class: "input_error", message: "You are not a member of this organization", error_route: req.session.currentPage });
@@ -33,7 +33,7 @@ router
             return res.status(403).render("error.handlebars", { error_class: "input_error", message: "You must sign in to access this page!", error_route: req.session.currentPage });
         }
         try {
-            let orgName = validation.checkString(req.params.orgName, "Org Name");
+            let orgName = validation.checkOrgName(req.params.orgName);
             let proposal = validation.checkString(req.body.firstProposal, "Original Proposal");
             let seshName = validation.checkString(req.body.seshName, "Session Name");
             let resp = sessionData.createSession(proposal, req.session.user.userName, orgName, seshName);
@@ -137,5 +137,46 @@ router
         }
         return res.render("session.handlebars");
     });
+
+// AJAX call routes to handle actions
+// TODO: verify validation and error checking (include exists for all?)
+
+// THIS ROUTE GOT FUCKED UP IN THE MERGE, MAY HAVE TO REIMPLEMENT
+// router
+//     .route('sendvote/')
+//     .patch(async (req, res) => {
+//         let actionId = xss(req.body.actionId);
+//         let vote = xss(req.body.vote);
+//         let voterId = req.session.user.userName;
+
+// THIS ROUTE GOT FUCKED UP WITH THE ABOVE IN THE MERGE
+// MAY HAVE TO FIX BUGS HERE
+
+// router
+// .route('createAction/')
+// .post(async (req, res) => {
+//     let type = xss(req.body.type);
+//     let value = xss(req.body.value);
+//     let actionOwner = req.session.user.userName;
+//     try {
+//         validation.exists(type, "type");
+//         validation.is_str(type, "type");
+//         validation.exists(value, "value");
+//         validation.is_str(value, "value");
+//         validation.exists(actionOwner, "actionOwner");
+//         validation.is_str(actionOwner, "actionOwner");
+//         validation.is_user_id(actionOwner, "actionOwner");
+//         let resp = actionData.createAction(type, value, actionOwner);
+//         return res.json(resp);
+//     } catch (e) {
+//         res.status(400).json({error: e});
+//     }
+// });
+
+router.route('endSession/')
+.patch(async (req, res) => {
+    let sessionId = xss(req.body.sessionId);
+    // TODO: implement
+});
 
 export default router;
