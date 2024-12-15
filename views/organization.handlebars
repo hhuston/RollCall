@@ -51,6 +51,12 @@
     </form>
 </div>
 {{/if}}
+{{#if moderator}}
+<div>
+    <h3 id="sessions_title">Sessions</h3>
+    <a class="create_sesh" id="create_session" href="/session/createsession/{{orgData.orgName}}">Create a new session</a>
+</div>
+{{/if}}
 <script src="https://code.jquery.com/jquery-2.2.4.min.js"
         integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
 <script src='/public/js/main.js'></script>

@@ -197,7 +197,7 @@ const loginOrg = async (
 
     return [return_info_user, return_info_org]
 }
-
+//TODO propogate through sessions
 const leaveOrg = async (
     userName,
     orgName
@@ -269,7 +269,7 @@ const leaveOrg = async (
     return [return_info_user, return_info_org]
 }
 
-
+//TODO propogate through sessions
 const deleteOrganization = async (
     orgName
 ) => {
