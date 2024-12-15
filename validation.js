@@ -99,7 +99,7 @@ let checkUserName = (str) => {
     if (str.includes(" ")) {
         throw `Username must not contain a space`;
     }
-    return str;
+    return str.toLowerCase();
 };
 
 let checkOrgRole = (role) => {
@@ -178,11 +178,11 @@ let validation = {
 }; */
 
 let is_action_type = (type) => {
-  type = checkString(type)
-  if (type != 'motion' && type != 'amendment') {
-    throw `Type is not 'motion' or 'amendment'`
-  }
-}
+    type = checkString(type);
+    if (type != "motion" && type != "amendment") {
+        throw `Type is not 'motion' or 'amendment'`;
+    }
+};
 
 let validation = {
     isNumber: isNumber,
