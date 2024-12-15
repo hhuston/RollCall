@@ -217,7 +217,7 @@ if (button3) {
             contenttype: 'application/json',
             datatype: "json",
             url: `/leaveorganization/${orgName}`,
-            body: JSON.stringify(data)
+            data: data
         };
         $.ajax(requestConfig).then(function (responseMessage) {
             let orgData = responseMessage
@@ -294,7 +294,7 @@ if (button4) {
             contenttype: 'application/json',
             datatype: "json",
             url: `/organization/${orgName}`,
-            body: JSON.stringify(data)
+            data: data
         };
         $.ajax(requestConfig).then(function (responseMessage) {
             let orgData = responseMessage
@@ -374,7 +374,7 @@ if (button5) {
             contenttype: 'application/json',
             datatype: "json",
             url: `/organization/${orgName}`,
-            body: JSON.stringify(data)
+            data: data
         };
         $.ajax(requestConfig).then(function (responseMessage) {
             let orgData = responseMessage
@@ -393,7 +393,7 @@ if (button5) {
             contenttype: 'application/json',
             datatype: "json",
             url: `/organization/${orgName}`,
-            body: JSON.stringify(data_owner)
+            data: data_owner
         };
         $.ajax(requestConfig).then(function (responseMessage) {
             let orgData = responseMessage
