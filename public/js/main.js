@@ -54,7 +54,7 @@ document.addEventListener('click', function(event) {
     //for clicking on the name:role of an organization member
     if (event.target.tagName.toLowerCase() === 'a' && event.target.id != 'home' && event.target.id != 'leave' && event.target.id != 'delete' && event.target.id != "back_to_signin") {
         event.preventDefault()
-        const delete_item = document.querySelector('h2');
+        const delete_item = document.querySelector('h4');
         if (delete_item) {
             delete_item.remove()
         }
@@ -100,7 +100,7 @@ button = document.getElementById('switch_role')
 if (button) {
     button.addEventListener('click', function(event) {
         event.preventDefault()
-        const delete_item = document.querySelector('h2');
+        const delete_item = document.querySelector('h4');
         if (delete_item) {
             delete_item.remove()
         }
@@ -141,7 +141,7 @@ button2 = document.getElementById('kick_out')
 if (button2) {
     button2.addEventListener('click', function(event) {
         event.preventDefault()
-        const delete_item = document.querySelector('h2');
+        const delete_item = document.querySelector('h4');
         if (delete_item) {
             delete_item.remove()
         }
@@ -182,7 +182,7 @@ button3 = document.getElementById('kickout_yes')
 if (button3) {
     button3.addEventListener('click', function(event) {
         event.preventDefault()
-        const delete_item = document.querySelector('h2');
+        const delete_item = document.querySelector('h4');
         if (delete_item) {
             delete_item.remove()
         }
@@ -217,10 +217,11 @@ if (button3) {
             contenttype: 'application/json',
             datatype: "json",
             url: `/leaveorganization/${orgName}`,
-            body: JSON.stringify(data)
+            data: data
         };
         $.ajax(requestConfig).then(function (responseMessage) {
             let orgData = responseMessage
+            console.log(orgData)
             let ul = document.getElementById("membersList")
             ul.innerHTML = ""
             for (let member of orgData.members) {
@@ -241,7 +242,7 @@ button4 = document.getElementById('switch_value')
 if (button4) {
     button4.addEventListener('click', function(event) {
         event.preventDefault()
-        const delete_item = document.querySelector('h2');
+        const delete_item = document.querySelector('h4');
         if (delete_item) {
             delete_item.remove()
         }
@@ -294,7 +295,7 @@ if (button4) {
             contenttype: 'application/json',
             datatype: "json",
             url: `/organization/${orgName}`,
-            body: JSON.stringify(data)
+            data: data
         };
         $.ajax(requestConfig).then(function (responseMessage) {
             let orgData = responseMessage
@@ -318,7 +319,7 @@ button5 = document.getElementById('switch_owner_value')
 if (button5) {
     button5.addEventListener('click', function(event) {
         event.preventDefault()
-        const delete_item = document.querySelector('h2');
+        const delete_item = document.querySelector('h4');
         if (delete_item) {
             delete_item.remove()
         }
@@ -374,7 +375,7 @@ if (button5) {
             contenttype: 'application/json',
             datatype: "json",
             url: `/organization/${orgName}`,
-            body: JSON.stringify(data)
+            data: data
         };
         $.ajax(requestConfig).then(function (responseMessage) {
             let orgData = responseMessage
@@ -393,7 +394,7 @@ if (button5) {
             contenttype: 'application/json',
             datatype: "json",
             url: `/organization/${orgName}`,
-            body: JSON.stringify(data_owner)
+            data: data_owner
         };
         $.ajax(requestConfig).then(function (responseMessage) {
             let orgData = responseMessage

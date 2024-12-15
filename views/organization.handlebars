@@ -6,7 +6,9 @@
 
 <body>
 <a class="home" id="home" href="/home">Back Home</a>
+{{#unless owner}}
 <a class="leaveOrg" id="leave" href="/leaveorganization/{{orgData.orgName}}">Leave This Org</a>
+{{/unless}}
 <h1 id="orgTitle">{{orgData.orgName}}</h1>
 <h2>You are a {{role}} in this organization!</h2>
 {{#if owner}}

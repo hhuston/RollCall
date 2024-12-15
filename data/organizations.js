@@ -220,15 +220,14 @@ const leaveOrg = async (
     if (!Org) {
         throw 'No organization matches the provided orgName'
     }
-
-    let role = members_list.filter(item => item.userName == User.userName)[0].role
-    if (role == "owner") {
-        throw "you can't leave if you are the owner! Must make someone else the Owner first!"
-    }
-    let members_list = Org.members
     const User = await UserCollection.findOne({userName: userName})
     if (!User) {
         throw 'No user matches the provided userName'
+    }
+    let members_list = Org.members
+    let role = members_list.filter(item => item.userName == User.userName)[0].role
+    if (role == "owner") {
+        throw "you can't leave if you are the owner! Must make someone else the Owner first!"
     }
     members_list = members_list.filter(item => item.userName !== User.userName);
     let newUserOrgs = User.memberOrganizations
@@ -275,7 +274,7 @@ const deleteOrganization = async (
     orgName
 ) => {
     //Args: orgName
-    //successful output: 'orgName has been successfully deleted!'
+    //successful output: the toString() of the deleted org _id
     //constraints: orgName must exist, and be a string
     validation.exists(orgName, "orgName")
     validation.is_str(orgName, "orgName")
@@ -299,7 +298,7 @@ const deleteOrganization = async (
             {returnDocument: 'after'}
         );
     }
-    return `${deletedOrg.orgName} has been successfully deleted!`;
+    return deletedOrg._id.toString()
 }
 
 const updateOrganization = async (orgID, updateObject) => {
@@ -406,6 +405,9 @@ let updateRoleOrg = async (
     role,
     orgName
 ) => {
+    //input: userName, role, orgName with the usal contraints
+    //output: the _id, orgName, members, and sessions of the updated Org
+    //contraints: usual
     validation.exists(userName, "userName")
     validation.exists(role, "role")
     validation.is_str(userName, "userName")

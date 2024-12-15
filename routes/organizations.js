@@ -32,6 +32,7 @@ router
       }
       else {
         const result = await organizationData.deleteOrganization(orgName);
+        req.session.user.memberOrganizations = req.session.user.memberOrganizations.filter(mem => mem !== result)
         return res.render("deleteorganization.handlebars", {orgName: orgName})
       }
   }
@@ -229,12 +230,10 @@ router
         return res.status(403).render("error.handlebars", { error_class: "input_error", message: "You must sign in to access this page!", error_route: req.session.currentPage});
       }
       let userName = req.body.userName
-      console.log(req)
       validation.exists(userName, "userName")
       validation.is_str(userName, "userName")
       validation.is_user_id(userName)
       let resp = await organizationData.leaveOrg(userName, orgName)
-      console.log(resp)
       if (!resp) {
         return res.status(500).render("error.handlebars", { error_class: "server_error", message: "Internal Server Error", error_route: req.session.currentPage});
       }
