@@ -105,6 +105,11 @@ const joinSession = async (
         throw 'You are already in the session'
     }
     Sesh.members.push({userName: userName.trim().toLowerCase(), role: role.trim().toLowerCase()})
+    const deletionInfo = await SeshCollection.findOneAndUpdate(
+        {_id: object_id},
+        {$set: Sesh},
+        {returnDocument: 'after'}
+    )
     Sesh._id = Sesh._id.toString()
     return Sesh
 }
@@ -123,5 +128,5 @@ let deleteSession = async (id) => {
     return {...deletionInfo, deleted: true}
 }
 
-export default {createSession, deleteSession, getSession}
+export default {createSession, deleteSession, getSession, joinSession}
 

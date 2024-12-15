@@ -8,7 +8,7 @@
 <h1>Join Session</h1>
 <a class="home" href="/organization/{{sessionInfo.orgName}}">Back To Organization</a>
 <main>
-    <form id="session-signin-form" method="POST" action="/joinSession/{{sessionInfo._id}}">
+    <form id="session-signin-form" method="POST" action="/session/joinsession/{{sessionInfo._id}}">
         <label for="session_role">Role</label>
         <select name="session_role" id="session_role">
             <option value="voter">Voter</option>

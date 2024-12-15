@@ -50,9 +50,9 @@ router.route("/createsession/:orgName") // /session/orgId
     }
 })
 
-router.route("/joinsession/:sessionId") // /session/orgId
+router.route("/joinsession/:sessionId")
 .get(async (req, res) => {
-    let orgName = req.params.sessionId
+    let sessionId = req.params.sessionId
     if (!req.session.currentPage) {
         req.session.currentPage = "/";
     }
@@ -60,8 +60,16 @@ router.route("/joinsession/:sessionId") // /session/orgId
         return res.status(403).render("error.handlebars", { error_class: "input_error", message: "You must sign in to access this page!", error_route: req.session.currentPage});
     }
     try {
-        let sessionId = validation.checkId(sessionId);
-        let Sesh = await sessionData.getOrganizationByName(sessionId)
+        sessionId = validation.checkId(sessionId);
+        let Sesh = await sessionData.getSession(sessionId)
+        let Org = await organizationData.getOrganizationByName(Sesh.orgName)
+        if (!Org.members.some(mem => mem.userName === req.session.user.userName)) {
+            return res.status(400).render("error.handlebars", { error_class: `bad_param`, message: `You are not a member of ${Sesh.orgName}`, error_route: req.session.currentPage});
+        }
+        if (Sesh.members.some(mem => mem.userName === req.session.user.userName)) {
+            return res.redirect(`/session/${sessionId}`);
+        }
+
         req.session.currentPage = `/session/joinsession/${sessionId}`
         return res.render("joinsession.handlebars", {sessionInfo: Sesh})
     } catch (e) {
@@ -83,7 +91,7 @@ router.route("/joinsession/:sessionId") // /session/orgId
         validation.is_session_role(role, "role");
         validation.is_obj_id(sessionId, "seshID")
         let resp = sessionData.joinSession(sessionId, role, req.session.user.userName)
-        return res.redirect(`/session/${resp._id}`)
+        return res.redirect(`/session/${sessionId}`)
     } catch (e) {
         res.status(400).render("error.handlebars", { error_class: `bad_param`, message: e, error_route: req.session.currentPage});
     }
