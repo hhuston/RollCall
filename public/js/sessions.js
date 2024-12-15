@@ -9,12 +9,13 @@ const endSession = document.getElementById('endSession');
 
 if (yayVote) {
     yayVote.addEventListener('click', async (event) => {
-        const votingOptions = document.getElementById('votingOptions');
+        const votingPrompt = document.getElementById('votingPrompt')
         const voteCast = document.getElementById('voteCast');
         const data = await fetch('Action vote route', {
             method: 'PATCH',
             data: JSON.stringify({
-                vote: 'Yay'
+                vote: 'Yay',
+                actionId: votingPrompt.dataset.actionId
             })
         });
         
@@ -31,12 +32,13 @@ if (yayVote) {
 
 if (nayVote) {
     nayVote.addEventListener('click', async (event) => {
-        const votingOptions = document.getElementById('votingOptions');
+        const votingPrompt = document.getElementById('votingPrompt')
         const voteCast = document.getElementById('voteCast');
         const data = await fetch('Action vote route', {
             method: 'PATCH',
             data: JSON.stringify({
-                vote: 'Nay'
+                vote: 'Nay',
+                actionId: votingPrompt.dataset.actionId
             })
         });
         
@@ -53,12 +55,13 @@ if (nayVote) {
 
 if (absVote) {
     absVote.addEventListener('click', async (event) => {
-        const votingOptions = document.getElementById('votingOptions');
+        const votingPrompt = document.getElementById('votingPrompt')
         const voteCast = document.getElementById('voteCast');
         const data = await fetch('Action vote route', {
             method: 'PATCH',
             data: JSON.stringify({
-                vote: 'Abstain'
+                vote: 'Abstain',
+                actionId: votingPrompt.dataset.actionId
             })
         });
         
@@ -75,7 +78,7 @@ if (absVote) {
 
 if (createMotion) {
     createMotion.addEventListener('click', async (event) => {
-        
+
     });
 }
 
