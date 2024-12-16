@@ -280,10 +280,6 @@
             let form4 = document.getElementById("switch_owner_form");
             let form5 = document.getElementById("delete_org_form");
             form5.hidden = true;
-            let title = document.getElementById("members_title");
-            let name = form4.getAttribute("data-name");
-            let role = form4.getAttribute("data-role");
-            let updateRole = document.getElementById("update_owner_role").value;
             try {
                 let title = checkString(document.getElementById("members_title"), "Title");
                 let name = checkUserName(form4.getAttribute("data-name"));
