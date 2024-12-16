@@ -37,9 +37,11 @@ let createSession = async (proposal, proposalOwner, orgName, seshName) => {
     }
 
     const sessionCollection = await sessions();
-    const repeatSesh = await sessionCollection.findOne({ seshName: seshName });
-    if (repeatSesh && repeatSesh.Date == session.Date) {
-        throw "the provided seshName already exists on this date";
+    const repeatSesh = await sessionCollection.find({ seshName: seshName }).toArray();
+    for (let Sezh of repeatSesh) {
+        if (Sezh.Date == session.Date && Sezh.orgName == session.orgName) {
+            throw "the provided seshName already exists on this date in this org";
+        }
     }
     const newInsertInformation = await sessionCollection.insertOne(session);
     sessions_list.push(newInsertInformation.insertedId.toString());
