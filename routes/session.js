@@ -205,19 +205,18 @@ router
 //     }
 // });
 
-router.route('/endsession/:sessionId')
-.patch(async (req, res) => {
+router.route("/endsession/:sessionId").patch(async (req, res) => {
     let sessionId = req.params.sessionId;
     try {
         sessionId = validation.checkId(sessionId);
     } catch (e) {
-        return res.status(400).render("error", { error_class: `bad_param`, message: e.message, error_route: req.session.currentPage });
+        return res.status(400).render("error", { title: "Error Page", error_class: `bad_param`, message: e.message, error_route: req.session.currentPage });
     }
 
     try {
         await sessionData.endSession(sessionId.toString());
     } catch (e) {
-        return res.status(500).render("error", { error_class: `server_error`, message: e.message, error_route: req.session.currentPage });
+        return res.status(500).render("error", { title: "Error Page", error_class: `server_error`, message: e.message, error_route: req.session.currentPage });
     }
 
     return res.redirect("/home");

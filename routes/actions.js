@@ -17,7 +17,7 @@ router.route("/:actionId").get(async (req, res) => {
 
         let user = await userData.getUser(action.actionOwner);
 
-        req.session.currentPage = `/actions/${actionId}`;
+        req.session.currentPage = `/action/${actionId}`;
         return res.render("actiondetails.handlebars", { action: action, firstName: user.firstName, lastName: user.lastName });
     } catch (e) {
         res.status(400).render("error.handlebars", { error_class: `bad_param`, message: e, error_route: req.session.currentPage });
