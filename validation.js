@@ -22,6 +22,12 @@ let isArr = (arr, arg) => {
     return trimArr(arr, arg);
 };
 
+let isIdArr = (arr) => {
+    return arr.map((elem) => {
+        return checkId(elem);
+    });
+};
+
 //Not used anywhere
 let trimObj = (obj) => {
     let new_object = {};
@@ -177,7 +183,7 @@ let validation = {
     is_session_role: is_session_role,
 }; */
 
-let is_action_type = (type) => {
+let checkActionType = (type) => {
     type = checkString(type);
     if (type != "motion" && type != "amendment") {
         throw `Type is not 'motion' or 'amendment'`;
@@ -187,6 +193,7 @@ let is_action_type = (type) => {
 let validation = {
     isNumber: isNumber,
     isArr: isArr,
+    isIdArr: isIdArr,
     trimObj: trimObj,
     strFormat: strFormat,
     checkEmail: checkEmail,
@@ -201,5 +208,6 @@ let validation = {
     checkOrgName: checkOrgName,
     checkDate: checkDate,
     isObj: isObj,
+    checkActionType: checkActionType,
 };
 export default validation;

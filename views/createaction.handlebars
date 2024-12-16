@@ -1,0 +1,33 @@
+<head>
+  <meta charset="utf-8" />
+  <title>Create a {{actionType}}</title>
+  <link rel="stylesheet" href="/public/css/sitestyles.css" />
+</head>
+
+<body id="up">
+  <a class="home" href="/session/{{sessionId}}">Back to Session</a>
+  <h1>Create a {{actionType}}</h1>
+  <main>
+    <form
+      id="create-action-form"
+      name="create-action-form"
+      method="POST"
+      action="/action/create/{{sessionId}}"
+    >
+      <label for="actionText">Enter {{actionType}} here: </label>
+      <input type="text" id="actionText" name="actionText" />
+      <input
+        type="hidden"
+        id="actionType"
+        name="actionType"
+        value="{{actionType}}"
+      />
+      <button
+        id="submitButtonAction"
+        name="submitButtonAction"
+        type="submit"
+      >Submit</button>
+    </form>
+    <script src="/public/js/form_validate.js"></script>
+  </main>
+</body>

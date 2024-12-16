@@ -140,8 +140,8 @@ if (button3) {
             delete_item.remove();
         }
         try {
-            let password = checkPassword(document.getElementById("password").value, "Password");
-            let role = checkOrgRole(document.getElementById("role").value);
+            password = checkPassword(document.getElementById("password").value, "Password");
+            role = checkOrgRole(document.getElementById("role").value);
             let form = document.getElementById("org-signin-form");
             form.submit();
         } catch (e) {
@@ -226,6 +226,28 @@ if (button6) {
         try {
             let role = checkSessionRole(document.getElementById("session_role").value);
             let form = document.getElementById("session-signin-form");
+            form.submit();
+        } catch (e) {
+            const h1 = document.querySelector("h1");
+            const new_item = document.createElement("h2");
+            new_item.textContent = e;
+            h1.insertAdjacentElement("afterend", new_item);
+        }
+    });
+}
+
+let button7 = document.getElementById("submitButtonAction");
+// this button is for creating an action
+if (button7) {
+    button7.addEventListener("click", function (event) {
+        event.preventDefault();
+        const delete_item = document.querySelector("h2");
+        if (delete_item) {
+            delete_item.remove();
+        }
+        try {
+            let actionText = checkString(document.getElementById("actionText").value, "Action Text");
+            let form = document.getElementById("create-action-form");
             form.submit();
         } catch (e) {
             const h1 = document.querySelector("h1");

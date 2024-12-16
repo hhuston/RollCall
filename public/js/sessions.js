@@ -1,5 +1,3 @@
-import { json } from "express";
-// Cant do that...
 
 const yayVote = document.getElementById("yayVote");
 const nayVote = document.getElementById("nayVote");
@@ -85,18 +83,6 @@ if (absVote) {
 
         voteCast.innerHTML = "Successfully cast abstain vote";
         voteCast.hidden = false;
-    });
-}
-
-if (createMotion) {
-    createMotion.addEventListener("click", async (event) => {
-        // TODO: Implement (frank)
-    });
-}
-
-if (createAmendment) {
-    createAmendment.addEventListener("click", async (event) => {
-        // TODO: Implement (frank)
     });
 }
 

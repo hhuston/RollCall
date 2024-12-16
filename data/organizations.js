@@ -1,8 +1,8 @@
 import { ObjectId } from "mongodb";
-import { users, organizations } from "./../config/mongoCollections.js";
+import { users, organizations, sessions } from "./../config/mongoCollections.js";
 import bcrypt from "bcrypt";
 import validation from "../validation.js";
-const saltRounds = 16;
+const saltRounds = 10;
 
 const createOrganization = async (
     //enforce a minimum password length
@@ -174,6 +174,15 @@ const leaveOrg = async (userName, orgName) => {
         throw "No user matches the provided userName";
     }
     let members_list = Org.members;
+    let sessions_list = Org.sessions;
+    for (let sesh of sessions_list) {
+        let Sesh = await SeshCollection.findOne({ _id: new ObjectId(sesh) });
+        let new_members = Sesh.members.filter((item) => item.userName !== User.userName)
+        let new_sesh = {
+            members: new_members
+        }
+        let updatedInfoSesh = await SeshCollection.findOneAndUpdate({ _id: new ObjectId(sesh) }, { $set: new_sesh }, { returnDocument: "after" });
+    }
     let role = members_list.filter((item) => item.userName == User.userName)[0].role;
     if (role == "owner") {
         throw "you can't leave if you are the owner! Must make someone else the Owner first!";
@@ -218,6 +227,7 @@ const deleteOrganization = async (orgName) => {
     orgName = validation.checkOrgName(orgName);
     const UserCollection = await users();
     const OrgCollection = await organizations();
+    const SeshCollection = await sessions();
     const deletedOrg = await OrgCollection.findOneAndDelete({ orgName: new RegExp(orgName, "i") });
     if (!deletedOrg) {
         throw "No organization matches the provided id";
@@ -231,6 +241,10 @@ const deleteOrganization = async (orgName) => {
             memberOrganizations: newUserOrgs,
         };
         const updatedInfo = await UserCollection.findOneAndUpdate({ userName: member.userName }, { $set: new_user_obj }, { returnDocument: "after" });
+    }
+    let sessions_list = Org.sessions;
+    for (let sesh of sessions_list) {
+        let Sesh = await SeshCollection.findOneAndDelete({ _id: new ObjectId(sesh) });
     }
     return deletedOrg._id.toString();
 };
@@ -319,10 +333,9 @@ let updateRoleOrg = async (userName, role, orgName) => {
     //input: userName, role, orgName with the usal contraints
     //output: the _id, orgName, members, and sessions of the updated Org
     //contraints: usual
-
     userName = validation.checkUserName(userName, "Username");
     role = validation.checkOrgRole(role);
-    checkOrgName = validation.checkOrgName(orgName);
+    validation.checkOrgName(orgName);
 
     const UserCollection = await users();
     const OrgCollection = await organizations();
@@ -337,7 +350,7 @@ let updateRoleOrg = async (userName, role, orgName) => {
         throw "No user matches the provided userName";
     }
     members_list.forEach((item) => {
-        if (item.userName == userName) {
+        if (item.userName == User.userName) {
             item.role = role;
         }
     });
