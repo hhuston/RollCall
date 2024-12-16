@@ -39,7 +39,7 @@ let createSession = async (proposal, proposalOwner, orgName, seshName) => {
     const sessionCollection = await sessions();
     const repeatSesh = await sessionCollection.find({ seshName: seshName }).toArray();
     for (let Sezh of repeatSesh) {
-        if (Sezh.Date == session.Date && Sezh.orgName == session.orgName) {
+        if (Sezh.sessionDate == session.sessionDate && Sezh.orgName == session.orgName) {
             throw "the provided seshName already exists on this date in this org";
         }
     }

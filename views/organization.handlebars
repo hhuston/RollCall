@@ -61,7 +61,7 @@
         <h3 id="sessions_title">Sessions</h3>
         <ul id="sessionsList">
             {{#each sessions_list}}
-            <li><a href='/session/joinsession/{{this.id}}' id="session_elem">{{this.name}}</a></li>
+            <li><a href='/session/joinsession/{{this.id}}' id="session_elem">{{this.date}} {{this.name}}</a></li>
             {{/each}}
         </ul>
     </div>
