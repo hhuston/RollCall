@@ -29,6 +29,7 @@ for (let i in testUsers) {
     testUsers[i] = await userData.createUser(user.userName, user.password, user.firstName, user.lastname, user.email);
 }
 
+// Harrison is created as organization owner & moderator
 console.log("Inserting test organizations...");
 const testOrgs = [
     {_id: '', orgName: 'First Presbyterian Church of Ramsey', password: 'Password@1', userName: testUsers[4].userName},
@@ -85,4 +86,5 @@ for (let i in testActions) {
     testSessions[0] = await sessionData.getSession(action.sessionId);
 }
 
+await closeConnection();
 console.log("Done");
