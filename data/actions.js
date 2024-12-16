@@ -15,6 +15,8 @@ let createAction = async (type, value, actionOwner) => {
     const actionCollection = await actions();
     const newInsertInformation = await actionCollection.insertOne(action);
 
+    if (!newInsertInformation) throw "Could not add action";
+    
     return newInsertInformation.insertedId.toString();
 };
 
