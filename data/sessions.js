@@ -97,6 +97,7 @@ let deleteSession = async (id) => {
         _id: id,
     });
 
+
     if (!deletionInfo) throw "Could not delete session with that id";
 
     return { ...deletionInfo, deleted: true };
@@ -125,6 +126,10 @@ let leaveSession = async (sessionId, userName) => {
     let members = Info.members
     if (!members.some((mem) => mem.userName === userName)) {
         throw "You can't sign out of a session you aren't in";
+    }
+    let member_role = members.filter((mem) => mem.userName == userName)[0].role
+    if (member_role == 'moderator') {
+        throw "You can't leave! You are the moderator for the session."
     }
     let final_members = members.filter((mem) => mem.userName !== userName)
     let final_obj = {
