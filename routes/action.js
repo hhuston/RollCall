@@ -84,8 +84,19 @@ router
 router
     .route("/delete/:actionId")
     .patch(async (req, res) => {
-        // TODO: implemment 
-        // then update data/actions.js: deleteAction to remove action from session queue
+        let actionId = req.params.actionId;
+        try {
+            actionId = validation.checkId(actionId).toString();
+        } catch (e) {
+            return res.status(400).render("error.handlebars", { title: "Error Page", error_class: `bad_param`, message: e.message, error_route: req.session.currentPage });
+        }
+
+        try {
+            let response = await actionData.deleteAction(actionId);
+            return res.json(response);
+        } catch (e) {
+            return res.status(500).render("error.handlebars", { title: "Error Page", error_class: `bad_param`, message: e.message, error_route: req.session.currentPage });
+        }
     });
 
 router

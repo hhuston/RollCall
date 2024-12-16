@@ -2,9 +2,6 @@
 const yayVote = document.getElementById("yayVote");
 const nayVote = document.getElementById("nayVote");
 const absVote = document.getElementById("absVote");
-const createMotion = document.getElementById("createMotion");
-const createAmendment = document.getElementById("createAmendment");
-const endSession = document.getElementById("endSession");
 
 if (yayVote) {
     yayVote.addEventListener('click', async (event) => {
@@ -34,7 +31,7 @@ if (yayVote) {
 
 if (nayVote) {
     nayVote.addEventListener('click', async (event) => {
-        const votingPrompt = document.getElementById('votingPrompt')
+        const votingPrompt = document.getElementById('votingPrompt');
         const voteCast = document.getElementById('voteCast');
         const data = await fetch('/session/sendvote', {
             method: 'PATCH',
@@ -85,3 +82,66 @@ if (absVote) {
         voteCast.hidden = false;
     });
 }
+
+const refreshActionLogs = async () => {
+    let response = await fetch(`/session/${sessionId}/api/actions`);
+    let data = await response.json();
+
+    const actionQueue = document.getElementById('actionQueue');
+    actionQueue.innerHTML = "";
+    for (let action of data.queue) {
+        const li = document.createElement('li');
+        const callVote = document.createElement('form');
+        callVote.innerHTML = 
+            `<form method="PATCH" action="/action/callVote/${action._id}">
+                <input type="submit" value="Call Vote">
+            </form>`
+        callVote.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            await fetch(`/action/callVote/${action._id}`);
+            refreshActionLogs();
+        });
+
+        const deleteAction = document.createElement('form');
+        deleteAction.innerHTML = 
+            `<form method="PATCH" action="/action/delete/${action._id}">
+                <input type="submit" value="Delete ${action.type}">
+            </form>`
+        deleteAction.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            await fetch(`/action/delete/${action._id}`);
+            refreshActionLogs();
+        });
+        
+        li.innerHTML = 
+            `<h5>${action.type}</h5>
+            <p>${action.value}</p>
+            <h5>By</h5>
+            <p>${action.actionOwner}</p>`
+        if (isModerator) {
+            li.appendChild(callVote);
+            li.appendChild(deleteAction);
+        }
+        actionQueue.appendChild(li);
+    }
+
+    const votingPrompt = document.getElementById("votingPrompt");
+    votingPrompt.innerHTML = `${data.oncall[0].value}`;
+
+    const sessionLog = document.getElementById("sessionLog");
+    for (let action of data.logged) {
+        const li = document.createElement('li');
+        li.innerHTML = 
+        `<div class="action">
+            <h5>${action.type}</h5>
+            <p>${action.value}</p>
+            <h5>By</h5>
+            <p>${action.actionOwner}</p>
+        </div>`
+        sessionLog.appendChild(li);
+    }
+}
+
+refreshActionLogs();
+const MINUTE = 60000;
+setInterval(refreshActionLogs, MINUTE);

@@ -11,7 +11,7 @@
         <h3>On Call</h3>
         <div class="greyPanel">
             {{!-- Change this with client side JS and AJAX --}}
-            <p id="currentVoteP"></p>
+            <p id="votingPrompt"></p>
             {{#if isVoter}}
             {{!-- Add button functionality with JS --}}
             <div>
@@ -19,14 +19,15 @@
                 <button id="nayVote">Nay</button>
                 <button id="absVote">Abstain</button>
             </div>
+            <p class="voteCast" hidden></p>
             {{/if}}
         </div>
     </div>
     <div id="sessionLog">
         <h3>Session Log</h3>
-        <div class="greyPanel">
+        <ul id="sessionLog" class="greyPanel">
             {{!-- Populate this with JS --}}
-        </div>
+        </ul>
     </div>
     <div id="queue">
         <h3>Queue</h3>
@@ -35,7 +36,7 @@
             <div id="upcoming">
                 {{!-- TODO: implement AJAX to handle updates --}}
                 <ul id="actionQueue">
-                    {{#each queuedActions}}
+                    {{!-- {{#each queuedActions}}
                         <li>
                             <div class="action">
                                 <h5>{{this.type}}</h5>
@@ -52,7 +53,7 @@
                                 {{/if}}
                             </div>
                         </li>
-                    {{/each}}
+                    {{/each}} --}}
                 </ul>
             </div>
         </div>
@@ -85,6 +86,10 @@
     </div>
     <script src="https://code.jquery.com/jquery-2.2.4.min.js"
         integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+    <script>
+        const sessionId = "{{sessionData._id}}";
+        const isModerator = "{{isModerator}}";
+    </script>
     <script src="/public/js/sessions.js"></script>
 
 </div>

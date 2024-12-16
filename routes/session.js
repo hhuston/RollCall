@@ -67,6 +67,9 @@ router
             sessionId = validation.checkId(sessionId).toString();
 
             let Sesh = await sessionData.getSession(sessionId);
+            if (!Sesh.open)
+                return res.status(403).render("error.handlebars", { error_class: `bad_param`, message: `${Sesh.seshName} is closed`, error_route: req.session.currentPage })
+
             let Org = await organizationData.getOrganizationByName(Sesh.orgName);
             if (!Org.members.some((mem) => mem.userName === req.session.user.userName)) {
                 return res
@@ -217,6 +220,34 @@ router.route('/endsession/:sessionId')
     }
 
     return res.redirect("/home");
+});
+
+router.route('/:sessionId/api/actions')
+.get(async (req, res) => {
+    let sessionId = req.params.sessionId;
+    try {
+        sessionId = validation.checkId(sessionId).toString();
+    } catch (e) {
+        return res.status(400).json({ error: e.message });
+    }
+
+    try {
+        let session = await sessionData.getSession(sessionId);
+        for (let i in session.actionQueue) {
+            session.actionQueue[i] = await actionData.getAction(session.actionQueue[i]);
+        }
+        let queue = session.actionQueue.filter((action) => action.status === "queued");
+        let oncall = session.actionQueue.filter((action) => action.status === "oncall");
+        let logged = session.actionQueue.filter((action) => action.status === "logged");
+
+        return res.json({ 
+            queue,
+            oncall,
+            logged,
+         });
+    } catch (e) {
+        return res.status(500).json({ error: e.message });
+    }
 });
 
 export default router;
