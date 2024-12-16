@@ -247,7 +247,7 @@ const deleteOrganization = async (orgName) => {
     let sessions_list = deletedOrg.sessions;
     for (let sesh of sessions_list) {
         let Sesh = await SeshCollection.findOneAndDelete({ _id: new ObjectId(sesh) });
-        for (let action in Sesh.actionQueue) {
+        for (let action of Sesh.actionQueue) {
             let Act = await ActCollection.findOneAndDelete({ _id: new ObjectId(action) });
         }
     }

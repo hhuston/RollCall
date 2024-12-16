@@ -4,6 +4,7 @@ import { sessionData, organizationData, actionData } from "../data/index.js";
 
 import validation from "../validation.js";
 import middlewares from "../middlewares.js";
+import xss from "xss";
 
 //Middle ware to check if user is in the organization
 router
@@ -74,18 +75,16 @@ router
 
             let Sesh = await sessionData.getSession(sessionId);
 
-            let Org = await organizationData.getOrganizationByName(Sesh.orgName);
-            if (!Org.members.some((mem) => mem.userName === req.session.user.userName)) {
-                return res
-                    .status(400)
-                    .render("error.handlebars", { title: "Error Page", error_class: `bad_param`, message: `You are not a member of ${Sesh.orgName}`, error_route: req.session.currentPage });
-            }
             if (Sesh.members.some((mem) => mem.userName === req.session.user.userName)) {
                 return res.redirect(`/session/${sessionId}`);
             }
-
-            req.session.currentPage = `/session/joinsession/${sessionId}`;
-            return res.render("joinsession.handlebars", { title: "Join Session", sessionInfo: Sesh });
+            if (Sesh.open) {
+                req.session.currentPage = `/session/joinsession/${sessionId}`;
+                return res.render("joinsession.handlebars", { title: "Join Session", sessionInfo: Sesh });
+            }
+            else {
+                return res.redirect(`/session/${sessionId}`);
+            }
         } catch (e) {
             res.status(400).render("error.handlebars", { title: "Error Page", error_class: `bad_param`, message: e, error_route: req.session.currentPage });
         }
@@ -103,8 +102,7 @@ router
             let sessionId = validation.checkId(req.params.sessionId).toString();
             let role = validation.checkSessionRole(req.body.session_role);
 
-            let resp = sessionData.joinSession(sessionId, role, req.session.user.userName);
-            //small bug occurs here, I believe due to the fact that the chck if in session and org middleware runs before mongodb transaction is run
+            let resp = await sessionData.joinSession(sessionId, role, req.session.user.userName);
             return res.redirect(`/session/${sessionId}`);
         } catch (e) {
             res.status(400).render("error.handlebars", { title: "Error Page", error_class: `bad_param`, message: e, error_route: req.session.currentPage });
@@ -113,7 +111,7 @@ router
 
 router
     .route("/:sessionId") // /session/asd8987dsf
-    .get(middlewares.checkIfInSessionAndOrg, async (req, res) => {
+    .get(middlewares.checkIfInOrg, async (req, res) => {
         //TODO add share url logic
         if (!req.session.currentPage) {
             req.session.currentPage = "/";
@@ -129,7 +127,14 @@ router
             if (!Sesh) {
                 throw `no session with id ${sessionId}`;
             }
-
+            if (Sesh.open) {
+            if (!Sesh.members.some((mem) => mem.userName === req.session.user.userName)) {
+                return res.status(403).render("error.handlebars", {
+                    error_class: "input_error",
+                    message: "You are not a member of this session",
+                    error_route: req.session.currentPage,
+                });
+            }
             let role = Sesh.members.filter((mem) => mem.userName === req.session.user.userName)[0].role;
             let voter = "";
             let moderator = "";
@@ -148,40 +153,21 @@ router
             if (role == "observer") {
                 observer = "true";
             }
-            req.session.currentPage = `/session/${Sesh._id}`;
+            req.session.currentPage = `/session/${Sesh._id.toString()}`;
             let actions = await actionData.getListofActions(Sesh.actionQueue);
             let queuedActions = actions.filter((action) => action.status === "queued");
             let oncallActions = actions.filter((action) => action.status === "oncall");
             let loggedActions = actions.filter((action) => action.status === "logged");
-            req.session.currentPage = `/session/${Sesh._id}`;
-            if (Sesh.open) {
-                return res.render("session.handlebars", { title: "Session", sessionData: Sesh, Role: role, isModerator: moderator, isVoter: voter, isGuest: guest, isObserver: observer });
-            } else {
-                let actions = actionData.getListofActions(Sesh.actionQueue);
-                return res.render("listofactions.handlebars", { title: "List of Actions", actions: actions });
+            let no_moderator = Sesh.members.filter((mem) => mem.role !== "moderator")
+            req.session.currentPage = `/session/${Sesh._id.toString()}`;
+
+            return res.render("session.handlebars", { title: "Session", sessionData: Sesh, Role: role, isModerator: moderator, isVoter: voter, isGuest: guest, isObserver: observer, members: no_moderator });
             }
-        } catch (e) {
-            return res.status(400).render("error.handlebars", { title: "Error Page", error_class: `bad_param`, message: e, error_route: req.session.currentPage });
-        }
-    });
-
-router
-    .route("/leavesession/:sessionId") // /session/leavesession/asd8987dsf
-    .patch(middlewares.checkIfInSessionAndOrg, async (req, res) => {
-        if (!req.session.currentPage) {
-            req.session.currentPage = "/";
-        }
-        if (!req.session.user) {
-            return res
-                .status(403)
-                .render("error.handlebars", { title: "Error Page", error_class: "input_error", message: "You must sign in to access this page!", error_route: req.session.currentPage });
-        }
-        try {
-            let userName = req.session.user.userName;
-            let sessionId = validation.checkId(req.params.sessionId).toString();
-
-            let orgName = await sessionData.leaveSession(sessionId, userName);
-            return res.redirect(`/organization/${orgName}`);
+            else {
+                let actions = await actionData.getListofActions(Sesh.actionQueue);
+                req.session.currentPage = `/session/${Sesh._id.toString()}`;
+                return res.render("listofactions.handlebars", { title: "List of Actions", actions: actions, session_route: `/organization/${Sesh.orgName}` });
+            }
         } catch (e) {
             return res.status(400).render("error.handlebars", { title: "Error Page", error_class: `bad_param`, message: e, error_route: req.session.currentPage });
         }
@@ -242,17 +228,65 @@ router.route('/:sessionId/api/actions')
             session.actionQueue[i] = await actionData.getAction(session.actionQueue[i]);
         }
         let queue = session.actionQueue.filter((action) => action.status === "queued");
-        let oncall = session.actionQueue.filter((action) => action.status === "oncall");
+        let onCallArr = session.actionQueue.filter((action) => action.status === "oncall");
+        let onCall = {};
+        if (onCallArr.length !== 0)
+            onCall = onCallArr[0];
+        if (onCallArr.length > 1) throw "Too many on call arguments";
         let logged = session.actionQueue.filter((action) => action.status === "logged");
 
         return res.json({ 
             queue,
-            oncall,
+            onCall,
             logged,
          });
     } catch (e) {
         return res.status(500).json({ error: e.message });
     }
 });
+
+router.route("/sendvote")
+.patch(async (req, res) => {
+    let vote = xss(req.body.vote);
+    let actionId = xss(req.body.actionId);
+    let voterUserName = req.session.user.userName;
+
+    try {
+        vote = validation.checkString(vote, "Vote");
+        if (!["Yay", "Nay", "Abstain"].includes(vote)) throw "Invalid vote option";
+        actionId = validation.checkId(actionId).toString();
+        voterUserName = validation.checkUserName(voterUserName);
+    } catch (e) {
+        return res.status(400).json({ error: e.message });
+    }
+    
+    try {
+        let response = await actionData.addActionVote(vote, actionId, voterUserName);
+        return res.json(response);
+    } catch (e) {
+        return res.status(500).json({ error: e.message });
+    }
+});
+
+router.route("/kickuser")
+.patch(async (req, res) => {
+    let sessionId = xss(req.body.sessionId);
+    let userName = xss(req.body.userName);
+
+    try {
+        sessionId = validation.checkId(sessionId).toString();
+        userName = validation.checkUserName(userName);
+    } catch (e) {
+        return res.status(400).json({ error: e.message });
+    }
+
+    try {
+        let orgName = await sessionData.leaveSession(sessionId, userName);
+        return res.json(orgName);
+        // return res.redirect(`/session/${sessionId}`);
+    } catch (e) {
+        return res.status(500).json({ error: e.message });
+    }
+})
 
 export default router;

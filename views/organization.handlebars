@@ -4,7 +4,11 @@
     <a class="leaveOrg" id="leave" href="/leaveorganization/{{orgData.orgName}}">Leave This Org</a>
     {{/unless}}
     <h1 id="orgTitle">{{orgData.orgName}}</h1>
-    <h2>You are a {{role}} in this organization!</h2>
+    {{#if owner}}
+        <h2>You are the owner in this organization!</h2>
+    {{else}}
+        <h2>You are a {{role}} in this organization!</h2>
+    {{/if}}
     {{#if owner}}
     <a class="deleteOrg" id="delete" href='javascript:void(0)'>Delete This Org</a>
     <form id="delete_org_form" method="POST" action="/deleteorganization/{{orgData.orgName}}" hidden>

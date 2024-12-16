@@ -1,17 +1,31 @@
 <div>
     <a class="home" id="home" href="/organization/{{sessionData.orgName}}">Back to Organization</a>
-    <h1 id="sessionTitle">{{sessionData.Proposal}}</h1>
-    <h2>Your are a {{Role}} in this session</h2>
-    <h2>Use this link to share the session page: <a href="javscript:void(0)">{{sessionLink}}</a></h2>
+    <h1 id="sessionTitle">{{sessionData.proposal}}</h1>
+    {{#if isModerator}}
+        <h2>You are the moderator in this session!</h2>
+    {{else}}
+        {{#if isGuest}}
+            <h2>You are a {{Role}} in this session!</h2>
+        {{else}}
+            {{#if isVoter}}
+                <h2>You are a {{Role}} in this session!</h2>
+            {{else}}
+                <h2>You are an observer in this session!</h2>
+            {{/if}}
+        {{/if}}
+    {{/if}}
+            <h2>Use this link to share the session page: <a href="javscript:void(0)">{{sessionLink}}</a></h2>
+    {{#unless isModerator}}
     <form method="PATCH" action="/session/leavesession/{{sessionData._id}}">
         <input type="submit" value="Leave Session">
     </form>
+    {{/unless}}
 
     <div id="currentVoteDiv">
         <h3>On Call</h3>
         <div class="greyPanel">
             {{!-- Change this with client side JS and AJAX --}}
-            <p id="votingPrompt"></p>
+            <div id="votingPrompt"></div>
             {{#if isVoter}}
             {{!-- Add button functionality with JS --}}
             <div>
@@ -19,7 +33,7 @@
                 <button id="nayVote">Nay</button>
                 <button id="absVote">Abstain</button>
             </div>
-            <p class="voteCast" hidden></p>
+            <p id="voteCast" hidden></p>
             {{/if}}
         </div>
     </div>
@@ -34,26 +48,8 @@
         <div class="greyPanel">
             <h4>Next up:</h4>
             <div id="upcoming">
-                {{!-- TODO: implement AJAX to handle updates --}}
                 <ul id="actionQueue">
-                    {{!-- {{#each queuedActions}}
-                        <li>
-                            <div class="action">
-                                <h5>{{this.type}}</h5>
-                                <p>{{this.value}}</p>
-                                <h5>By</h5>
-                                <p>{{this.actionOwner}}</p>
-                                {{#if ../isModerator}}
-                                    <form method="PATCH" action="/action/callVote/{{this.actionId}}">
-                                        <input type="submit" value="Call Vote">
-                                    </form>
-                                    <form method="PATCH" action="/action/delete/{{this.actionId}}">
-                                        <input type="submit" value="Delete {{this.type}}">
-                                    </form>
-                                {{/if}}
-                            </div>
-                        </li>
-                    {{/each}} --}}
+                    {{!-- Populated this with JS --}}
                 </ul>
             </div>
         </div>
@@ -84,6 +80,15 @@
         </form>
         {{/if}}
     </div>
+    {{#if isModerator}}
+        <h3 id="members_title">Members</h3>
+        <ul id="membersList">
+            {{#each members}}
+            <li class="memberListItem"><a class="memberLink" href='javascript:void(0)' data-name='{{this.userName}}'
+                    data-role="{{this.role}}">{{this.userName}}:{{this.role}}</a></li>
+            {{/each}}
+        </ul>
+    {{/if}}
     <script src="https://code.jquery.com/jquery-2.2.4.min.js"
         integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
     <script>

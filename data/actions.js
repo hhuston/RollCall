@@ -1,6 +1,7 @@
 import { actions, sessions, users } from "../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
 import validation from "../validation.js";
+import id from "date-and-time/locale/id";
 
 let createAction = async (type, value, actionOwner, sessionId) => {
   let action = {};
@@ -38,24 +39,6 @@ let createAction = async (type, value, actionOwner, sessionId) => {
   return actionId;
 };
 
-let deleteAction = async (id) => {
-  id = validation.checkId(id);
-
-  const actionCollection = await actions();
-  const deletionInfo = await actionCollection.findOneAndDelete({
-    _id: id,
-  });
-
-  if (!deletionInfo) throw "Could not delete action with that id";
-
-  const sessionCollection = await sessions();
-  const updateInfo = await sessionCollection.findOneAndUpdate({ actionQueue: id.toString() }, { $pull: { actionQueue: id.toString() }});
-
-  if (!updateInfo || updateInfo.acknowledged) throw "Could not remove action from the session";
-
-  return { ...deletionInfo, deleted: true };
-};
-
 let getAction = async (id) => {
   id = validation.checkId(id);
 
@@ -90,4 +73,95 @@ let getListofActions = async (actions) => {
   return actionData;
 };
 
-export default { createAction, deleteAction, getAction, getListofActions };
+let deleteAction = async (id) => {
+  id = validation.checkId(id);
+
+  const actionCollection = await actions();
+  const deletionInfo = await actionCollection.findOneAndDelete({
+    _id: id,
+  });
+
+  if (!deletionInfo) throw "Could not delete action with that id";
+
+  const sessionCollection = await sessions();
+  const updateInfo = await sessionCollection.findOneAndUpdate(
+    { actionQueue: id.toString() },
+    { $pull: { actionQueue: id.toString() } }
+  );
+
+  if (!updateInfo || updateInfo.acknowledged)
+    throw "Could not remove action from the session";
+
+  return { ...deletionInfo, deleted: true };
+};
+
+let forwardActionStatus = async (id) => {
+  id = validation.checkId(id);
+
+  const actionCollection = await actions();
+  const action = await actionCollection.findOne({
+    _id: id,
+  });
+
+  if (!action) throw "Could not find action with that id";
+
+  // Update action's status
+  if (action.status === "queued") {
+    action.status = "oncall";
+  } else if (action.status === "oncall") {
+    action.status = "logged";
+  } else if (action.status === "logged") {
+    throw "Action has already been logged";
+  } else {
+    throw "Action has an invalid status";
+  }
+
+  // Update action in the database
+  const updatedAction = await actionCollection.findOneAndUpdate(
+    { _id: id },
+    { $set: action },
+    { returnDocument: "after" }
+  );
+
+  if (!updatedAction) throw "Could not update action";
+
+  return { ...updatedAction, updated: true };
+};
+
+let addActionVote = async (vote, actionId, voterUserName) => {
+    actionId = validation.checkId(actionId);
+
+    const actionCollection = await actions();
+    const action = await actionCollection.findOne({
+    _id: id,
+    });
+
+    if (!action) throw "Could not find action with that id";
+
+    // Make sure the user has not voted already
+    for (let voteType in action.votingRecord) {
+        let record = action.votingRecord[voteType]
+        if (record.includes(voterUserName)) throw "User has already voted on this aciton";
+    }
+
+    if (!["Yay", "Nay", "Abstain"].includes(vote)) throw "Invalid vote option";
+    // Update action in the database
+    const updatedAction = await actionCollection.findOneAndUpdate(
+    { _id: id },
+    { $push: { [`votingRecord.${vote}`]: voterUserName }},
+    { returnDocument: "after" }
+    );
+
+    if (!updatedAction) throw "Could not update action";
+
+    return { ...updatedAction, updated: true };
+}
+
+export default {
+  createAction,
+  deleteAction,
+  getAction,
+  getListofActions,
+  forwardActionStatus,
+  addActionVote
+};

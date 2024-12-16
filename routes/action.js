@@ -1,6 +1,6 @@
 import Router from "express";
 const router = Router();
-import { actionData } from "../data/index.js";
+import { actionData, userData} from "../data/index.js";
 import validation from "../validation.js";
 import middlewares from "../middlewares.js";
 
@@ -58,7 +58,7 @@ router.route("/create/:sessionId").post(middlewares.checkIfInSessionAndOrg, asyn
 });
 
 router
-    .route("/:actionId") // /action/:orgId
+    .route("/:actionId") // /action/:actionId
     .get(async (req, res) => {
         if (!req.session.currentPage) {
             req.session.currentPage = "/";
@@ -73,9 +73,9 @@ router
             let action = await actionData.getAction(actionId);
 
             let user = await userData.getUser(action.actionOwner);
-
+            let back_route = req.session.currentPage
             req.session.currentPage = `/actions/${actionId}`;
-            return res.render("actiondetails.handlebars", { title: "Action Details", action: action, firstName: user.firstName, lastName: user.lastName });
+            return res.render("actiondetails.handlebars", { title: "Action Details", action: action, firstName: user.firstName, lastName: user.lastName, back: back_route });
         } catch (e) {
             res.status(400).render("error.handlebars", { title: "Error Page", error_class: `bad_param`, message: e, error_route: req.session.currentPage });
         }
@@ -100,11 +100,56 @@ router
     });
 
 router
+    .route("/callvote/:actionId/:onCallActionId")
+    .patch(async (req, res) => {
+        // TODO:
+        // First check that session doesn't already have an action on call (do this in routes but not data to allow more flexibility on backend)
+        // let numActionsOnCall = req.body.actionsoncall;
+        // if (numActionsOnCall > 0) {
+        //     return res.status(400).render("error.handlebars", { title: "Error Page", error_class: `bad_param`, message: "There is already an action on call", error_route: req.session.currentPage });
+        // }
+
+        let actionId = req.params.actionId; 
+        let onCallActionId = req.params.onCallActionId;
+        try {
+            actionId = validation.checkId(actionId).toString();
+            onCallActionId = validation.checkId(onCallActionId).toString();
+        } catch (e) {
+            return res.status(400).render("error.handlebars", { title: "Error Page", error_class: `bad_param`, message: e.message, error_route: req.session.currentPage });
+        }
+
+        try {
+            let newOnCallResp = await actionData.forwardActionStatus(actionId);
+            let oldOnCallResp = await actionData.forwardActionStatus(onCallActionId);
+            return res.json({ newOnCallResp, oldOnCallResp });
+        } catch (e) {
+            return res.status(500).render("error.handlebars", { title: "Error Page", error_class: `bad_param`, message: e.message, error_route: req.session.currentPage });
+        }
+    });
+
+router
     .route("/callvote/:actionId")
     .patch(async (req, res) => {
-        // TODO: implement 
-        // first check that session doesn't already have an action on call
-        // then create new data/actions.js function to update action status from queued to oncall
+        // TODO:
+        // First check that session doesn't already have an action on call (do this in routes but not data to allow more flexibility on backend)
+        // let numActionsOnCall = req.body.actionsoncall;
+        // if (numActionsOnCall > 0) {
+        //     return res.status(400).render("error.handlebars", { title: "Error Page", error_class: `bad_param`, message: "There is already an action on call", error_route: req.session.currentPage });
+        // }
+
+        let actionId = req.params.actionId; 
+        try {
+            actionId = validation.checkId(actionId).toString();
+        } catch (e) {
+            return res.status(400).render("error.handlebars", { title: "Error Page", error_class: `bad_param`, message: e.message, error_route: req.session.currentPage });
+        }
+
+        try {
+            let response = await actionData.forwardActionStatus(actionId);
+            return res.json(response);
+        } catch (e) {
+            return res.status(500).render("error.handlebars", { title: "Error Page", error_class: `bad_param`, message: e.message, error_route: req.session.currentPage });
+        }
     });
 
 export default router;
