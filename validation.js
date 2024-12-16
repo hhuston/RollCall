@@ -22,6 +22,12 @@ let isArr = (arr, arg) => {
     return trimArr(arr, arg);
 };
 
+let isIdArr = (arr) => {
+    return arr.map((elem) => {
+        return checkId(elem);
+    });
+};
+
 //Not used anywhere
 let trimObj = (obj) => {
     let new_object = {};
@@ -187,6 +193,7 @@ let is_action_type = (type) => {
 let validation = {
     isNumber: isNumber,
     isArr: isArr,
+    isIdArr: isIdArr,
     trimObj: trimObj,
     strFormat: strFormat,
     checkEmail: checkEmail,
