@@ -87,6 +87,7 @@ const joinSession = async (sessionId, role, userName) => {
     return Sesh;
 };
 
+//TODO: remove all actions in actionQueue
 let deleteSession = async (id) => {
     id = validation.checkId(id);
 
@@ -116,9 +117,19 @@ let leaveSession = async (sessionId, userName) => {
     userName = validation.checkUserName(userName);
 
     const sessionCollection = await sessions();
-    const updatedInfo = await sessionCollection.findOneAndUpdate({ _id: sessionId }, { $pull: { members: userName } }, { projection: { _id: 0, orgName: 1 } });
+    const Info = await sessionCollection.findOne({ _id: sessionId });
 
-    if (!updatedInfo) throw "Could not remove user from session";
+    if (!Info) throw "No session with that name";
+
+    let members = Info.members
+    if (!members.some((mem) => mem.userName === userName)) {
+        throw "You can't sign out of a session you aren't in";
+    }
+    let final_members = members.filter((mem) => mem.userName !== userName)
+    let final_obj = {
+        members: final_members
+    }
+    const updatedInfo = await sessionCollection.findOneAndUpdate({ _id: sessionId }, { $set: final_obj }, { returnDocument: "after" });
 
     return updatedInfo.orgName;
 };
