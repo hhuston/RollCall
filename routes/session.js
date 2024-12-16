@@ -54,7 +54,7 @@ router
             return res.status(403).render("error.handlebars", { error_class: "input_error", message: "You must sign in to access this page!", error_route: req.session.currentPage });
         }
         try {
-            let sessionId = validation.checkId(req.params.sessionId).toString();
+            sessionId = validation.checkId(sessionId).toString();
 
             let Sesh = await sessionData.getSession(sessionId);
             let Org = await organizationData.getOrganizationByName(Sesh.orgName);
@@ -174,10 +174,22 @@ router
 //     }
 // });
 
-router.route('endSession/')
+router.route('/endSession/:sessionId')
 .patch(async (req, res) => {
-    let sessionId = xss(req.body.sessionId);
-    // TODO: implement
+    let sessionId = xss(req.params.sessionId);
+    try {
+        sessionId = validation.checkId(sessionId);
+    } catch (e) {
+        return res.status(400).render("error", { error_class: `bad_param`, message: e.message, error_route: req.session.currentPage });
+    }
+
+    try {
+        await sessionData.endSession(sessionId);
+    } catch (e) {
+        return res.status(500).render("error", { error_class: `server_error`, message: e.message, error_route: req.session.currentPage });
+    }
+
+    return res.redirect("/home");
 });
 
 export default router;

@@ -1,6 +1,7 @@
 import { sessions, users, organizations } from "../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
 import validation from "../validation.js";
+import session from "express-session";
 
 let createSession = async (proposal, proposalOwner, orgName, seshName) => {
     //input: proposal, proposalOwner, orgName, seshName
@@ -101,4 +102,19 @@ let deleteSession = async (id) => {
     return { ...deletionInfo, deleted: true };
 };
 
-export default { createSession, deleteSession, getSession, joinSession };
+let endSession = async (id) => {
+    id = validation.checkId(id);
+
+    const sessionCollection = await sessions();
+    const session = await sessionCollection.findOne({ _id: id });
+
+    if (!session) throw Error("No session with that id");
+    session.open = false;
+    const updateInfo = await sessionCollection.findOneAndUpdate({ _id: id }, session);
+
+    if (!updateInfo) throw Error("Could not update session");
+    
+    return updateInfo;
+}
+
+export default { createSession, deleteSession, getSession, joinSession, endSession };

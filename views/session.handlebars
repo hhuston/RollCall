@@ -67,7 +67,6 @@
             <button id="createAmendment">Create Amendment</button>
         {{/if}}
         {{#if isModerator}}
-            {{!-- Add functionality with JS and AJAX --}}
             <form method="PATCH" action="/session/endSession/{{Sesh._id}}">
                 <input type="submit" value="End Session">
             </form>
