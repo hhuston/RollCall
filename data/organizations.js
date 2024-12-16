@@ -161,9 +161,6 @@ const leaveOrg = async (userName, orgName) => {
     //successful output: a tuple containing the same outputs found in both the getorg by name and get user by name functions
     //constraints: userName must exist, be a string, and be a valid userName, orgName must exist in the db and be a string
     userName = validation.checkUserName(userName);
-
-    validation.exists(orgName, "orgName");
-    validation.is_str(orgName, "orgName");
     orgName = validation.checkOrgName(orgName);
 
     const UserCollection = await users();
