@@ -33,7 +33,8 @@
         <div class="greyPanel">
             <h4>Next up:</h4>
             <div id="upcoming">
-                <<<<<<< HEAD {{!-- TODO: implement AJAX to handle updates --}} <ul id="actionQueue">
+                {{!-- TODO: implement AJAX to handle updates --}}
+                <ul id="actionQueue">
                     {{#each queuedActions}}
                     <li>
                         <div class="action">
@@ -48,7 +49,7 @@
                         </div>
                     </li>
                     {{/each}}
-                    </ul>
+                </ul>
             </div>
         </div>
     </div>
@@ -57,64 +58,29 @@
         {{#if isVoter}}
         {{!-- Add functionality with JS and AJAX --}}
         <a href="/action/createmotion/{{sessionData._id}}">
-            =======
-            {{!-- Populate with JS --}}
-            {{!-- Example of what it will look like
-            <div class="action">
-                <h5>Filled with action type</h5>
-                <p>Filled with descripiton</p>
-                <h5>By</h5>
-                <p>Filled with proposer name</p>
-
-                (If they are a moderator)
-                <button id="callVote">Call Vote</button>
-                <button id="deleteAction>Delete Action</button>" </div>
-                    --}}
-            </div>
+            <button id="createMotion">Create Motion</button>
+        </a>
+        <a href="/action/createamendment/{{sessionData._id}}">
+            <button id="createAmendment">Create Amendment</button>
+        </a>
+        {{/if}}
+        {{#if isGuest}}
+        {{!-- Add functionality with JS and AJAX --}}
+        <a href="/action/createmotion/{{sessionData._id}}">
+            <button id="createMotion">Create Motion</button>
+        </a>
+        <a href="/action/createamendment/{{sessionData._id}}">
+            <button id="createAmendment">Create Amendment</button>
+        </a>
+        {{/if}}
+        {{#if isModerator}}
+        <form method="PATCH" action="/session/endsession/{{sessionData._id}}">
+            <input type="submit" value="End Session">
+        </form>
+        {{/if}}
     </div>
-</div>
-<div id="buttons">
-    {{!-- Have to do separate if for vote and guest bc handlebars is annoying --}}
-    {{#if isVoter}}
-    {{!-- Add functionality with JS and AJAX --}}
-    >>>>>>> css
-    <button id="createMotion">Create Motion</button>
-    </a>
-    <a href="/action/createamendment/{{sessionData._id}}">
-        <button id="createAmendment">Create Amendment</button>
-        <<<<<<< HEAD </a>
-            {{/if}}
-            {{#if isGuest}}
-            {{!-- Add functionality with JS and AJAX --}}
-            <a href="/action/createmotion/{{sessionData._id}}">
-                =======
-                {{/if}}
-                {{#if isGuest}}
-                {{!-- Add functionality with JS and AJAX --}}
-                >>>>>>> css
-                <button id="createMotion">Create Motion</button>
-            </a>
-            <a href="/action/createamendment/{{sessionData._id}}">
-                <button id="createAmendment">Create Amendment</button>
-                <<<<<<< HEAD </a>
-                    {{/if}}
-                    {{#if isModerator}}
-                    <form method="PATCH" action="/session/endsession/{{sessionData._id}}">
-                        <input type="submit" value="End Session">
-                    </form>
-                    {{/if}}
-                    =======
-                    {{/if}}
-                    {{#if isModerator}}
-                    {{!-- Add functionality with JS and AJAX --}}
-                    <form method="PATCH" action="/session/endSession/{{Sesh._id}}">
-                        <input type="submit" value="End Session">
-                    </form>
-                    {{/if}}
-</div>
-<script src="https://code.jquery.com/jquery-2.2.4.min.js"
-    integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
-<script src="/public/js/sessions.js"></script>
->>>>>>> css
-</div>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"
+        integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+    <script src="/public/js/sessions.js"></script>
+
 </div>

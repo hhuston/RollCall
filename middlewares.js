@@ -27,6 +27,7 @@ let checkIfInSessionAndOrg = async (req, res, next) => {
     }
     if (!Org.members.some((mem) => mem.userName === req.session.user.userName)) {
         return res.status(403).render("error.handlebars", {
+            title: "Error Page",
             error_class: "input_error",
             message: "You are not a member of this organization",
             error_route: req.session.currentPage,

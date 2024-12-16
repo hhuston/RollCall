@@ -13,9 +13,9 @@ router.route("/createmotion/:sessionId").get(middlewares.checkIfInSessionAndOrg,
     try {
         const sessionId = validation.checkId(req.params.sessionId);
         req.session.currentPage = `/action/createaction/${sessionId}`;
-        return res.render("createaction.handlebars", { sessionId: sessionId, actionType: "Motion" });
+        return res.render("createaction.handlebars", { title: "Create Action", sessionId: sessionId, actionType: "Motion" });
     } catch (e) {
-        res.status(400).render("error", { error_class: "input_error", message: e, error_route: req.session.currentPage });
+        res.status(400).render("error", { title: "Error Page", error_class: "input_error", message: e, error_route: req.session.currentPage });
     }
 });
 
@@ -29,9 +29,9 @@ router.route("/createamendment/:sessionId").get(middlewares.checkIfInSessionAndO
     try {
         const sessionId = validation.checkId(req.params.sessionId);
         req.session.currentPage = `/action/createaction/${sessionId}`;
-        return res.render("createaction.handlebars", { sessionId: sessionId, actionType: "Amendment" });
+        return res.render("createaction.handlebars", { title: "Create Action", sessionId: sessionId, actionType: "Amendment" });
     } catch (e) {
-        res.status(400).render("error", { error_class: "input_error", message: e, error_route: req.session.currentPage });
+        res.status(400).render("error", { title: "Error Page", error_class: "input_error", message: e, error_route: req.session.currentPage });
     }
 });
 
@@ -41,7 +41,7 @@ router.route("/create/:sessionId").post(middlewares.checkIfInSessionAndOrg, asyn
         req.session.currentPage = "/";
     }
     if (!req.session.user) {
-        return res.status(403).render("error.handlebars", { error_class: "input_error", message: "You must sign in to access this page!", error_route: req.session.currentPage });
+        return res.status(403).render("error.handlebars", { title: "Error Page", error_class: "input_error", message: "You must sign in to access this page!", error_route: req.session.currentPage });
     }
     // TODO: check if user has permission to create action
     try {
@@ -53,7 +53,7 @@ router.route("/create/:sessionId").post(middlewares.checkIfInSessionAndOrg, asyn
         await actionData.createAction(actionType, actionText, actionOwner, sessionId);
         res.redirect(`/session/${sessionId}`);
     } catch (e) {
-        res.status(400).render("error", { error_class: "input_error", message: e, error_route: req.session.currentPage });
+        res.status(400).render("error", { title: "Error Page", error_class: "input_error", message: e, error_route: req.session.currentPage });
     }
 });
 
@@ -64,7 +64,9 @@ router
             req.session.currentPage = "/";
         }
         if (!req.session.user) {
-            return res.status(403).render("error.handlebars", { error_class: "input_error", message: "You must sign in to access this page!", error_route: req.session.currentPage });
+            return res
+                .status(403)
+                .render("error.handlebars", { title: "Error Page", error_class: "input_error", message: "You must sign in to access this page!", error_route: req.session.currentPage });
         }
         try {
             let actionId = validation.checkId(req.params.actionId).toString();
@@ -73,9 +75,9 @@ router
             let user = await userData.getUser(action.actionOwner);
 
             req.session.currentPage = `/actions/${actionId}`;
-            return res.render("actiondetails.handlebars", { action: action, firstName: user.firstName, lastName: user.lastName });
+            return res.render("actiondetails.handlebars", { title: "Action Details", action: action, firstName: user.firstName, lastName: user.lastName });
         } catch (e) {
-            res.status(400).render("error.handlebars", { error_class: `bad_param`, message: e, error_route: req.session.currentPage });
+            res.status(400).render("error.handlebars", { title: "Error Page", error_class: `bad_param`, message: e, error_route: req.session.currentPage });
         }
     });
 
