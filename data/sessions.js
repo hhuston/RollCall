@@ -105,13 +105,9 @@ let endSession = async (id) => {
     id = validation.checkId(id);
 
     const sessionCollection = await sessions();
-    const session = await sessionCollection.findOne({ _id: id });
+    const updateInfo = await sessionCollection.updateOne({ _id: id }, { $set: { open: false } });
 
-    if (!session) throw Error("No session with that id");
-    session.open = false;
-    const updateInfo = await sessionCollection.findOneAndUpdate({ _id: id }, session);
-
-    if (!updateInfo) throw Error("Could not update session");
+    if (!updateInfo || updateInfo.acknowledged === false) throw Error("Could not update session with that ID");
     
     return updateInfo;
 }

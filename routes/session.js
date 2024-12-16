@@ -183,9 +183,9 @@ router
 //     }
 // });
 
-router.route('/endSession/:sessionId')
+router.route('/endsession/:sessionId')
 .patch(async (req, res) => {
-    let sessionId = xss(req.params.sessionId);
+    let sessionId = req.params.sessionId;
     try {
         sessionId = validation.checkId(sessionId);
     } catch (e) {
@@ -193,7 +193,7 @@ router.route('/endSession/:sessionId')
     }
 
     try {
-        await sessionData.endSession(sessionId);
+        await sessionData.endSession(sessionId.toString());
     } catch (e) {
         return res.status(500).render("error", { error_class: `server_error`, message: e.message, error_route: req.session.currentPage });
     }

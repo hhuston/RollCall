@@ -75,7 +75,7 @@
         </a>
         {{/if}}
         {{#if isModerator}}
-            <form method="PATCH" action="/session/endSession/{{Sesh._id}}">
+            <form method="PATCH" action="/session/endsession/{{sessionData._id}}">
                 <input type="submit" value="End Session">
             </form>
         {{/if}}

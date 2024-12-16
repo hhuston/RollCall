@@ -85,11 +85,3 @@ if (absVote) {
         voteCast.hidden = false;
     });
 }
-
-if (endSession) {
-    endSession.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        
-        
-    });
-}
