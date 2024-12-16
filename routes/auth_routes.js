@@ -13,7 +13,7 @@ router
     .get(async (req, res) => {
         //code here for GET
         req.session.currentPage = "/signupuser";
-        return res.status(200).render("signupuser.handlebars");
+        return res.status(200).render("signupuser.handlebars", { title: "Sign Up" });
     })
     .post(async (req, res) => {
         //code here for POST
@@ -34,11 +34,11 @@ router
 
             let resp = await userData.createUser(userName, password, firstName, lastName, email);
             if (!resp) {
-                return res.status(500).render("error.handlebars", { error_class: "server_error", message: "Internal Server Error", error_route: "/signupuser" });
+                return res.status(500).render("error.handlebars", { title: "Error Page", error_class: "server_error", message: "Internal Server Error", error_route: "/signupuser" });
             }
             return res.redirect("/signinuser");
         } catch (e) {
-            return res.status(400).render("error.handlebars", { error_class: "input_error", message: e, error_route: "/signupuser" });
+            return res.status(400).render("error.handlebars", { title: "Error Page", error_class: "input_error", message: e, error_route: "/signupuser" });
         }
     });
 
@@ -47,7 +47,7 @@ router
     .get(async (req, res) => {
         //code here for GET
         req.session.currentPage = "/signinuser";
-        return res.status(200).render("signinuser.handlebars");
+        return res.status(200).render("signinuser.handlebars", { title: "Sign In" });
     })
     .post(async (req, res) => {
         //code here for POST
@@ -57,12 +57,12 @@ router
 
             let resp = await userData.loginUser(userName, password);
             if (!resp) {
-                return res.status(500).render("error.handlebars", { error_class: "server_error", message: "Internal Server Error", error_route: "/signinuser" });
+                return res.status(500).render("error.handlebars", { title: "Error Page", error_class: "server_error", message: "Internal Server Error", error_route: "/signinuser" });
             }
             req.session.user = resp;
             return res.redirect("/home");
         } catch (e) {
-            return res.status(400).render("error.handlebars", { error_class: "input_error", message: e, error_route: "/signinuser" });
+            return res.status(400).render("error.handlebars", { title: "Error Page", error_class: "input_error", message: e, error_route: "/signinuser" });
         }
     });
 
@@ -73,7 +73,7 @@ router.route("/home").get(async (req, res) => {
         req.session.currentPage = "/";
     }
     if (!req.session.user) {
-        return res.status(403).render("error.handlebars", { error_class: "input_error", message: "You must sign in to access this page!", error_route: req.session.currentPage });
+        return res.status(403).render("error.handlebars", { title: "Error Page", error_class: "input_error", message: "You must sign in to access this page!", error_route: req.session.currentPage });
     }
     let orgNames = [];
     for (let id of req.session.user.memberOrganizations) {
@@ -84,7 +84,7 @@ router.route("/home").get(async (req, res) => {
         orgNames.push(Org);
     }
     req.session.currentPage = "/home";
-    return res.status(200).render("home.handlebars", { orgList: orgNames });
+    return res.status(200).render("home.handlebars", { title: "Organizations", orgList: orgNames });
 });
 
 router.route("/signoutuser").get(async (req, res) => {
@@ -95,7 +95,7 @@ router.route("/signoutuser").get(async (req, res) => {
         }
         res.clearCookie("AuthenticationState");
     });
-    return res.status(200).render("signoutuser.handlebars");
+    return res.status(200).render("signoutuser.handlebars", { title: "Sign Out" });
 });
 
 export default router;

@@ -1,9 +1,4 @@
-<head>
-    <meta charset="utf-8">
-    <title>Error Page</title>
-    <link rel="stylesheet" href="/public/css/sitestyles.css">
-</head>
-<body>
+<div>
     <a class="home" id="home" href="/organization/{{sessionData.orgName}}">Back to Organization</a>
     <h1 id="sessionTitle">{{sessionData.Proposal}}</h1>
     <h2>Your are a {{Role}} in this session</h2>
@@ -18,12 +13,12 @@
             {{!-- Change this with client side JS and AJAX --}}
             <p id="currentVoteP"></p>
             {{#if isVoter}}
-                {{!-- Add button functionality with JS --}}
-                <div> 
-                    <button id="yayVote">Yay</button>
-                    <button id="nayVote">Nay</button>
-                    <button id="absVote">Abstain</button>
-                </div>
+            {{!-- Add button functionality with JS --}}
+            <div>
+                <button id="yayVote">Yay</button>
+                <button id="nayVote">Nay</button>
+                <button id="absVote">Abstain</button>
+            </div>
             {{/if}}
         </div>
     </div>
@@ -48,32 +43,32 @@
 
                     (If they are a moderator)
                     <button id="callVote">Call Vote</button>
-                    <button id="deleteAction>Delete Action</button>"
+                    <button id="deleteAction>Delete Action</button>" </div>
+                        --}}
                 </div>
-                 --}}
             </div>
         </div>
-    </div>
-    <div id="buttons">
-        {{!-- Have to do separate if for vote and guest bc handlebars is annoying --}}
-        {{#if isVoter}}
+        <div id="buttons">
+            {{!-- Have to do separate if for vote and guest bc handlebars is annoying --}}
+            {{#if isVoter}}
             {{!-- Add functionality with JS and AJAX --}}
             <button id="createMotion">Create Motion</button>
             <button id="createAmendment">Create Amendment</button>
-        {{/if}}
-        {{#if isGuest}}
+            {{/if}}
+            {{#if isGuest}}
             {{!-- Add functionality with JS and AJAX --}}
             <button id="createMotion">Create Motion</button>
             <button id="createAmendment">Create Amendment</button>
-        {{/if}}
-        {{#if isModerator}}
+            {{/if}}
+            {{#if isModerator}}
             {{!-- Add functionality with JS and AJAX --}}
             <form method="PATCH" action="/session/endSession/{{Sesh._id}}">
                 <input type="submit" value="End Session">
             </form>
-        {{/if}}
+            {{/if}}
+        </div>
+        <script src="https://code.jquery.com/jquery-2.2.4.min.js"
+            integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+        <script src="/public/js/sessions.js"></script>
     </div>
-    <script src="https://code.jquery.com/jquery-2.2.4.min.js"
-        integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
-    <script src="/public/js/sessions.js"></script>
-</body>
+</div>
