@@ -41,12 +41,17 @@ let createAction = async (type, value, actionOwner, sessionId) => {
 let deleteAction = async (id) => {
   id = validation.checkId(id);
 
-  const actionCollection = await sessions();
+  const actionCollection = await actions();
   const deletionInfo = await actionCollection.findOneAndDelete({
     _id: id,
   });
 
   if (!deletionInfo) throw "Could not delete action with that id";
+
+  const sessionCollection = await sessions();
+  const updateInfo = await sessionCollection.findOneAndUpdate({ actionQueue: id.toString() }, { $pull: { actionQueue: id.toString() }});
+
+  if (!updateInfo || updateInfo.acknowledged) throw "Could not remove action from the session";
 
   return { ...deletionInfo, deleted: true };
 };
@@ -60,7 +65,7 @@ let getAction = async (id) => {
   });
 
   if (!action) throw "Could not find action with that id";
-
+  action._id = action._id.toString();
   return action;
 };
 
