@@ -81,4 +81,19 @@ router
         }
     });
 
+router
+    .route("/delete/:actionId")
+    .patch(async (req, res) => {
+        // TODO: implemment 
+        // then update data/actions.js: deleteAction to remove action from session queue
+    });
+
+router
+    .route("/callvote/:actionId")
+    .patch(async (req, res) => {
+        // TODO: implement 
+        // first check that session doesn't already have an action on call
+        // then create new data/actions.js function to update action status from queued to oncall
+    });
+
 export default router;

@@ -36,18 +36,22 @@
                 {{!-- TODO: implement AJAX to handle updates --}}
                 <ul id="actionQueue">
                     {{#each queuedActions}}
-                    <li>
-                        <div class="action">
-                            <h5>{{this.type}}</h5>
-                            <p>{{this.value}}</p>
-                            <h5>By</h5>
-                            <p>{{this.actionOwner}}</p>
-                            {{#if ../isModerator}}
-                            <button id="callVote">Call Vote</button>
-                            <button id="deleteAction">Delete {{this.type}}</button>
-                            {{/if}}
-                        </div>
-                    </li>
+                        <li>
+                            <div class="action">
+                                <h5>{{this.type}}</h5>
+                                <p>{{this.value}}</p>
+                                <h5>By</h5>
+                                <p>{{this.actionOwner}}</p>
+                                {{#if ../isModerator}}
+                                    <form method="PATCH" action="/action/callVote/{{this.actionId}}">
+                                        <input type="submit" value="Call Vote">
+                                    </form>
+                                    <form method="PATCH" action="/action/delete/{{this.actionId}}">
+                                        <input type="submit" value="Delete {{this.type}}">
+                                    </form>
+                                {{/if}}
+                            </div>
+                        </li>
                     {{/each}}
                 </ul>
             </div>
