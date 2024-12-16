@@ -7,13 +7,6 @@
     margin: 20px 0;
 }
 
-form {
-    width: 100%;
-    max-width: 600px;
-    margin: 20px auto;
-    padding: 20px;
-}
-
 .signin, .signup {
     border: 1px solid #ccc;
     border-radius: 5px;
@@ -22,6 +15,45 @@ form {
     font-family: sans-serif;
     width: 500px;
     margin: 20px auto;
+}
+
+form.signin, form.signup {
+    width: 100%;
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+}
+
+.homepage {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    width: 90%;
+    text-align: left;
+    font-size: large;
+    font-family: sans-serif;
+    margin: 20px auto;
+    padding: 20px;
+}
+
+#user_orgs {
+    list-style-type: none;
+    padding: 0;
+}
+
+#user_orgs li {
+    display: inline-block; /* Adjust border size to text */
+    padding: 20px;
+    padding: 20px;
+    background-color: rgb(255, 255, 255);
+    border-radius: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+}
+
+#user_orgs li a {
+    text-decoration: none;
+    color: #02542d;
 }
 
 form input {
@@ -36,7 +68,7 @@ form input {
 }
 
 form input:last-of-type {
-    margin-bottom: 20px; /* Add extra space here */
+    margin-bottom: 20px;
 }
 
 form button {
