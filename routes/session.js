@@ -7,8 +7,8 @@ import middlewares from "../middlewares.js";
 
 //Middle ware to check if user is in the organization
 router
-    .route("/createsession/:orgName") // /session/orgId
-    .get(async (req, res) => {
+    .route( "/createsession/:orgName") // /session/orgId
+    .get( async (req, res) => {
         if (!req.session.currentPage) {
             req.session.currentPage = "/";
         }
@@ -31,7 +31,7 @@ router
             res.status(400).render("error.handlebars", { title: "Error Page", error_class: `bad_param`, message: e, error_route: req.session.currentPage });
         }
     })
-    .post(async (req, res) => {
+    .post( async (req, res) => {
         if (!req.session.currentPage) {
             req.session.currentPage = "/";
         }
@@ -42,6 +42,12 @@ router
         }
         try {
             let orgName = validation.checkOrgName(req.params.orgName);
+            let Org = await organizationData.getOrganizationByName(orgName);
+            if (!Org.members.some((mem) => mem.userName === req.session.user.userName)) {
+                return res
+                    .status(403)
+                    .render("error.handlebars", { title: "Error Page", error_class: "input_error", message: "You are not a member of this organization", error_route: req.session.currentPage });
+            }
             let proposal = validation.checkString(req.body.firstProposal, "Original Proposal");
             let seshName = validation.checkString(req.body.seshName, "Session Name");
             let resp = await sessionData.createSession(proposal, req.session.user.userName, orgName, seshName);
@@ -53,7 +59,7 @@ router
 
 router
     .route("/joinsession/:sessionId")
-    .get(middlewares.checkIfInSessionAndOrg, async (req, res) => {
+    .get( middlewares.checkIfInOrg, async (req, res) => {
         let sessionId = req.params.sessionId;
         if (!req.session.currentPage) {
             req.session.currentPage = "/";
@@ -67,8 +73,6 @@ router
             sessionId = validation.checkId(sessionId).toString();
 
             let Sesh = await sessionData.getSession(sessionId);
-            if (!Sesh.open)
-                return res.status(403).render("error.handlebars", { error_class: `bad_param`, message: `${Sesh.seshName} is closed`, error_route: req.session.currentPage })
 
             let Org = await organizationData.getOrganizationByName(Sesh.orgName);
             if (!Org.members.some((mem) => mem.userName === req.session.user.userName)) {
@@ -86,7 +90,7 @@ router
             res.status(400).render("error.handlebars", { title: "Error Page", error_class: `bad_param`, message: e, error_route: req.session.currentPage });
         }
     })
-    .post(middlewares.checkIfInSessionAndOrg, async (req, res) => {
+    .post(middlewares.checkIfInOrg, async (req, res) => {
         if (!req.session.currentPage) {
             req.session.currentPage = "/";
         }
@@ -100,6 +104,7 @@ router
             let role = validation.checkSessionRole(req.body.session_role);
 
             let resp = sessionData.joinSession(sessionId, role, req.session.user.userName);
+            //small bug occurs here, I believe due to the fact that the chck if in session and org middleware runs before mongodb transaction is run
             return res.redirect(`/session/${sessionId}`);
         } catch (e) {
             res.status(400).render("error.handlebars", { title: "Error Page", error_class: `bad_param`, message: e, error_route: req.session.currentPage });
@@ -148,7 +153,7 @@ router
             let queuedActions = actions.filter((action) => action.status === "queued");
             let oncallActions = actions.filter((action) => action.status === "oncall");
             let loggedActions = actions.filter((action) => action.status === "logged");
-
+            req.session.currentPage = `/session/${Sesh._id}`;
             if (Sesh.open) {
                 return res.render("session.handlebars", { title: "Session", sessionData: Sesh, Role: role, isModerator: moderator, isVoter: voter, isGuest: guest, isObserver: observer });
             } else {
@@ -205,7 +210,7 @@ router
     });
 
 router.route('/endsession/:sessionId')
-.patch(async (req, res) => {
+.patch(middlewares.checkIfInSessionAndOrg, async (req, res) => {
     let sessionId = req.params.sessionId;
     try {
         sessionId = validation.checkId(sessionId);
@@ -223,7 +228,7 @@ router.route('/endsession/:sessionId')
 });
 
 router.route('/:sessionId/api/actions')
-.get(async (req, res) => {
+.get(middlewares.checkIfInSessionAndOrg, async (req, res) => {
     let sessionId = req.params.sessionId;
     try {
         sessionId = validation.checkId(sessionId).toString();
