@@ -3,14 +3,56 @@
     text-align: center;
     font-size: xx-large;
     color: #02542d;
+    font-family: sans-serif;
+    margin: 20px 0;
 }
 
-.signin {
+form {
+    width: 100%;
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+}
+
+.signin, .signup {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    padding: 20px;
+    font-family: sans-serif;
     width: 500px;
-    height: max-content;
-    margin: auto;
+    margin: 20px auto;
 }
 
-.center {
-    border: solid;
+form input {
+    display: block;
+    width: 90%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    background-color: #fff;
+}
+
+form input:last-of-type {
+    margin-bottom: 20px; /* Add extra space here */
+}
+
+form button {
+    display: block;
+    width: 90%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    box-sizing: border-box;
+    border: none;
+    background-color: #4CAF50;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+form button:hover {
+    background-color: #45a049;
 }
