@@ -102,9 +102,26 @@ router
 router
     .route("/callvote/:actionId")
     .patch(async (req, res) => {
-        // TODO: implement 
-        // first check that session doesn't already have an action on call
-        // then create new data/actions.js function to update action status from queued to oncall
+        // TODO:
+        // First check that session doesn't already have an action on call (do this in routes but not data to allow more flexibility on backend)
+        // let numActionsOnCall = req.body.actionsoncall;
+        // if (numActionsOnCall > 0) {
+        //     return res.status(400).render("error.handlebars", { title: "Error Page", error_class: `bad_param`, message: "There is already an action on call", error_route: req.session.currentPage });
+        // }
+
+        let actionId = req.params.actionId; 
+        try {
+            actionId = validation.checkId(actionId).toString();
+        } catch (e) {
+            return res.status(400).render("error.handlebars", { title: "Error Page", error_class: `bad_param`, message: e.message, error_route: req.session.currentPage });
+        }
+
+        try {
+            let response = await actionData.forwardActionStatus(actionId);
+            return res.json(response);
+        } catch (e) {
+            return res.status(500).render("error.handlebars", { title: "Error Page", error_class: `bad_param`, message: e.message, error_route: req.session.currentPage });
+        }
     });
 
 export default router;

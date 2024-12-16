@@ -1,4 +1,3 @@
-
 const yayVote = document.getElementById("yayVote");
 const nayVote = document.getElementById("nayVote");
 const absVote = document.getElementById("absVote");
@@ -93,12 +92,14 @@ const refreshActionLogs = async () => {
         const li = document.createElement('li');
         const callVote = document.createElement('form');
         callVote.innerHTML = 
-            `<form method="PATCH" action="/action/callVote/${action._id}">
+            `<form method="PATCH" action="/action/callvote/${action._id}">
                 <input type="submit" value="Call Vote">
             </form>`
         callVote.addEventListener("submit", async (event) => {
             event.preventDefault();
-            await fetch(`/action/callVote/${action._id}`);
+            await fetch(`/action/callvote/${action._id}`, {
+                method: 'PATCH',
+            });
             refreshActionLogs();
         });
 
@@ -109,7 +110,9 @@ const refreshActionLogs = async () => {
             </form>`
         deleteAction.addEventListener("submit", async (event) => {
             event.preventDefault();
-            await fetch(`/action/delete/${action._id}`);
+            await fetch(`/action/delete/${action._id}`, {
+                method: 'PATCH',
+            });
             refreshActionLogs();
         });
         
