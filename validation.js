@@ -183,7 +183,7 @@ let validation = {
     is_session_role: is_session_role,
 }; */
 
-let is_action_type = (type) => {
+let checkActionType = (type) => {
     type = checkString(type);
     if (type != "motion" && type != "amendment") {
         throw `Type is not 'motion' or 'amendment'`;
@@ -208,5 +208,6 @@ let validation = {
     checkOrgName: checkOrgName,
     checkDate: checkDate,
     isObj: isObj,
+    checkActionType: checkActionType,
 };
 export default validation;

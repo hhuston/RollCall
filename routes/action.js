@@ -49,12 +49,12 @@ router.post('/create/:sessionId', async (req, res) => {
     }
     // TODO: check if user has permission to create action
     try {
-        const sessionId = validation.checkId(req.params.sessionId);
+        const sessionId = validation.checkId(req.params.sessionId).toString();
         const actionText = validation.checkString(req.body.actionText, 'Action Text');
         const actionType = req.body.actionType;
         const actionOwner = req.session.user.userName;
 
-        await actionData.createAction(actionType, actionText, actionOwner);
+        await actionData.createAction(actionType, actionText, actionOwner, sessionId);
         res.redirect(`/session/${sessionId}`);
     } catch (e) {
         res.status(400).render('error', { error_class: 'input_error', message: e, error_route: req.session.currentPage });
