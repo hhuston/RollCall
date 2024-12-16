@@ -149,11 +149,6 @@ router
                 observer = "true";
             }
             req.session.currentPage = `/session/${Sesh._id}`;
-            let actions = await actionData.getListofActions(Sesh.actionQueue);
-            let queuedActions = actions.filter((action) => action.status === "queued");
-            let oncallActions = actions.filter((action) => action.status === "oncall");
-            let loggedActions = actions.filter((action) => action.status === "logged");
-            req.session.currentPage = `/session/${Sesh._id}`;
             if (Sesh.open) {
                 return res.render("session.handlebars", { title: "Session", sessionData: Sesh, Role: role, isModerator: moderator, isVoter: voter, isGuest: guest, isObserver: observer });
             } else {
@@ -259,5 +254,26 @@ router.route("/sendvote")
         return res.status(500).json({ error: e.message });
     }
 });
+
+router.route("/kickuser")
+.patch(async (req, res) => {
+    let sessionId = xss(req.body.sessionId);
+    let userName = xss(req.body.userName);
+
+    try {
+        sessionId = validation.checkId(sessionId).toString();
+        userName = validation.checkUserName(userName);
+    } catch (e) {
+        return res.status(400).json({ error: e.message });
+    }
+
+    try {
+        let orgName = await sessionData.leaveSession(sessionId, userName);
+        return res.json(orgName);
+        // return res.redirect(`/session/${sessionId}`);
+    } catch (e) {
+        return res.status(500).json({ error: e.message });
+    }
+})
 
 export default router;

@@ -50,6 +50,9 @@ if (nayVote) {
         const voteCast = document.getElementById('voteCast');
         const response = await fetch('/session/sendvote', {
             method: 'PATCH',
+            headers: {
+                "Content-Type": "application/json",
+            },
             body: JSON.stringify({
                 vote: "Nay",
                 actionId: votingPrompt.dataset.actionId,
@@ -79,6 +82,9 @@ if (absVote) {
         const voteCast = document.getElementById('voteCast');
         const response = await fetch('/session/sendvote', {
             method: 'PATCH',
+            headers: {
+                "Content-Type": "application/json",
+            },
             body: JSON.stringify({
                 vote: "Abstain",
                 actionId: votingPrompt.dataset.actionId,
@@ -102,7 +108,7 @@ if (absVote) {
 
 let onCallActionId = "";
 const refreshActionLogs = async () => {
-    if (onCallActionId === "") {
+    if (onCallActionId === "" && yayVote) {
         yayVote.hidden = true;
         nayVote.hidden = true;
         absVote.hidden = true;
@@ -150,13 +156,13 @@ const refreshActionLogs = async () => {
         actionQueue.appendChild(li);
     }
 
-    if (data.onCall !== "") {
+    if (Object.keys(data.onCall).length !== 0) {
         const votingPrompt = document.getElementById("votingPrompt");
         let onCall = data.onCall
         if (onCallActionId !== onCall._id) {
-            yayVote.hidden = false;
-            nayVote.hidden = false;
-            absVote.hidden = false;
+            if (yayVote) yayVote.hidden = false;
+            if (nayVote) nayVote.hidden = false;
+            if (absVote) absVote.hidden = false;
             document.getElementById('votingPrompt').hidden = false;
         }
         votingPrompt.innerHTML = 
@@ -184,3 +190,36 @@ const refreshActionLogs = async () => {
 refreshActionLogs();
 const MINUTE = 60000;
 setInterval(refreshActionLogs, 1000);
+
+
+const members = document.getElementsByClassName("memberListItem");
+for (let member of members) {
+    member.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const a = member.querySelector('a');
+        const existingButton = member.querySelector("button");
+        if (existingButton)
+            existingButton.remove();
+        else {
+            const kickButton = document.createElement('button');
+            kickButton.innerHTML = 'Kick out';
+            
+            kickButton.addEventListener("click", async (event) => {
+                event.preventDefault();
+                await fetch('/session/kickuser', {
+                    method: 'PATCH',
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        sessionId: sessionId,
+                        userName: a.dataset.name,
+                    }),
+                });
+                location.reload();
+            });
+
+            member.appendChild(kickButton);
+        }
+    });
+}
