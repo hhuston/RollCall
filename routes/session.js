@@ -67,6 +67,9 @@ router
             sessionId = validation.checkId(sessionId).toString();
 
             let Sesh = await sessionData.getSession(sessionId);
+            if (!Sesh.open)
+                return res.status(403).render("error.handlebars", { error_class: `bad_param`, message: `${Sesh.seshName} is closed`, error_route: req.session.currentPage })
+
             let Org = await organizationData.getOrganizationByName(Sesh.orgName);
             if (!Org.members.some((mem) => mem.userName === req.session.user.userName)) {
                 return res
