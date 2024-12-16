@@ -1,5 +1,4 @@
 import { sessions, users, organizations } from "../config/mongoCollections.js";
-import { ObjectId } from "mongodb";
 import validation from "../validation.js";
 import session from "express-session";
 
@@ -112,4 +111,16 @@ let endSession = async (id) => {
     return updateInfo;
 }
 
-export default { createSession, deleteSession, getSession, joinSession, endSession };
+let leaveSession = async (sessionId, userName) => {
+    sessionId = validation.checkId(sessionId);
+    userName = validation.checkUserName(userName);
+
+    const sessionCollection = await sessions();
+    const updatedInfo = await sessionCollection.findOneAndUpdate({ _id: sessionId }, { $pull: { members: userName } }, { projection: { _id: 0, orgName: 1 } });
+
+    if (!updatedInfo) throw "Could not remove user from session";
+
+    return updatedInfo.orgName;
+};
+
+export default { createSession, deleteSession, getSession, joinSession, endSession, leaveSession };
