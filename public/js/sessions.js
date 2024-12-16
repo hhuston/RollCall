@@ -101,6 +101,10 @@ if (absVote) {
         nayVote.hidden = true;
         absVote.hidden = true;
 
+        if (response.status !== 200) {
+            const data = await response.body.json()
+            voteCast.innerHTML = data.error;
+        }
         voteCast.innerHTML = "Successfully cast abstain vote";
         voteCast.hidden = false;
     });

@@ -43,8 +43,10 @@ for (let i in testOrgs) {
 }
 
 console.log("Adding users to organization...");
+const returnData = await organizationData.loginOrg(testUsers[0].userName, testOrgs[0].password, testOrgs[0].orgName, "Moderator");
 for (let i in testUsers) {
     if (i == 4) break;
+    if (i == 0) continue;
     const returnData = await organizationData.loginOrg(testUsers[i].userName, testOrgs[0].password, testOrgs[0].orgName, "Member");
 
     testOrgs[0].members = returnData[1].members;
