@@ -317,7 +317,7 @@ router
                 let sessions_name_id = [];
                 for (let sessionId of Org.sessions) {
                     let Sesh = await sessionData.getSession(sessionId);
-                    sessions_name_id.push({ id: sessionId, name: Sesh.seshName });
+                    sessions_name_id.push({ id: sessionId, name: Sesh.seshName, date: Sesh.sessionDate });
                 }
 
                 req.session.currentPage = `/organization/${orgName}`;
