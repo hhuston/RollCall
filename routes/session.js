@@ -75,18 +75,16 @@ router
 
             let Sesh = await sessionData.getSession(sessionId);
 
-            let Org = await organizationData.getOrganizationByName(Sesh.orgName);
-            if (!Org.members.some((mem) => mem.userName === req.session.user.userName)) {
-                return res
-                    .status(400)
-                    .render("error.handlebars", { title: "Error Page", error_class: `bad_param`, message: `You are not a member of ${Sesh.orgName}`, error_route: req.session.currentPage });
-            }
             if (Sesh.members.some((mem) => mem.userName === req.session.user.userName)) {
                 return res.redirect(`/session/${sessionId}`);
             }
-
-            req.session.currentPage = `/session/joinsession/${sessionId}`;
-            return res.render("joinsession.handlebars", { title: "Join Session", sessionInfo: Sesh });
+            if (Sesh.open) {
+                req.session.currentPage = `/session/joinsession/${sessionId}`;
+                return res.render("joinsession.handlebars", { title: "Join Session", sessionInfo: Sesh });
+            }
+            else {
+                return res.redirect(`/session/${sessionId}`);
+            }
         } catch (e) {
             res.status(400).render("error.handlebars", { title: "Error Page", error_class: `bad_param`, message: e, error_route: req.session.currentPage });
         }
@@ -113,7 +111,7 @@ router
 
 router
     .route("/:sessionId") // /session/asd8987dsf
-    .get(middlewares.checkIfInSessionAndOrg, async (req, res) => {
+    .get(middlewares.checkIfInOrg, async (req, res) => {
         //TODO add share url logic
         if (!req.session.currentPage) {
             req.session.currentPage = "/";
@@ -129,7 +127,14 @@ router
             if (!Sesh) {
                 throw `no session with id ${sessionId}`;
             }
-
+            if (Sesh.open) {
+            if (!Sesh.members.some((mem) => mem.userName === req.session.user.userName)) {
+                return res.status(403).render("error.handlebars", {
+                    error_class: "input_error",
+                    message: "You are not a member of this session",
+                    error_route: req.session.currentPage,
+                });
+            }
             let role = Sesh.members.filter((mem) => mem.userName === req.session.user.userName)[0].role;
             let voter = "";
             let moderator = "";
@@ -148,12 +153,18 @@ router
             if (role == "observer") {
                 observer = "true";
             }
-            req.session.currentPage = `/session/${Sesh._id}`;
-            if (Sesh.open) {
-                return res.render("session.handlebars", { title: "Session", sessionData: Sesh, Role: role, isModerator: moderator, isVoter: voter, isGuest: guest, isObserver: observer });
-            } else {
-                let actions = actionData.getListofActions(Sesh.actionQueue);
-                return res.render("listofactions.handlebars", { title: "List of Actions", actions: actions });
+            req.session.currentPage = `/session/${Sesh._id.toString()}`;
+            let actions = await actionData.getListofActions(Sesh.actionQueue);
+            let queuedActions = actions.filter((action) => action.status === "queued");
+            let oncallActions = actions.filter((action) => action.status === "oncall");
+            let loggedActions = actions.filter((action) => action.status === "logged");
+            req.session.currentPage = `/session/${Sesh._id.toString()}`;
+            return res.render("session.handlebars", { title: "Session", sessionData: Sesh, Role: role, isModerator: moderator, isVoter: voter, isGuest: guest, isObserver: observer });
+            }
+            else {
+                let actions = await actionData.getListofActions(Sesh.actionQueue);
+                req.session.currentPage = `/session/${Sesh._id.toString()}`;
+                return res.render("listofactions.handlebars", { title: "List of Actions", actions: actions, session_route: `/organization/${Sesh.orgName}` });
             }
         } catch (e) {
             return res.status(400).render("error.handlebars", { title: "Error Page", error_class: `bad_param`, message: e, error_route: req.session.currentPage });
