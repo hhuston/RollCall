@@ -1,18 +1,22 @@
 <main>
+    <a class="home" id="home" href="{{session_route}}">To Organization</a>
     <h2>Actions</h2>
-    <!-- Maybe some back button to look at all sessions? -->
+    {{#if actions}}
     <table>
         <tr>
             <th>Type</th>
             <th>Value</th>
             <th>More Info</th>
         </tr>
-        {{#each action}}
         <tr>
+            {{#each actions}}
             <td>{{this.type}}</td>
             <td>{{this.value}}</td>
             <td><a href="/action/{{this.actionId}}">View More Info</a></td>
+            {{/each}}
         </tr>
-        {{/each}}
     </table>
+    {{else}}
+        <h3>There were no actions in this session!</h3>
+    {{/if}}
 </main>

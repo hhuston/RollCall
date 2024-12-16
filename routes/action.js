@@ -1,6 +1,6 @@
 import Router from "express";
 const router = Router();
-import { actionData } from "../data/index.js";
+import { actionData, userData} from "../data/index.js";
 import validation from "../validation.js";
 import middlewares from "../middlewares.js";
 
@@ -58,7 +58,7 @@ router.route("/create/:sessionId").post(middlewares.checkIfInSessionAndOrg, asyn
 });
 
 router
-    .route("/:actionId") // /action/:orgId
+    .route("/:actionId") // /action/:actionId
     .get(async (req, res) => {
         if (!req.session.currentPage) {
             req.session.currentPage = "/";
@@ -73,9 +73,9 @@ router
             let action = await actionData.getAction(actionId);
 
             let user = await userData.getUser(action.actionOwner);
-
+            let back_route = req.session.currentPage
             req.session.currentPage = `/actions/${actionId}`;
-            return res.render("actiondetails.handlebars", { title: "Action Details", action: action, firstName: user.firstName, lastName: user.lastName });
+            return res.render("actiondetails.handlebars", { title: "Action Details", action: action, firstName: user.firstName, lastName: user.lastName, back: back_route });
         } catch (e) {
             res.status(400).render("error.handlebars", { title: "Error Page", error_class: `bad_param`, message: e, error_route: req.session.currentPage });
         }
