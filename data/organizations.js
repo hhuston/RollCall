@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import { users, organizations, sessions } from "./../config/mongoCollections.js";
+import { users, organizations, sessions, actions } from "./../config/mongoCollections.js";
 import bcrypt from "bcrypt";
 import validation from "../validation.js";
 const saltRounds = 10;
@@ -229,6 +229,7 @@ const deleteOrganization = async (orgName) => {
     const UserCollection = await users();
     const OrgCollection = await organizations();
     const SeshCollection = await sessions();
+    const ActCollection = await actions()
     const deletedOrg = await OrgCollection.findOneAndDelete({ orgName: new RegExp(orgName, "i") });
     if (!deletedOrg) {
         throw "No organization matches the provided id";
@@ -246,6 +247,9 @@ const deleteOrganization = async (orgName) => {
     let sessions_list = deletedOrg.sessions;
     for (let sesh of sessions_list) {
         let Sesh = await SeshCollection.findOneAndDelete({ _id: new ObjectId(sesh) });
+        for (let action in Sesh.actionQueue) {
+            let Act = await ActCollection.findOneAndDelete({ _id: new ObjectId(action) });
+        }
     }
     return deletedOrg._id.toString();
 };
