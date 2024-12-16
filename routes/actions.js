@@ -25,3 +25,5 @@ router
             res.status(400).render("error.handlebars", { error_class: `bad_param`, message: e, error_route: req.session.currentPage });
         }
     });
+
+export default router;
