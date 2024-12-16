@@ -4,6 +4,7 @@ import { sessionData, organizationData, actionData } from "../data/index.js";
 
 import validation from "../validation.js";
 import middlewares from "../middlewares.js";
+import xss from "xss";
 
 //Middle ware to check if user is in the organization
 router
@@ -225,14 +226,41 @@ router.route('/:sessionId/api/actions')
             session.actionQueue[i] = await actionData.getAction(session.actionQueue[i]);
         }
         let queue = session.actionQueue.filter((action) => action.status === "queued");
-        let oncall = session.actionQueue.filter((action) => action.status === "oncall");
+        let onCallArr = session.actionQueue.filter((action) => action.status === "oncall");
+        let onCall = {};
+        if (onCallArr.length !== 0)
+            onCall = onCallArr[0];
+        if (onCallArr.length > 1) throw "Too many on call arguments";
         let logged = session.actionQueue.filter((action) => action.status === "logged");
 
         return res.json({ 
             queue,
-            oncall,
+            onCall,
             logged,
          });
+    } catch (e) {
+        return res.status(500).json({ error: e.message });
+    }
+});
+
+router.route("/sendvote")
+.patch(async (req, res) => {
+    let vote = xss(req.body.vote);
+    let actionId = xss(req.body.actionId);
+    let voterUserName = req.session.user.userName;
+
+    try {
+        vote = validation.checkString(vote, "Vote");
+        if (!["Yay", "Nay", "Abstain"].includes(vote)) throw "Invalid vote option";
+        actionId = validation.checkId(actionId).toString();
+        voterUserName = validation.checkUserName(voterUserName);
+    } catch (e) {
+        return res.status(400).json({ error: e.message });
+    }
+    
+    try {
+        let response = await actionData.addActionVote(vote, actionId, voterUserName);
+        return res.json(response);
     } catch (e) {
         return res.status(500).json({ error: e.message });
     }
