@@ -2,9 +2,34 @@ let checkPassword = (password, arg) => {
     if (!password) throw `${arg} must be provided`;
     if (typeof password !== "string") throw `${arg} must be of type string`;
 
-    //Password max length?
-    if (password.length < 8 || /^[0-9] | ^[A-Z] | [0-9a-zA-Z]+/.test(password)) throw `${arg} must be 8+ characters and contain an uppercase letter, a number, and a special character`;
-
+    password=password.trim()
+    if (!password) throw `${arg} only contains spaces`;
+    let upper = true
+    let number = true
+    let special = true
+    if (password.length < 8) {
+        throw `${arg} is shorter than 8 characters`
+    }
+    if (password.length > 100) {
+        throw `${arg} is longer than 100 characters`
+    }
+    if (password.split(' ').length > 1) {
+        throw `${arg} contains a space`
+    }
+    for (let char of password) {
+        if (!isNaN(char)) {
+            number = false
+        }
+        else if (char.charCodeAt(0) > 65 && char.charCodeAt(0) < 90) {
+            upper = false
+        }
+        else if (char.charCodeAt(0) < 97 || char.charCodeAt(0) > 122) {
+            special = false
+        }
+    }
+    if (upper || number || special) {
+        throw `${arg} must contain an uppercase letter, a number, and a special character`
+    }
     return password;
 };
 
@@ -70,6 +95,9 @@ let checkEmail = (email) => {
     if (!regex.test(email)) {
         throw "please provide a valid email";
     }
+    if (email.length > 320) {
+      throw "email cannot exceed 320 characters"
+    }
 
     return email;
 };
@@ -88,14 +116,11 @@ if (button) {
             let lastName = checkName(document.getElementById("lastName").value, "Last Name");
             let email = checkEmail(document.getElementById("email").value);
 
-            let password = document.getElementById("password").value;
-            let confirmPassword = document.getElementById("confirmPassword").value;
+            let password = checkPassword(document.getElementById("password").value, "Password");
+            let confirmPassword = checkPassword(document.getElementById("confirmPassword").value, "Confirm Password");
             if (password != confirmPassword) {
                 throw "passwords must match";
             }
-
-            checkPassword(password, "Password");
-            checkPassword(confirmPassword, "Confirm Password");
 
             let form = document.getElementById("signup-form");
             form.submit();
@@ -167,12 +192,11 @@ if (button4) {
 
             let password = document.getElementById("password").value;
             let confirmPassword = document.getElementById("confirmPassword").value;
+            checkPassword(password, "Password");
+            checkPassword(confirmPassword, "Confirm Password");
             if (password != confirmPassword) {
                 throw "passwords must match";
             }
-
-            checkPassword(password, "Password");
-            checkPassword(confirmPassword, "Confirm Password");
 
             let form = document.getElementById("create-org-form");
             form.submit();

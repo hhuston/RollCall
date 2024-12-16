@@ -77,12 +77,11 @@ router
 
             let password = req.body.password;
             let confirmPassword = req.body.confirmPassword;
-
+            password = validation.checkPassword(password, "Password");
+            confirmPassword = validation.checkPassword(confirmPassword, "Confirm Password");
             if (password != confirmPassword) {
                 throw "passwords must match";
             }
-            password = validation.checkPassword(password, "Password");
-            confirmPassword = validation.checkPassword(confirmPassword, "Confirm Password");
 
             if (password != confirmPassword) {
                 throw "passwords must match";
