@@ -13,7 +13,7 @@ const constructorMethod = (app) => {
         if (!req.session.currentPage) {
             req.session.currentPage = "/";
         }
-        res.status(404).render("error.handlebars", { error_class: `not_found`, message: "Route Not Found!", error_route: req.session.currentPage });
+        res.status(404).render("error.handlebars", { title: "Error Page", error_class: `not_found`, message: "Route Not Found!", error_route: req.session.currentPage });
     });
 };
 

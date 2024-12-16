@@ -1,37 +1,29 @@
-<head>
-    <meta charset="utf-8">
-    <title>List of Actions</title>
-    <link rel="stylesheet" href="/public/css/sitestyles.css">
-</head>
-
-<body>
-    <main>
-        <h2>Action</h2>
-        <!-- Maybe some back button to look at all sessions? -->
-        <table>
-            <tr>
-                <th>Type</th>
-                <th>Author</th>
-                <th>Value</th>
-            </tr>
-            <tr>
-                <td>{{action.type}}</td>
-                <td>{{firstName}} {{lastName}}</td>
-                <td>{{action.value}}</td>
-            </tr>
-        </table>
-        <h3>Votes</h3>
-        <table>
-            <tr>
-                <th>Yay</th>
-                <th>Nay</th>
-                <th>Abstain</th>
-            </tr>
-            <tr>
-                <td>{{action.votingRecord.Yay}}</td>
-                <td>{{action.votingRecord.Nay}}</td>
-                <td>{{action.votingRecord.Abstain}}</td>
-            </tr>
-        </table>
-    </main>
-</body>
+<main>
+    <h2>Action</h2>
+    <!-- Maybe some back button to look at all sessions? -->
+    <table>
+        <tr>
+            <th>Type</th>
+            <th>Author</th>
+            <th>Value</th>
+        </tr>
+        <tr>
+            <td>{{action.type}}</td>
+            <td>{{firstName}} {{lastName}}</td>
+            <td>{{action.value}}</td>
+        </tr>
+    </table>
+    <h3>Votes</h3>
+    <table>
+        <tr>
+            <th>Yay</th>
+            <th>Nay</th>
+            <th>Abstain</th>
+        </tr>
+        <tr>
+            <td>{{action.votingRecord.Yay}}</td>
+            <td>{{action.votingRecord.Nay}}</td>
+            <td>{{action.votingRecord.Abstain}}</td>
+        </tr>
+    </table>
+</main>

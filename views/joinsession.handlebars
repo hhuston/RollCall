@@ -1,22 +1,16 @@
-<head>
-    <meta charset="utf-8">
-    <title>Join Session</title>
-    <link rel="stylesheet" href="/public/css/sitestyles.css">
-</head>
-
-<body>
-<h1>Join Session</h1>
-<a class="home" href="/organization/{{sessionInfo.orgName}}">Back To Organization</a>
-<main>
-    <form id="session-signin-form" method="POST" action="/session/joinsession/{{sessionInfo._id}}">
-        <label for="session_role">Role</label>
-        <select name="session_role" id="session_role">
-            <option value="voter">Voter</option>
-            <option value="observer">Observer</option>
-            <option value="guest">Guest</option>
-        </select>
-        <button id="session_submit_button" name="session_submit_button" type="submit">Submit</button>
-    </form>
-    <script src='/public/js/form_validate.js'></script>
-</main>
-</body>
+<div>
+    <h1>Join Session</h1>
+    <a class="home" href="/organization/{{sessionInfo.orgName}}">Back To Organization</a>
+    <main>
+        <form id="session-signin-form" method="POST" action="/session/joinsession/{{sessionInfo._id}}">
+            <label for="session_role">Role</label>
+            <select name="session_role" id="session_role">
+                <option value="voter">Voter</option>
+                <option value="observer">Observer</option>
+                <option value="guest">Guest</option>
+            </select>
+            <button id="session_submit_button" name="session_submit_button" type="submit">Submit</button>
+        </form>
+        <script src='/public/js/form_validate.js'></script>
+    </main>
+</div>

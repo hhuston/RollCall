@@ -13,30 +13,22 @@ router
             req.session.currentPage = "/";
         }
         if (!req.session.user) {
-            return res.status(403).render("error.handlebars", {
-                error_class: "input_error",
-                message: "You must sign in to access this page!",
-                error_route: req.session.currentPage,
-            });
+            return res
+                .status(403)
+                .render("error.handlebars", { title: "Error Page", error_class: "input_error", message: "You must sign in to access this page!", error_route: req.session.currentPage });
         }
         try {
             let orgName = validation.checkOrgName(req.params.orgName);
             let Org = await organizationData.getOrganizationByName(orgName);
             if (!Org.members.some((mem) => mem.userName === req.session.user.userName)) {
-                return res.status(403).render("error.handlebars", {
-                    error_class: "input_error",
-                    message: "You are not a member of this organization",
-                    error_route: req.session.currentPage,
-                });
+                return res
+                    .status(403)
+                    .render("error.handlebars", { title: "Error Page", error_class: "input_error", message: "You are not a member of this organization", error_route: req.session.currentPage });
             }
             req.session.currentPage = `/session/createsession/${orgName}`;
-            return res.render("createsession.handlebars", { orgName: orgName });
+            return res.render("createsession.handlebars", { title: "Create Session", orgName: orgName });
         } catch (e) {
-            res.status(400).render("error.handlebars", {
-                error_class: `bad_param`,
-                message: e,
-                error_route: req.session.currentPage,
-            });
+            res.status(400).render("error.handlebars", { title: "Error Page", error_class: `bad_param`, message: e, error_route: req.session.currentPage });
         }
     })
     .post(async (req, res) => {
@@ -44,11 +36,9 @@ router
             req.session.currentPage = "/";
         }
         if (!req.session.user) {
-            return res.status(403).render("error.handlebars", {
-                error_class: "input_error",
-                message: "You must sign in to access this page!",
-                error_route: req.session.currentPage,
-            });
+            return res
+                .status(403)
+                .render("error.handlebars", { title: "Error Page", error_class: "input_error", message: "You must sign in to access this page!", error_route: req.session.currentPage });
         }
         try {
             let orgName = validation.checkOrgName(req.params.orgName);
@@ -57,11 +47,7 @@ router
             let resp = await sessionData.createSession(proposal, req.session.user.userName, orgName, seshName);
             return res.redirect(`/session/${resp._id}`);
         } catch (e) {
-            res.status(400).render("error.handlebars", {
-                error_class: `bad_param`,
-                message: e,
-                error_route: req.session.currentPage,
-            });
+            res.status(400).render("error.handlebars", { title: "Error Page", error_class: `bad_param`, message: e, error_route: req.session.currentPage });
         }
     });
 
@@ -73,7 +59,9 @@ router
             req.session.currentPage = "/";
         }
         if (!req.session.user) {
-            return res.status(403).render("error.handlebars", { error_class: "input_error", message: "You must sign in to access this page!", error_route: req.session.currentPage });
+            return res
+                .status(403)
+                .render("error.handlebars", { title: "Error Page", error_class: "input_error", message: "You must sign in to access this page!", error_route: req.session.currentPage });
         }
         try {
             sessionId = validation.checkId(sessionId).toString();
@@ -81,24 +69,18 @@ router
             let Sesh = await sessionData.getSession(sessionId);
             let Org = await organizationData.getOrganizationByName(Sesh.orgName);
             if (!Org.members.some((mem) => mem.userName === req.session.user.userName)) {
-                return res.status(400).render("error.handlebars", {
-                    error_class: `bad_param`,
-                    message: `You are not a member of ${Sesh.orgName}`,
-                    error_route: req.session.currentPage,
-                });
+                return res
+                    .status(400)
+                    .render("error.handlebars", { title: "Error Page", error_class: `bad_param`, message: `You are not a member of ${Sesh.orgName}`, error_route: req.session.currentPage });
             }
             if (Sesh.members.some((mem) => mem.userName === req.session.user.userName)) {
                 return res.redirect(`/session/${sessionId}`);
             }
 
             req.session.currentPage = `/session/joinsession/${sessionId}`;
-            return res.render("joinsession.handlebars", { sessionInfo: Sesh });
+            return res.render("joinsession.handlebars", { title: "Join Session", sessionInfo: Sesh });
         } catch (e) {
-            res.status(400).render("error.handlebars", {
-                error_class: `bad_param`,
-                message: e,
-                error_route: req.session.currentPage,
-            });
+            res.status(400).render("error.handlebars", { title: "Error Page", error_class: `bad_param`, message: e, error_route: req.session.currentPage });
         }
     })
     .post(middlewares.checkIfInSessionAndOrg, async (req, res) => {
@@ -106,11 +88,9 @@ router
             req.session.currentPage = "/";
         }
         if (!req.session.user) {
-            return res.status(403).render("error.handlebars", {
-                error_class: "input_error",
-                message: "You must sign in to access this page!",
-                error_route: req.session.currentPage,
-            });
+            return res
+                .status(403)
+                .render("error.handlebars", { title: "Error Page", error_class: "input_error", message: "You must sign in to access this page!", error_route: req.session.currentPage });
         }
         try {
             let sessionId = validation.checkId(req.params.sessionId).toString();
@@ -119,11 +99,7 @@ router
             let resp = sessionData.joinSession(sessionId, role, req.session.user.userName);
             return res.redirect(`/session/${sessionId}`);
         } catch (e) {
-            res.status(400).render("error.handlebars", {
-                error_class: `bad_param`,
-                message: e,
-                error_route: req.session.currentPage,
-            });
+            res.status(400).render("error.handlebars", { title: "Error Page", error_class: `bad_param`, message: e, error_route: req.session.currentPage });
         }
     });
 
@@ -135,11 +111,9 @@ router
             req.session.currentPage = "/";
         }
         if (!req.session.user) {
-            return res.status(403).render("error.handlebars", {
-                error_class: "input_error",
-                message: "You must sign in to access this page!",
-                error_route: req.session.currentPage,
-            });
+            return res
+                .status(403)
+                .render("error.handlebars", { title: "Error Page", error_class: "input_error", message: "You must sign in to access this page!", error_route: req.session.currentPage });
         }
         try {
             let sessionId = validation.checkId(req.params.sessionId).toString();
@@ -173,28 +147,13 @@ router
             let loggedActions = actions.filter((action) => action.status === "logged");
 
             if (Sesh.open) {
-                return res.render("session.handlebars", {
-                    sessionData: Sesh,
-                    Role: role,
-                    isModerator: moderator,
-                    isVoter: voter,
-                    isGuest: guest,
-                    isObserver: observer,
-                    queuedActions: queuedActions,
-                    oncallActions: oncallActions,
-                    loggedActions: loggedActions,
-                });
+                return res.render("session.handlebars", { title: "Session", sessionData: Sesh, Role: role, isModerator: moderator, isVoter: voter, isGuest: guest, isObserver: observer });
             } else {
-                return res.render("listofactions.handlebars", {
-                    actions: actions,
-                });
+                let actions = actionData.getListofActions(Sesh.actionQueue);
+                return res.render("listofactions.handlebars", { title: "List of Actions", actions: actions });
             }
         } catch (e) {
-            return res.status(400).render("error.handlebars", {
-                error_class: `bad_param`,
-                message: e,
-                error_route: req.session.currentPage,
-            });
+            return res.status(400).render("error.handlebars", { title: "Error Page", error_class: `bad_param`, message: e, error_route: req.session.currentPage });
         }
     });
 

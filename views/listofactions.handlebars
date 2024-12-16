@@ -1,26 +1,18 @@
-<head>
-    <meta charset="utf-8">
-    <title>List of Actions</title>
-    <link rel="stylesheet" href="/public/css/sitestyles.css">
-</head>
-
-<body>
-    <main>
-        <h2>Actions</h2>
-        <!-- Maybe some back button to look at all sessions? -->
-        <table>
-            <tr>
-                <th>Type</th>
-                <th>Value</th>
-                <th>More Info</th>
-            </tr>
-            {{#each action}}
-            <tr>
-                <td>{{this.type}}</td>
-                <td>{{this.value}}</td>
-                <td><a href="/action/{{this.actionId}}">View More Info</a></td>
-            </tr>
-            {{/each}}
-        </table>
-    </main>
-</body>
+<main>
+    <h2>Actions</h2>
+    <!-- Maybe some back button to look at all sessions? -->
+    <table>
+        <tr>
+            <th>Type</th>
+            <th>Value</th>
+            <th>More Info</th>
+        </tr>
+        {{#each action}}
+        <tr>
+            <td>{{this.type}}</td>
+            <td>{{this.value}}</td>
+            <td><a href="/action/{{this.actionId}}">View More Info</a></td>
+        </tr>
+        {{/each}}
+    </table>
+</main>

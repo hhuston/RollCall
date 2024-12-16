@@ -1,0 +1,16 @@
+.title {
+    width: 100%;
+    text-align: center;
+    font-size: xx-large;
+    color: #02542d;
+}
+
+.signin {
+    width: 500px;
+    height: max-content;
+    margin: auto;
+}
+
+.center {
+    border: solid;
+}

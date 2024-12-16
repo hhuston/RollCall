@@ -1,22 +1,16 @@
-<head>
-    <meta charset="utf-8">
-    <title>Create Organization</title>
-    <link rel="stylesheet" href="/public/css/sitestyles.css">
-</head>
-
-<body id = "up">
-<a class="home" href="/home">Back to Organizations</a>
-<h1>Create Organization</h1>
-<main>
-    <form id="create-org-form" name="create-org-form" method="POST" action="/createorganization">
-        <label for="orgName">OrgName: </label>
-        <input type="text" id="orgName" name="orgName">
-        <label for="password">Password: </label>
-        <input type="password" id="password" name="password">
-        <label for="confirmPassword">Confirm Password: </label>
-        <input type="password" id="confirmPassword" name="confirmPassword">
-        <button id="submitButtonOrg" name="submitButtonOrg" type="submit">Submit</button>
-    </form>
-    <script src='/public/js/form_validate.js'></script>
-</main>
-</body>
+<div id="up">
+    <a class="home" href="/home">Back to Organizations</a>
+    <h1>Create Organization</h1>
+    <main>
+        <form id="create-org-form" name="create-org-form" method="POST" action="/createorganization">
+            <label for="orgName">OrgName: </label>
+            <input type="text" id="orgName" name="orgName">
+            <label for="password">Password: </label>
+            <input type="password" id="password" name="password">
+            <label for="confirmPassword">Confirm Password: </label>
+            <input type="password" id="confirmPassword" name="confirmPassword">
+            <button id="submitButtonOrg" name="submitButtonOrg" type="submit">Submit</button>
+        </form>
+        <script src='/public/js/form_validate.js'></script>
+    </main>
+</div>
