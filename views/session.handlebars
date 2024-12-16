@@ -5,7 +5,6 @@
 </head>
 
 <body>
-    <a class="home" id="home" href="/organization/{{sessionData.orgName}}">Back to Organization</a>
     <h1 id="sessionTitle">{{sessionData.Proposal}}</h1>
     <h2>Your are a {{Role}} in this session</h2>
     <h2>Use this link to share the session page: <a href="javscript:void(0)">{{sessionLink}}</a></h2>
@@ -42,18 +41,18 @@
                 {{!-- TODO: implement AJAX to handle updates --}}
                 <ul id="actionQueue">
                     {{#each queuedActions}}
-                        <li>
-                            <div class="action">
-                                <h5>{{this.type}}</h5>
-                                <p>{{this.value}}</p>
-                                <h5>By</h5>
-                                <p>{{this.actionOwner}}</p>
-                                {{#if ../isModerator}}
-                                    <button id="callVote">Call Vote</button>
-                                    <button id="deleteAction">Delete {{this.type}}</button>
-                                {{/if}}
-                            </div>
-                        </li>
+                    <li>
+                        <div class="action">
+                            <h5>{{this.type}}</h5>
+                            <p>{{this.value}}</p>
+                            <h5>By</h5>
+                            <p>{{this.actionOwner}}</p>
+                            {{#if ../isModerator}}
+                            <button id="callVote">Call Vote</button>
+                            <button id="deleteAction">Delete {{this.type}}</button>
+                            {{/if}}
+                        </div>
+                    </li>
                     {{/each}}
                 </ul>
             </div>
@@ -62,16 +61,16 @@
     <div id="buttons">
         {{!-- Have to do separate if for vote and guest bc handlebars is annoying --}}
         {{#if isVoter}}
-            {{!-- Add functionality with JS and AJAX --}}
-            <a href="/action/createmotion/{{sessionData._id}}">
-                <button id="createMotion">Create Motion</button>
-            </a>
-            <a href="/action/createamendment/{{sessionData._id}}">
-                <button id="createAmendment">Create Amendment</button>
-            </a>
-            {{/if}}
-            {{#if isGuest}}
-            {{!-- Add functionality with JS and AJAX --}}
+        {{!-- Add functionality with JS and AJAX --}}
+        <a href="/action/createmotion/{{sessionData._id}}">
+            <button id="createMotion">Create Motion</button>
+        </a>
+        <a href="/action/createamendment/{{sessionData._id}}">
+            <button id="createAmendment">Create Amendment</button>
+        </a>
+        {{/if}}
+        {{#if isGuest}}
+        {{!-- Add functionality with JS and AJAX --}}
         <a href="/action/createmotion/{{sessionData._id}}">
             <button id="createMotion">Create Motion</button>
         </a>
@@ -80,12 +79,12 @@
         </a>
         {{/if}}
         {{#if isModerator}}
-            <form method="PATCH" action="/session/endsession/{{sessionData._id}}">
-                <input type="submit" value="End Session">
-            </form>
-            {{/if}}
-        </div>
-        <script src="https://code.jquery.com/jquery-2.2.4.min.js"
-            integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
-        <script src="/public/js/sessions.js"></script>
+        <form method="PATCH" action="/session/endsession/{{sessionData._id}}">
+            <input type="submit" value="End Session">
+        </form>
+        {{/if}}
+    </div>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"
+        integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+    <script src="/public/js/sessions.js"></script>
 </body>
