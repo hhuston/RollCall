@@ -185,9 +185,11 @@ let validation = {
 
 let checkActionType = (type) => {
     type = checkString(type);
+    type = type.toLowerCase();
     if (type != "motion" && type != "amendment") {
         throw `Type is not 'motion' or 'amendment'`;
     }
+    return type;
 };
 
 let validation = {
