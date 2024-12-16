@@ -144,50 +144,6 @@ router
   });
 
 router
-    .route("/:sessionId") // /session/asd8987dsf
-    .get(async (req, res) => {
-        //TODO add share url logic
-        if (!req.session.currentPage) {
-            req.session.currentPage = "/";
-        }
-        if (!req.session.user) {
-            return res.status(403).render("error.handlebars", { error_class: "input_error", message: "You must sign in to access this page!", error_route: req.session.currentPage });
-        }
-        try {
-            let sessionId = validation.checkId(req.params.sessionId).toString();
-            let Sesh = await sessionData.getSession(sessionId);
-            if (!Sesh) {
-                throw `no session with id ${sessionId}`;
-            }
-            //console.log("JAWN2")
-            if (!Sesh.members.some((mem) => mem.userName === req.session.user.userName)) {
-                return res.status(403).render("error.handlebars", { error_class: "input_error", message: "You are not a member of this session", error_route: req.session.currentPage });
-            }
-            //console.log("JAWN3")
-            let Org = await organizationData.getOrganizationByName(Sesh.orgName);
-            if (!Org.members.some((mem) => mem.userName === req.session.user.userName)) {
-                return res.status(403).render("error.handlebars", { error_class: "input_error", message: "You are not a member of this organization", error_route: req.session.currentPage });
-            }
-            //console.log("JAWN4")
-            let role = Sesh.members.filter((mem) => mem.userName === req.session.user.userName)[0].role;
-            let voter = "";
-            let moderator = "";
-            let guest = "";
-            let observer = "";
-            //TODO add logic to make sure the proper permissions are granted
-            if (role == "voter") {
-                voter = "true";
-            }
-            if (role == "moderator") {
-                moderator = "true";
-            }
-            if (role == "guest") {
-                guest = "true";
-            }
-            if (role == "observer") {
-                observer = "true";
-            }
-            req.session.currentPage = `/session/${Sesh._id}`;
   .route("/:sessionId") // /session/asd8987dsf
   .get(async (req, res) => {
     //TODO add share url logic
@@ -232,7 +188,6 @@ router
       let role = Sesh.members.filter(
         (mem) => mem.userName === req.session.user.userName
       )[0].role;
-      console.log(role);
       let voter = "";
       let moderator = "";
       let guest = "";
