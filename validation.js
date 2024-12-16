@@ -143,7 +143,7 @@ let checkString = (str, arg) => {
 };
 
 let checkOrgName = (name) => {
-    name = checkString(name);
+    name = checkString(name, "Organization Name");
     if (name.length > 255) throw "Org Name is too long";
     return name;
 };

@@ -3,12 +3,13 @@
     <title>Error Page</title>
     <link rel="stylesheet" href="/public/css/sitestyles.css">
 </head>
+
 <body>
     <a class="home" id="home" href="/organization/{{sessionData.orgName}}">Back to Organization</a>
     <h1 id="sessionTitle">{{sessionData.Proposal}}</h1>
     <h2>Your are a {{Role}} in this session</h2>
     <h2>Use this link to share the session page: <a href="javscript:void(0)">{{sessionLink}}</a></h2>
-    <form method="PATCH" action="/session/leavesession/{{Sesh._id}}">
+    <form method="PATCH" action="/session/leavesession/{{sessionData._id}}">
         <input type="submit" value="Leave Session">
     </form>
 
@@ -18,12 +19,12 @@
             {{!-- Change this with client side JS and AJAX --}}
             <p id="currentVoteP"></p>
             {{#if isVoter}}
-                {{!-- Add button functionality with JS --}}
-                <div> 
-                    <button id="yayVote">Yay</button>
-                    <button id="nayVote">Nay</button>
-                    <button id="absVote">Abstain</button>
-                </div>
+            {{!-- Add button functionality with JS --}}
+            <div>
+                <button id="yayVote">Yay</button>
+                <button id="nayVote">Nay</button>
+                <button id="absVote">Abstain</button>
+            </div>
             {{/if}}
         </div>
     </div>
@@ -62,14 +63,14 @@
         {{!-- Have to do separate if for vote and guest bc handlebars is annoying --}}
         {{#if isVoter}}
             {{!-- Add functionality with JS and AJAX --}}
-        <a href="/action/createmotion/{{sessionData._id}}">
-            <button id="createMotion">Create Motion</button>
-        </a>
-        <a href="/action/createamendment/{{sessionData._id}}">
-            <button id="createAmendment">Create Amendment</button>
-        </a>
-        {{/if}}
-        {{#if isGuest}}
+            <a href="/action/createmotion/{{sessionData._id}}">
+                <button id="createMotion">Create Motion</button>
+            </a>
+            <a href="/action/createamendment/{{sessionData._id}}">
+                <button id="createAmendment">Create Amendment</button>
+            </a>
+            {{/if}}
+            {{#if isGuest}}
             {{!-- Add functionality with JS and AJAX --}}
         <a href="/action/createmotion/{{sessionData._id}}">
             <button id="createMotion">Create Motion</button>
@@ -79,13 +80,12 @@
         </a>
         {{/if}}
         {{#if isModerator}}
-            {{!-- Add functionality with JS and AJAX --}}
-            <form method="PATCH" action="/session/endSession/{{Sesh._id}}">
+            <form method="PATCH" action="/session/endsession/{{sessionData._id}}">
                 <input type="submit" value="End Session">
             </form>
-        {{/if}}
-    </div>
-    <script src="https://code.jquery.com/jquery-2.2.4.min.js"
-        integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
-    <script src="/public/js/sessions.js"></script>
+            {{/if}}
+        </div>
+        <script src="https://code.jquery.com/jquery-2.2.4.min.js"
+            integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+        <script src="/public/js/sessions.js"></script>
 </body>
