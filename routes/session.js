@@ -187,28 +187,6 @@ router
         }
     });
 
-router
-    .route("/leavesession/:sessionId") // /session/leavesession/asd8987dsf
-    .patch(middlewares.checkIfInSessionAndOrg, async (req, res) => {
-        if (!req.session.currentPage) {
-            req.session.currentPage = "/";
-        }
-        if (!req.session.user) {
-            return res
-                .status(403)
-                .render("error.handlebars", { title: "Error Page", error_class: "input_error", message: "You must sign in to access this page!", error_route: req.session.currentPage });
-        }
-        try {
-            let userName = req.session.user.userName;
-            let sessionId = validation.checkId(req.params.sessionId).toString();
-
-            let orgName = await sessionData.leaveSession(sessionId, userName);
-            return res.redirect(`/organization/${orgName}`);
-        } catch (e) {
-            return res.status(400).render("error.handlebars", { title: "Error Page", error_class: `bad_param`, message: e, error_route: req.session.currentPage });
-        }
-    });
-
 router.route('/endsession/:sessionId')
 .patch(middlewares.checkIfInSessionAndOrg, async (req, res) => {
     let sessionId = req.params.sessionId;
