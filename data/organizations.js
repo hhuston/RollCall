@@ -2,7 +2,7 @@ import { ObjectId } from "mongodb";
 import { users, organizations, sessions } from "./../config/mongoCollections.js";
 import bcrypt from "bcrypt";
 import validation from "../validation.js";
-const saltRounds = 16;
+const saltRounds = 10;
 
 const createOrganization = async (
     //enforce a minimum password length
@@ -336,10 +336,9 @@ let updateRoleOrg = async (userName, role, orgName) => {
     //input: userName, role, orgName with the usal contraints
     //output: the _id, orgName, members, and sessions of the updated Org
     //contraints: usual
-
     userName = validation.checkUserName(userName, "Username");
     role = validation.checkOrgRole(role);
-    checkOrgName = validation.checkOrgName(orgName);
+    validation.checkOrgName(orgName);
 
     const UserCollection = await users();
     const OrgCollection = await organizations();
@@ -354,7 +353,7 @@ let updateRoleOrg = async (userName, role, orgName) => {
         throw "No user matches the provided userName";
     }
     members_list.forEach((item) => {
-        if (item.userName == userName) {
+        if (item.userName == User.userName) {
             item.role = role;
         }
     });

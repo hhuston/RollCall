@@ -2,7 +2,7 @@ import { ObjectId } from "mongodb";
 import { organizations, users } from "./../config/mongoCollections.js";
 import bcrypt from "bcrypt";
 import validation from "../validation.js";
-const saltRounds = 16;
+const saltRounds = 10;
 
 const createUser = async (
     //enforce a minimum password length, make sure that the returns don't include password or id

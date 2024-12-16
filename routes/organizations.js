@@ -316,7 +316,7 @@ router
                 resp = await organizationData.updateRoleOrg(userName, role, orgName);
             }
             if (req.body.type == "members_owner") {
-                let userName = validation.checkUserName(req.body.userName);
+                let userName = validation.checkUserName(req.session.user.userName);
                 let role = validation.checkOrgRole(req.body.role);
                 resp = await organizationData.updateRoleOrg(userName, role, orgName);
                 // return res.redirect(`/organization/${orgName}`)
