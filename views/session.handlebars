@@ -25,7 +25,7 @@
         <h3>On Call</h3>
         <div class="greyPanel">
             {{!-- Change this with client side JS and AJAX --}}
-            <p id="votingPrompt"></p>
+            <div id="votingPrompt"></div>
             {{#if isVoter}}
             {{!-- Add button functionality with JS --}}
             <div>
@@ -33,7 +33,7 @@
                 <button id="nayVote">Nay</button>
                 <button id="absVote">Abstain</button>
             </div>
-            <p class="voteCast" hidden></p>
+            <p id="voteCast" hidden></p>
             {{/if}}
         </div>
     </div>

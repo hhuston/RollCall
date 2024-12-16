@@ -128,10 +128,40 @@ let forwardActionStatus = async (id) => {
   return { ...updatedAction, updated: true };
 };
 
+let addActionVote = async (vote, actionId, voterUserName) => {
+    actionId = validation.checkId(actionId);
+
+    const actionCollection = await actions();
+    const action = await actionCollection.findOne({
+    _id: id,
+    });
+
+    if (!action) throw "Could not find action with that id";
+
+    // Make sure the user has not voted already
+    for (let voteType in action.votingRecord) {
+        let record = action.votingRecord[voteType]
+        if (record.includes(voterUserName)) throw "User has already voted on this aciton";
+    }
+
+    if (!["Yay", "Nay", "Abstain"].includes(vote)) throw "Invalid vote option";
+    // Update action in the database
+    const updatedAction = await actionCollection.findOneAndUpdate(
+    { _id: id },
+    { $push: { [`votingRecord.${vote}`]: voterUserName }},
+    { returnDocument: "after" }
+    );
+
+    if (!updatedAction) throw "Could not update action";
+
+    return { ...updatedAction, updated: true };
+}
+
 export default {
   createAction,
   deleteAction,
   getAction,
   getListofActions,
   forwardActionStatus,
+  addActionVote
 };
