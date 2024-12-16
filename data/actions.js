@@ -133,7 +133,7 @@ let addActionVote = async (vote, actionId, voterUserName) => {
 
     const actionCollection = await actions();
     const action = await actionCollection.findOne({
-    _id: id,
+    _id: actionId,
     });
 
     if (!action) throw "Could not find action with that id";
@@ -141,13 +141,13 @@ let addActionVote = async (vote, actionId, voterUserName) => {
     // Make sure the user has not voted already
     for (let voteType in action.votingRecord) {
         let record = action.votingRecord[voteType]
-        if (record.includes(voterUserName)) throw "User has already voted on this aciton";
+        if (record.includes(voterUserName)) throw "User has already voted on this action";
     }
 
     if (!["Yay", "Nay", "Abstain"].includes(vote)) throw "Invalid vote option";
     // Update action in the database
     const updatedAction = await actionCollection.findOneAndUpdate(
-    { _id: id },
+    { _id: actionId },
     { $push: { [`votingRecord.${vote}`]: voterUserName }},
     { returnDocument: "after" }
     );
