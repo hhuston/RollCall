@@ -4,10 +4,10 @@ import sessionRoutes from './session.js';
 import actionRoutes from './action.js';
 
 const constructorMethod = (app) => {
-  app.use('/', authRoutes);
-  app.use('/', orgRoutes);
-  app.use('/session', sessionRoutes);
-  app.use('/action', actionRoutes);
+    app.use("/", authRoutes);
+    app.use("/", orgRoutes);
+    app.use("/session", sessionRoutes);
+    app.use("/action", actionRoutes);
 
     app.use("*", (req, res) => {
         if (!req.session.currentPage) {

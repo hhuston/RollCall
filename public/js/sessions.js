@@ -1,5 +1,3 @@
-import { json } from "express";
-// Cant do that...
 
 const yayVote = document.getElementById("yayVote");
 const nayVote = document.getElementById("nayVote");

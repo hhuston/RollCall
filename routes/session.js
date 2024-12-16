@@ -36,7 +36,7 @@ router
             let orgName = validation.checkOrgName(req.params.orgName);
             let proposal = validation.checkString(req.body.firstProposal, "Original Proposal");
             let seshName = validation.checkString(req.body.seshName, "Session Name");
-            let resp = sessionData.createSession(proposal, req.session.user.userName, orgName, seshName);
+            let resp = await sessionData.createSession(proposal, req.session.user.userName, orgName, seshName);
             return res.redirect(`/session/${resp._id}`);
         } catch (e) {
             res.status(400).render("error.handlebars", { error_class: `bad_param`, message: e, error_route: req.session.currentPage });
@@ -105,14 +105,18 @@ router
             if (!Sesh) {
                 throw `no session with id ${sessionId}`;
             }
+            //console.log("JAWN2")
             if (!Sesh.members.some((mem) => mem.userName === req.session.user.userName)) {
                 return res.status(403).render("error.handlebars", { error_class: "input_error", message: "You are not a member of this session", error_route: req.session.currentPage });
             }
+            //console.log("JAWN3")
             let Org = await organizationData.getOrganizationByName(Sesh.orgName);
             if (!Org.members.some((mem) => mem.userName === req.session.user.userName)) {
                 return res.status(403).render("error.handlebars", { error_class: "input_error", message: "You are not a member of this organization", error_route: req.session.currentPage });
             }
-            let role = Sesh.members.filter((mem) => mem.userName === req.session.user.userName);
+            //console.log("JAWN4")
+            let role = Sesh.members.filter((mem) => mem.userName === req.session.user.userName)[0].role;
+            console.log(role)
             let voter = "";
             let moderator = "";
             let guest = "";
@@ -139,9 +143,8 @@ router
                 return res.render("listofactions.handlebars", { actions: actions });
             }
         } catch (e) {
-            res.status(400).render("error.handlebars", { error_class: `bad_param`, message: e, error_route: req.session.currentPage });
+            return res.status(400).render("error.handlebars", { error_class: `bad_param`, message: e, error_route: req.session.currentPage });
         }
-        return res.render("session.handlebars");
     });
 
 // TODO: implement (frank)
