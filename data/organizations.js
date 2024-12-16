@@ -165,6 +165,7 @@ const leaveOrg = async (userName, orgName) => {
 
     const UserCollection = await users();
     const OrgCollection = await organizations();
+    const SeshCollection = await sessions();
     const Org = await OrgCollection.findOne({ orgName: new RegExp(orgName, "i") });
     if (!Org) {
         throw "No organization matches the provided orgName";
@@ -242,7 +243,7 @@ const deleteOrganization = async (orgName) => {
         };
         const updatedInfo = await UserCollection.findOneAndUpdate({ userName: member.userName }, { $set: new_user_obj }, { returnDocument: "after" });
     }
-    let sessions_list = Org.sessions;
+    let sessions_list = deletedOrg.sessions;
     for (let sesh of sessions_list) {
         let Sesh = await SeshCollection.findOneAndDelete({ _id: new ObjectId(sesh) });
     }
