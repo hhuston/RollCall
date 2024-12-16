@@ -74,6 +74,16 @@ app.use('/', async (req, res, next) => {
      }
    });
 
+app.use("/session/endsession", async (req, res, next) => {
+    if (req.method == "GET")
+        req.method = "PATCH";
+    next()
+});
+app.use("/session/leavesession", async (req, res, next) => {
+    if (req.method == "GET")
+        req.method = "PATCH";
+    next()
+});
 
 configRoutes(app);
 
