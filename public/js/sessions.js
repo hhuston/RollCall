@@ -82,6 +82,7 @@ if (absVote) {
     });
 }
 
+let onCallActionId = "";
 const refreshActionLogs = async () => {
     let response = await fetch(`/session/${sessionId}/api/actions`);
     let data = await response.json();
@@ -97,7 +98,7 @@ const refreshActionLogs = async () => {
             </form>`
         callVote.addEventListener("submit", async (event) => {
             event.preventDefault();
-            await fetch(`/action/callvote/${action._id}`, {
+            await fetch(`/action/callvote/${action._id}/${onCallActionId}`, {
                 method: 'PATCH',
             });
             refreshActionLogs();
@@ -130,6 +131,7 @@ const refreshActionLogs = async () => {
 
     const votingPrompt = document.getElementById("votingPrompt");
     votingPrompt.innerHTML = `${data.oncall[0].value}`;
+    onCallActionId = data.oncall[0]._id.toString();;
 
     const sessionLog = document.getElementById("sessionLog");
     for (let action of data.logged) {

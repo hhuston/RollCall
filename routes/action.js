@@ -100,6 +100,34 @@ router
     });
 
 router
+    .route("/callvote/:actionId/:onCallActionId")
+    .patch(async (req, res) => {
+        // TODO:
+        // First check that session doesn't already have an action on call (do this in routes but not data to allow more flexibility on backend)
+        // let numActionsOnCall = req.body.actionsoncall;
+        // if (numActionsOnCall > 0) {
+        //     return res.status(400).render("error.handlebars", { title: "Error Page", error_class: `bad_param`, message: "There is already an action on call", error_route: req.session.currentPage });
+        // }
+
+        let actionId = req.params.actionId; 
+        let onCallActionId = req.params.onCallActionId;
+        try {
+            actionId = validation.checkId(actionId).toString();
+            onCallActionId = validation.checkId(onCallActionId).toString();
+        } catch (e) {
+            return res.status(400).render("error.handlebars", { title: "Error Page", error_class: `bad_param`, message: e.message, error_route: req.session.currentPage });
+        }
+
+        try {
+            let newOnCallResp = await actionData.forwardActionStatus(actionId);
+            let oldOnCallResp = await actionData.forwardActionStatus(onCallActionId);
+            return res.json({ newOnCallResp, oldOnCallResp });
+        } catch (e) {
+            return res.status(500).render("error.handlebars", { title: "Error Page", error_class: `bad_param`, message: e.message, error_route: req.session.currentPage });
+        }
+    });
+
+router
     .route("/callvote/:actionId")
     .patch(async (req, res) => {
         // TODO:
