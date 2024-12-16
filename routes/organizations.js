@@ -36,7 +36,7 @@ router.route("/deleteorganization/:orgName").post(async (req, res) => {
             } else {
                 const result = await organizationData.deleteOrganization(orgName);
                 req.session.user.memberOrganizations = req.session.user.memberOrganizations.filter((mem) => mem !== result);
-                return res.render("deleteorganization.handlebars", { title: "Delete Org", orgName: orgName });
+                return res.render("deleteorganization.handlebars", { title: "Delete Org", orgName: validation.str_format(orgName) });
             }
         }
     } catch (e) {
@@ -121,7 +121,7 @@ router
         if (!Org) {
             return res
                 .status(400)
-                .render("error.handlebars", { title: "Error Page", error_class: "input_error", message: `Organization ${orgName} does not exist`, error_route: req.session.currentPage });
+                .render("error.handlebars", { title: "Error Page", error_class: "input_error", message: `Organization '${validation.str_format(orgName)}' does not exist`, error_route: req.session.currentPage });
         }
         if (Org.members.some((mem) => mem.userName === req.session.user.userName)) {
             return res
@@ -129,7 +129,7 @@ router
                 .render("error.handlebars", { title: "Error Page", error_class: "input_error", message: "You are already signed-in in to this organization!", error_route: req.session.currentPage });
         } else {
             req.session.currentPage = `/signinorganization/${orgName}`;
-            return res.status(200).render("signinorganization.handlebars", { title: `${orgName} Register`, orgName: orgName });
+            return res.status(200).render("signinorganization.handlebars", { title: `${validation.str_format(orgName)} Register`, orgName: validation.str_format(orgName) });
         }
     })
     .post(async (req, res) => {
@@ -184,7 +184,7 @@ router
                 }
                 return res
                     .status(400)
-                    .render("error.handlebars", { title: "Error Page", error_class: "input_error", message: `Organization ${orgName} does not exist`, error_route: req.session.currentPage });
+                    .render("error.handlebars", { title: "Error Page", error_class: "input_error", message: `Organization '${validation.str_format(orgName)}' does not exist`, error_route: req.session.currentPage });
             }
             if (Org.members.some((mem) => mem.userName === req.session.user.userName)) {
                 let member_role = Org.members.filter((mem) => mem.userName === req.session.user.userName)[0].role;
@@ -197,7 +197,7 @@ router
                     });
                 }
                 req.session.currentPage = `/leaveorganization/${orgName}`;
-                return res.status(200).render("leaveorganization.handlebars", { title: "Leave Org", orgName: orgName });
+                return res.status(200).render("leaveorganization.handlebars", { title: "Leave Org", orgName: validation.str_format(orgName) });
             } else {
                 return res.status(403).render("error.handlebars", {
                     title: "Error Page",
@@ -299,7 +299,7 @@ router
                 }
                 return res
                     .status(400)
-                    .render("error.handlebars", { title: "Error Page", error_class: "input_error", message: `Organization ${orgName} does not exist`, error_route: req.session.currentPage });
+                    .render("error.handlebars", { title: "Error Page", error_class: "input_error", message: `Organization ${validation.str_format(orgName)} does not exist`, error_route: req.session.currentPage });
             }
             if (Org.members.some((mem) => mem.userName === req.session.user.userName)) {
                 let curr_member = Org.members.filter((mem) => mem.userName === req.session.user.userName);

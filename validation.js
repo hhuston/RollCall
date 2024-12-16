@@ -121,6 +121,13 @@ let checkName = (str, arg) => {
     return str;
 };
 
+let str_format = (str) => {
+  str = str.split(' ')
+  str = str.map(word => { return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()})
+  str = str.join(' ');
+  return str
+}
+
 let checkUserName = (str) => {
     str = checkString(str, "Username");
     if (str.length < 5) {
@@ -238,5 +245,6 @@ let validation = {
     checkDate: checkDate,
     isObj: isObj,
     checkActionType: checkActionType,
+    str_format: str_format
 };
 export default validation;
