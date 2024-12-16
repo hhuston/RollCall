@@ -103,8 +103,7 @@ router
             let sessionId = validation.checkId(req.params.sessionId).toString();
             let role = validation.checkSessionRole(req.body.session_role);
 
-            let resp = sessionData.joinSession(sessionId, role, req.session.user.userName);
-            //small bug occurs here, I believe due to the fact that the chck if in session and org middleware runs before mongodb transaction is run
+            let resp = await sessionData.joinSession(sessionId, role, req.session.user.userName);
             return res.redirect(`/session/${sessionId}`);
         } catch (e) {
             res.status(400).render("error.handlebars", { title: "Error Page", error_class: `bad_param`, message: e, error_route: req.session.currentPage });
