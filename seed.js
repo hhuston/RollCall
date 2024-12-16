@@ -1,8 +1,10 @@
 import { userData, organizationData, sessionData, actionData }from "./data/index.js";
 import { users, organizations, sessions, actions } from "./config/mongoCollections.js";
+import { dbConnection, closeConnection } from "./config/mongoConnection.js";
 
 // Create DB connections
 console.log("Connecting to MongoDB...");
+const db = await dbConnection();
 const userCollection = await users();
 const orgCollection = await organizations();
 const sessionCollection = await sessions();
