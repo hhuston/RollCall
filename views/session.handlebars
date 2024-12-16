@@ -49,8 +49,12 @@
                                 <h5>By</h5>
                                 <p>{{this.actionOwner}}</p>
                                 {{#if ../isModerator}}
-                                    <button id="callVote">Call Vote</button>
-                                    <button id="deleteAction">Delete {{this.type}}</button>
+                                    <form method="PATCH" action="/action/callVote/{{this.actionId}}">
+                                        <input type="submit" value="Call Vote">
+                                    </form>
+                                    <form method="PATCH" action="/action/delete/{{this.actionId}}">
+                                        <input type="submit" value="Delete {{this.type}}">
+                                    </form>
                                 {{/if}}
                             </div>
                         </li>
