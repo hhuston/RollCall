@@ -55,8 +55,9 @@
             let form4 = document.getElementById("switch_owner_form");
             let form5 = document.getElementById("delete_org_form");
             form5.hidden = true;
+            let title = "";
             try {
-                let title = checkString(document.getElementById("members_title"), "Title");
+                title = document.getElementById("members_title");
                 let name = checkUserName(event.target.getAttribute("data-name"));
                 let role = checkOrgRole(event.target.getAttribute("data-role"));
 
@@ -93,8 +94,9 @@
             let form4 = document.getElementById("switch_owner_form");
             let form5 = document.getElementById("delete_org_form");
             form5.hidden = true;
+            let title = "";
             try {
-                let title = checkString(document.getElementById("members_title"), "Title");
+                title = document.getElementById("members_title");
                 let name = checkUserName(form.getAttribute("data-name"));
                 let role = checkOrgRole(form.getAttribute("data-role"));
 
@@ -126,8 +128,9 @@
             let form4 = document.getElementById("switch_owner_form");
             let form5 = document.getElementById("delete_org_form");
             form5.hidden = true;
+            let title = "";
             try {
-                let title = checkString(document.getElementById("members_title"), "Title");
+                title = document.getElementById("members_title");
                 let name = checkUserName(form.getAttribute("data-name"));
                 let role = checkOrgRole(form.getAttribute("data-role"));
 
@@ -161,8 +164,9 @@
             let form5 = document.getElementById("delete_org_form");
             form5.hidden = true;
 
+            let title = "";
             try {
-                let title = checkString(document.getElementById("members_title"), "Title");
+                title = document.getElementById("members_title");
                 let name = checkUserName(form3.getAttribute("data-name"));
                 let role = checkOrgRole(form3.getAttribute("data-role"));
 
@@ -214,8 +218,9 @@
             let form4 = document.getElementById("switch_owner_form");
             let form5 = document.getElementById("delete_org_form");
             form5.hidden = true;
+            let title = "";
             try {
-                let title = checkString(document.getElementById("members_title"), "Title");
+                title = document.getElementById("members_title");
                 let name = checkUserName(form2.getAttribute("data-name"));
                 let role = checkOrgRole(form2.getAttribute("data-role"));
                 let updateRole = checkOrgRole(document.getElementById("update_role").value);
@@ -281,7 +286,7 @@
             let form5 = document.getElementById("delete_org_form");
             form5.hidden = true;
             try {
-                let title = checkString(document.getElementById("members_title"), "Title");
+                title = document.getElementById("members_title");
                 let name = checkUserName(form4.getAttribute("data-name"));
                 let role = checkOrgRole(form4.getAttribute("data-role"));
                 let updateRole = checkOrgRole(document.getElementById("update_owner_role").value);

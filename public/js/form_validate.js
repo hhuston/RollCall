@@ -140,8 +140,8 @@ if (button3) {
             delete_item.remove();
         }
         try {
-            let password = checkPassword(document.getElementById("password").value, "Password");
-            let role = checkOrgRole(document.getElementById("role").value);
+            password = checkPassword(document.getElementById("password").value, "Password");
+            role = checkOrgRole(document.getElementById("role").value);
             let form = document.getElementById("org-signin-form");
             form.submit();
         } catch (e) {
