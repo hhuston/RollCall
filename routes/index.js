@@ -9,12 +9,12 @@ const constructorMethod = (app) => {
   app.use('/session', sessionRoutes);
   app.use('/action', actionRoutes);
 
-  app.use('*', (req, res) => {
-    if (!req.session.currentPage) {
-        req.session.currentPage = "/";
-    }
-    res.status(404).render("error.handlebars", { error_class: `not_found`, message: "Route Not Found!", error_route: req.session.currentPage});
-  });
+    app.use("*", (req, res) => {
+        if (!req.session.currentPage) {
+            req.session.currentPage = "/";
+        }
+        res.status(404).render("error.handlebars", { error_class: `not_found`, message: "Route Not Found!", error_route: req.session.currentPage });
+    });
 };
 
 export default constructorMethod;

@@ -9,8 +9,7 @@ let createAction = async (type, value, actionOwner) => {
     action.type = validation.checkString(type, "Type");
     action.value = validation.checkString(value, "Value");
     action.actionOwner = validation.checkUserName(actionOwner);
-    action.votingRecord = {"Yay": [], "Nay": [], "Abstain": []}
-
+    action.votingRecord = { Yay: [], Nay: [], Abstain: [] };
 
     const actionCollection = await actions();
     const newInsertInformation = await actionCollection.insertOne(action);
@@ -46,4 +45,17 @@ let getAction = async (id) => {
     return action;
 };
 
-export default { createAction, deleteAction, getAction };
+let getListofActions = async (actions) => {
+    validation.isIdArr(actions, "actions");
+
+    const actionCollection = await sessions();
+
+    actions.map(async (action) => {
+        let current_action = await getAction(action);
+        return { actionId: current_action._id.toString(), type: current_action.type, value: current_action.value };
+    });
+
+    return actions;
+};
+
+export default { createAction, deleteAction, getAction, getListofActions };

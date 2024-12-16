@@ -1,6 +1,6 @@
 import Router from "express";
 const router = Router();
-import { sessionData, organizationData } from "../data/index.js";
+import { sessionData, organizationData, actionData } from "../data/index.js";
 
 import validation from "../validation.js";
 
@@ -131,7 +131,13 @@ router
                 observer = "true";
             }
             req.session.currentPage = `/session/${Sesh._id}`;
-            return res.render("session.handlebars", { sessionData: Sesh, Role: role, isModerator: moderator, isVoter: voter, isGuest: guest, isObserver: observer });
+
+            if (Sesh.open) {
+                return res.render("session.handlebars", { sessionData: Sesh, Role: role, isModerator: moderator, isVoter: voter, isGuest: guest, isObserver: observer });
+            } else {
+                let actions = actionData.getListofActions(Sesh.actionQueue);
+                return res.render("listofactions.handlebars", { actions: actions });
+            }
         } catch (e) {
             res.status(400).render("error.handlebars", { error_class: `bad_param`, message: e, error_route: req.session.currentPage });
         }
@@ -175,8 +181,7 @@ router
 //     }
 // });
 
-router.route('endSession/')
-.patch(async (req, res) => {
+router.route("endSession/").patch(async (req, res) => {
     let sessionId = xss(req.body.sessionId);
     // TODO: implement
 });

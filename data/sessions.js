@@ -25,7 +25,7 @@ let createSession = async (proposal, proposalOwner, orgName, seshName) => {
     session.seshName = seshName;
     const UserCollection = await users();
     const OrgCollection = await organizations();
-    const Org = await OrgCollection.findOne({ orgName: new RegExp(orgName, "i") });
+    const Org = await OrgCollection.findOne({ orgName: { $regex: new RegExp(orgName, "i") } });
     if (!Org) {
         throw "No organization matches the provided orgName";
     }
@@ -47,7 +47,7 @@ let createSession = async (proposal, proposalOwner, orgName, seshName) => {
     let new_org_obj = {
         sessions: sessions_list,
     };
-    const updatedInfoOrg = await OrgCollection.findOneAndUpdate({ orgName: new RegExp(orgName, "i") }, { $set: new_org_obj }, { returnDocument: "after" });
+    const updatedInfoOrg = await OrgCollection.findOneAndUpdate({ orgName: { $regex: new RegExp(orgName, "i") } }, { $set: new_org_obj }, { returnDocument: "after" });
     session._id = newInsertInformation.insertedId.toString();
 
     return session;
