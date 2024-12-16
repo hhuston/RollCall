@@ -17,15 +17,14 @@
         <div class="greyPanel">
             {{!-- Change this with client side JS and AJAX --}}
             <p id="currentVoteP"></p>
-            {{!-- TODO: add back in role restrictions --}}
-            {{!-- {{#if isVoter}} --}}
+            {{#if isVoter}}
                 {{!-- Add button functionality with JS --}}
                 <div> 
                     <button id="yayVote">Yay</button>
                     <button id="nayVote">Nay</button>
                     <button id="absVote">Abstain</button>
                 </div>
-            {{!-- {{/if}} --}}
+            {{/if}}
         </div>
     </div>
     <div id="sessionLog">
@@ -56,9 +55,8 @@
         </div>
     </div>
     <div id="buttons">
-        {{!-- TODO: add back in role restrictions --}}
         {{!-- Have to do separate if for vote and guest bc handlebars is annoying --}}
-        {{!-- {{#if isVoter}} --}}
+        {{#if isVoter}}
             {{!-- Add functionality with JS and AJAX --}}
         <a href="/action/createmotion/{{sessionData._id}}">
             <button id="createMotion">Create Motion</button>
@@ -66,8 +64,8 @@
         <a href="/action/createamendment/{{sessionData._id}}">
             <button id="createAmendment">Create Amendment</button>
         </a>
-        {{!-- {{/if}} --}}
-        {{!-- {{#if isGuest}} --}}
+        {{/if}}
+        {{#if isGuest}}
             {{!-- Add functionality with JS and AJAX --}}
         <a href="/action/createmotion/{{sessionData._id}}">
             <button id="createMotion">Create Motion</button>
@@ -75,13 +73,13 @@
         <a href="/action/createamendment/{{sessionData._id}}">
             <button id="createAmendment">Create Amendment</button>
         </a>
-        {{!-- {{/if}} --}}
-        {{!-- {{#if isModerator}} --}}
+        {{/if}}
+        {{#if isModerator}}
             {{!-- Add functionality with JS and AJAX --}}
             <form method="PATCH" action="/session/endSession/{{Sesh._id}}">
                 <input type="submit" value="End Session">
             </form>
-        {{!-- {{/if}} --}}
+        {{/if}}
     </div>
     <script src="https://code.jquery.com/jquery-2.2.4.min.js"
         integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
