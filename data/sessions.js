@@ -22,6 +22,7 @@ let createSession = async (proposal, proposalOwner, orgName, seshName) => {
     session.open = true;
     session.orgName = orgName;
     session.seshName = seshName;
+    session.proposal = proposal;
     const UserCollection = await users();
     const OrgCollection = await organizations();
     const Org = await OrgCollection.findOne({ orgName: { $regex: new RegExp(orgName, "i") } });

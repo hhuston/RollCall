@@ -1,6 +1,6 @@
 <div>
     <a class="home" id="home" href="/organization/{{sessionData.orgName}}">Back to Organization</a>
-    <h1 id="sessionTitle">{{sessionData.Proposal}}</h1>
+    <h1 id="sessionTitle">{{sessionData.proposal}}</h1>
     <h2>Your are a {{Role}} in this session</h2>
     <h2>Use this link to share the session page: <a href="javscript:void(0)">{{sessionLink}}</a></h2>
     <form method="PATCH" action="/session/leavesession/{{sessionData._id}}">
