@@ -7,7 +7,7 @@ const constructorMethod = (app) => {
     app.use("/", authRoutes);
     app.use("/", orgRoutes);
     app.use("/session", sessionRoutes);
-    app.use("/action", sessionRoutes);
+    app.use("/action", actionRoutes);
 
     app.use("*", (req, res) => {
         if (!req.session.currentPage) {
