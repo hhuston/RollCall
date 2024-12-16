@@ -89,6 +89,11 @@ app.use("/session/sendvote", async (req, res, next) => {
         req.method = "PATCH";
     next()
 });
+app.use("/session/kickuser", async (req, res, next) => {
+    if (req.method == "GET")
+        req.method = "PATCH";
+    next()
+});
 app.use("/action/delete", async (req, res, next) => {
     if (req.method == "GET")
         req.method = "PATCH";

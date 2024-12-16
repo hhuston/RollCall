@@ -80,6 +80,15 @@
         </form>
         {{/if}}
     </div>
+    {{#if isModerator}}
+        <h3 id="members_title">Members</h3>
+        <ul id="membersList">
+            {{#each sessionData.members}}
+            <li class="memberListItem"><a class="memberLink" href='javascript:void(0)' data-name='{{this.userName}}'
+                    data-role="{{this.role}}">{{this.userName}}:{{this.role}}</a></li>
+            {{/each}}
+        </ul>
+    {{/if}}
     <script src="https://code.jquery.com/jquery-2.2.4.min.js"
         integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
     <script>

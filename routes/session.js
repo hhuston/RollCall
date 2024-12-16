@@ -266,4 +266,25 @@ router.route("/sendvote")
     }
 });
 
+router.route("/kickuser")
+.patch(async (req, res) => {
+    let sessionId = xss(req.body.sessionId);
+    let userName = xss(req.body.userName);
+
+    try {
+        sessionId = validation.checkId(sessionId).toString();
+        userName = validation.checkUserName(userName);
+    } catch (e) {
+        return res.status(400).json({ error: e.message });
+    }
+
+    try {
+        let orgName = await sessionData.leaveSession(sessionId, userName);
+        return res.json(orgName);
+        // return res.redirect(`/session/${sessionId}`);
+    } catch (e) {
+        return res.status(500).json({ error: e.message });
+    }
+})
+
 export default router;
