@@ -58,8 +58,11 @@ for (let i in testSessions) {
 }
 
 console.log("Adding users to test sessions");
+testSessions[0] = await sessionData.joinSession(testSessions[0]._id, "Voter",testUsers[1].userName);
+testSessions[0] = await sessionData.joinSession(testSessions[0]._id, "Guest",testUsers[2].userName);
+testSessions[0] = await sessionData.joinSession(testSessions[0]._id, "Observer",testUsers[3].userName);
 for (let i in testUsers) {
-    if (i == 0) continue;
+    if (i <= 3) continue;
     testSessions[0] = await sessionData.joinSession(testSessions[0]._id, "Voter",testUsers[i].userName);
 }
 
