@@ -58,13 +58,21 @@
         {{!-- Have to do separate if for vote and guest bc handlebars is annoying --}}
         {{#if isVoter}}
             {{!-- Add functionality with JS and AJAX --}}
+        <a href="/action/createmotion/{{sessionData._id}}">
             <button id="createMotion">Create Motion</button>
+        </a>
+        <a href="/action/createamendment/{{sessionData._id}}">
             <button id="createAmendment">Create Amendment</button>
+        </a>
         {{/if}}
         {{#if isGuest}}
             {{!-- Add functionality with JS and AJAX --}}
+        <a href="/action/createmotion/{{sessionData._id}}">
             <button id="createMotion">Create Motion</button>
+        </a>
+        <a href="/action/createamendment/{{sessionData._id}}">
             <button id="createAmendment">Create Amendment</button>
+        </a>
         {{/if}}
         {{#if isModerator}}
             {{!-- Add functionality with JS and AJAX --}}

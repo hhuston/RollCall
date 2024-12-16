@@ -116,7 +116,6 @@ router
             }
             //console.log("JAWN4")
             let role = Sesh.members.filter((mem) => mem.userName === req.session.user.userName)[0].role;
-            console.log(role)
             let voter = "";
             let moderator = "";
             let guest = "";
@@ -147,6 +146,7 @@ router
         }
     });
 
+// TODO: implement (frank)
 // TODO: implement (frank)
 // AJAX call routes to handle actions
 // TODO: verify validation and error checking (include exists for all?)

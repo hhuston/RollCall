@@ -1,20 +1,37 @@
-import { actions } from "../config/mongoCollections.js";
+import { actions, sessions, users } from "../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
 import validation from "../validation.js";
 
-let createAction = async (type, value, actionOwner) => {
+let createAction = async (type, value, actionOwner, sessionId) => {
     let action = {};
 
-    //Could have a checkType function to make sure it is a specific type of action
-    action.type = validation.checkString(type, "Type");
+    type = type.toLowerCase();
+    action.type = validation.checkActionType(type, "Type");
     action.value = validation.checkString(value, "Value");
     action.actionOwner = validation.checkUserName(actionOwner);
     action.votingRecord = { Yay: [], Nay: [], Abstain: [] };
+    action.sessionId = validation.checkId(sessionId);
+    action.status = "queued"; // (either queued, oncall, or logged)
+
+    const sessionCollection = await sessions();
+    const session = await sessionCollection.findOne({ _id: action.sessionId });
+    if (!session) throw "Could not find session with that id";
+
+    const userCollection = await users();
+    const user = await userCollection.findOne({ userName: action.actionOwner });
+    if (!user) throw "Could not find user with that username";
 
     const actionCollection = await actions();
     const newInsertInformation = await actionCollection.insertOne(action);
+    if (!newInsertInformation) throw "Could not add action";
+    const actionId = newInsertInformation.insertedId.toString();
 
-    return newInsertInformation.insertedId.toString();
+    // Add action to its session's action queue
+    session.actionQueue.push(actionId);
+    const sessionUpdateInfo = await sessionCollection.findOneAndUpdate({ _id: action.sessionId }, { $set: session }, { returnDocument: "after" });
+    if (!sessionUpdateInfo) throw `Could not add action to session with id ${sessionId}`;
+
+    return actionId;
 };
 
 let deleteAction = async (id) => {

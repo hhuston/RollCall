@@ -235,3 +235,25 @@ if (button6) {
         }
     });
 }
+
+let button7 = document.getElementById("submitButtonAction");
+// this button is for creating an action
+if (button7) {
+    button7.addEventListener("click", function (event) {
+        event.preventDefault();
+        const delete_item = document.querySelector("h2");
+        if (delete_item) {
+            delete_item.remove();
+        }
+        try {
+            let actionText = checkString(document.getElementById("actionText").value, "Action Text");
+            let form = document.getElementById("create-action-form");
+            form.submit();
+        } catch (e) {
+            const h1 = document.querySelector("h1");
+            const new_item = document.createElement("h2");
+            new_item.textContent = e;
+            h1.insertAdjacentElement("afterend", new_item);
+        }
+    });
+}

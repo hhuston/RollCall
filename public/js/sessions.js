@@ -86,18 +86,6 @@ if (absVote) {
     });
 }
 
-if (createMotion) {
-    createMotion.addEventListener("click", async (event) => {
-        // TODO: Implement (frank)
-    });
-}
-
-if (createAmendment) {
-    createAmendment.addEventListener("click", async (event) => {
-        // TODO: Implement (frank)
-    });
-}
-
 if (endSession) {
     endSession.addEventListener('submit', async (event) => {
         event.preventDefault();
