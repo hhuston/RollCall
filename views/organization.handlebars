@@ -1,4 +1,4 @@
-<div>
+<div class="organization-page">
     <a class="home" id="home" href="/home">Back Home</a>
     {{#unless owner}}
     <a class="leaveOrg" id="leave" href="/leaveorganization/{{orgData.orgName}}">Leave This Org</a>
@@ -14,7 +14,7 @@
     <form id="delete_org_form" method="POST" action="/deleteorganization/{{orgData.orgName}}" hidden>
         <button id="delete_button">Are you sure you want to delete the page?</button>
     </form>
-    <div>
+    <div class="members-container">
         <h3 id="members_title">Members</h3>
         <ul id="membersList">
             {{#each members}}
@@ -50,20 +50,21 @@
         </form>
     </div>
     {{/if}}
-    {{#if moderator}}
-    <div>
+    <div class = "sessions-container">
         <h3 id="sessions_title">Sessions</h3>
-        <a class="create_sesh" id="create_session" href="/session/createsession/{{orgData.orgName}}">Create a new
-            session</a>
-    </div>
-    {{/if}}
-    <div>
-        <h3 id="sessions_title">Sessions</h3>
-        <ul id="sessionsList">
-            {{#each sessions_list}}
-            <li><a href='/session/joinsession/{{this.id}}' id="session_elem">{{this.name}}</a></li>
-            {{/each}}
-        </ul>
+        {{#if moderator}}
+        <div>
+            <a class="create_sesh" id="create_session" href="/session/createsession/{{orgData.orgName}}">Create a new
+                session</a>
+        </div>
+        {{/if}}
+        <div>
+            <ul id="sessionsList">
+                {{#each sessions_list}}
+                <li><a href='/session/joinsession/{{this.id}}' id="session_elem">{{this.name}}</a></li>
+                {{/each}}
+            </ul>
+        </div>
     </div>
     <script src="https://code.jquery.com/jquery-2.2.4.min.js"
         integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
