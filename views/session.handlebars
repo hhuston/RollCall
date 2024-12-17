@@ -1,111 +1,99 @@
-<div class="session-page">
-  <a class="home" id="home" href="/organization/{{sessionData.orgName}}">Back to
-    Organization</a>
-  <h1 id="sessionTitle">{{sessionData.proposal}}</h1>
-  {{#if isModerator}}
-    <h2>You are the moderator in this session!</h2>
-  {{else}}
-    {{#if isGuest}}
-      <h2>You are a {{Role}} in this session!</h2>
+<div>
+    <a class="home" id="home" href="/organization/{{sessionData.orgName}}">Back to Organization</a>
+    <h1 id="sessionTitle">{{sessionData.proposal}}</h1>
+    {{#if isModerator}}
+        <h2>You are the moderator in this session!</h2>
     {{else}}
-      {{#if isVoter}}
-        <h2>You are a {{Role}} in this session!</h2>
-      {{else}}
-        <h2>You are an observer in this session!</h2>
-      {{/if}}
+        {{#if isGuest}}
+            <h2>You are a {{Role}} in this session!</h2>
+        {{else}}
+            {{#if isVoter}}
+                <h2>You are a {{Role}} in this session!</h2>
+            {{else}}
+                <h2>You are an observer in this session!</h2>
+            {{/if}}
+        {{/if}}
     {{/if}}
-  {{/if}}
-  <div class="live-panes-container">
-    <div class="current-vote-and-log">
-        <div id="currentVoteDiv" class="current-vote">
+
+    <div id="currentVoteDiv">
         <h3>On Call</h3>
         <div class="greyPanel">
-            {{! Change this with client side JS and AJAX }}
+            {{!-- Change this with client side JS and AJAX --}}
             <div id="votingPrompt"></div>
             {{#if isVoter}}
-            {{! Add button functionality with JS }}
-            <div class="vote-buttons">
-                <button id="yayVote" class="yay-button">Yay</button>
-                <button id="nayVote" class="nay-button">Nay</button>
-                <button id="absVote" class="abs-button">Abstain</button>
+            {{!-- Add button functionality with JS --}}
+            <div>
+                <button id="yayVote" hidden>Yay</button>
+                <button id="nayVote" hidden>Nay</button>
+                <button id="absVote" hidden>Abstain</button>
             </div>
             <p id="voteCast" hidden></p>
             {{/if}}
         </div>
-        </div>
-        <div id="sessionLog" class="session-log">
+    </div>
+    <div id="sessionLog">
         <h3>Session Log</h3>
         <ul id="sessionLog" class="greyPanel">
-            {{! Populate this with JS }}
+            {{!-- Populate this with JS --}}
         </ul>
-        </div>
     </div>
-    <div class="queue-and-buttons">
-      <div id="queue">
+    <div id="queue">
         <h3>Queue</h3>
         <div class="greyPanel">
-          <h4>Next up:</h4>
-          <div id="upcoming">
-            <ul id="actionQueue">
-              {{! Populated this with JS }}
-            </ul>
-          </div>
+            <h4>Next up:</h4>
+            <div id="upcoming">
+                <ul id="actionQueue">
+                    {{!-- Populated this with JS --}}
+                </ul>
+            </div>
         </div>
-      </div>
-      <div id="buttons" class="action-buttons-container">
-        {{! Have to do separate if for vote and guest bc handlebars is annoying }}
+    </div>
+    <div id="buttons">
+        {{!-- Have to do separate if for vote and guest bc handlebars is annoying --}}
         {{#if isVoter}}
-          {{! Add functionality with JS and AJAX }}
-          <a href="/action/createmotion/{{sessionData._id}}">
-            <button id="createMotion" class="action-button">Create Motion</button>
-          </a>
-          <a href="/action/createamendment/{{sessionData._id}}">
-            <button id="createAmendment" class="action-button">Create Amendment</button>
-          </a>
+        {{!-- Add functionality with JS and AJAX --}}
+        <a href="/action/createmotion/{{sessionData._id}}">
+            <button id="createMotion">Create Motion</button>
+        </a>
+        <a href="/action/createamendment/{{sessionData._id}}">
+            <button id="createAmendment">Create Amendment</button>
+        </a>
         {{/if}}
         {{#if isGuest}}
-          {{! Add functionality with JS and AJAX }}
-          <a href="/action/createmotion/{{sessionData._id}}">
-            <button id="createMotion" class="action-button">Create Motion</button>
-          </a>
-          <a href="/action/createamendment/{{sessionData._id}}">
-            <button id="createAmendment" class="action-button">Create Amendment</button>
-          </a>
+        {{!-- Add functionality with JS and AJAX --}}
+        <a href="/action/createmotion/{{sessionData._id}}">
+            <button id="createMotion">Create Motion</button>
+        </a>
+        <a href="/action/createamendment/{{sessionData._id}}">
+            <button id="createAmendment">Create Amendment</button>
+        </a>
         {{/if}}
-      </div>
+        {{#if isModerator}}
+        <form method="PATCH" action="/session/endsession/{{sessionData._id}}">
+            <input type="submit" value="End Session">
+        </form>
+        {{/if}}
     </div>
-  </div>
-{{#if isModerator}}
-    <form method="PATCH" action="/session/endsession/{{sessionData._id}}">
-        <input type="submit" value="End Session" class="end-session-form-button"/>
+    {{#if isModerator}}
+        <h3 id="members_title">Members</h3>
+        <ul id="membersList">
+            {{#each members}}
+            <li class="memberListItem"><a class="memberLink" href='javascript:void(0)' data-name='{{this.userName}}'
+                    data-role="{{this.role}}">{{this.userName}}:{{this.role}}</a></li>
+            {{/each}}
+        </ul>
+    {{else}}
+    <form method="PATCH" action="/session/leavesession/{{sessionData._id}}">
+        <input type="submit" value="Leave Session">
     </form>
-{{/if}}
-  {{#if isModerator}}
-    <h3 id="members_title">Members</h3>
-    <ul id="membersList">
-      {{#each members}}
-        <li class="memberListItem"><a
-            class="memberLink"
-            href="javascript:void(0)"
-            data-name="{{this.userName}}"
-            data-role="{{this.role}}"
-          >{{this.userName}}:{{this.role}}</a></li>
-      {{/each}}
-    </ul>
-  {{/if}}
-  {{#unless isModerator}}
-    <form method="PATCH" action="/session/leavesession/{{sessionData._id}}"/>
-      <input type="submit" value="Leave Session" class="leave-session-form-button"/>
-    </form>
-  {{/unless}}
-  <script
-    src="https://code.jquery.com/jquery-2.2.4.min.js"
-    integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
-    crossorigin="anonymous"
-  ></script>
-  <script>
-    const sessionId = "{{sessionData._id}}"; const isModerator = "{{isModerator}}";
-  </script>
-  <script src="/public/js/sessions.js"></script>
+    {{/if}}
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"
+        integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+    <script>
+        const userName = "{{userName}}";
+        const sessionId = "{{sessionData._id}}";
+        const isModerator = "{{isModerator}}";
+    </script>
+    <script src="/public/js/sessions.js"></script>
 
 </div>

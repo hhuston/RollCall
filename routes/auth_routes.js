@@ -67,15 +67,15 @@ router
 
 router.route("/home").get(async (req, res) => {
     //code here for GET
-
     if (!req.session.currentPage) {
         req.session.currentPage = "/";
     }
     if (!req.session.user) {
         return res.status(403).render("error.handlebars", { title: "Error Page", error_class: "input_error", message: "You must sign in to access this page!", error_route: req.session.currentPage });
     }
+    let orgNames;
     try {
-    let orgNames = [];
+    orgNames = [];
     for (let id of req.session.user.memberOrganizations) {
         let Org = await organizationData.getOrganization(id);
         if (!Org) {
