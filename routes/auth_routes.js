@@ -80,7 +80,7 @@ router.route("/home").get(async (req, res) => {
         if (!Org) {
             throw "User belongs to an organization that does not exist";
         }
-        orgNames.push(Org);
+        orgNames.push(validation.str_format(Org.orgName));
     }
     req.session.currentPage = "/home";
     return res.status(200).render("home.handlebars", { title: "Organizations", orgList: orgNames });

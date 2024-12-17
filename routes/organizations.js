@@ -317,12 +317,12 @@ router
                 let sessions_name_id = [];
                 for (let sessionId of Org.sessions) {
                     let Sesh = await sessionData.getSession(sessionId);
-                    sessions_name_id.push({ id: sessionId, name: Sesh.seshName, date: Sesh.sessionDate });
+                    sessions_name_id.push({ id: sessionId, name: validation.str_format(Sesh.seshName), date: Sesh.sessionDate });
                 }
 
                 req.session.currentPage = `/organization/${orgName}`;
                 return res.status(200).render("organization.handlebars", {
-                    title: Org.orgName,
+                    title: validation.str_format(Org.orgName),
                     orgData: Org,
                     userData: req.session.user,
                     moderator: moderator,
@@ -330,6 +330,7 @@ router
                     role: curr_member.role,
                     members: members,
                     sessions_list: sessions_name_id,
+                    org_name: validation.str_format(Org.orgName)
                 });
             } else {
                 return res.redirect(`/signinorganization/${orgName}`);
