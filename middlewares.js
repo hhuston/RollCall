@@ -3,10 +3,13 @@ import validation from "./validation.js";
 
 //Can absolutely send somewhere else or redirect somewhere.
 let checkIfInSessionAndOrg = async (req, res, next) => {
+    if (!req.session.currentPage) {
+        req.session.currentPage = "/";
+    }
     if (!req.session.user) {
         return res.status(403).render("error.handlebars", { title: "Error Page", error_class: "input_error", message: "You must sign in to access this page!", error_route: req.session.currentPage });
     }
-
+    try {
     let sessionId = validation.checkId(req.params.sessionId).toString();
     let Sesh = await sessionData.getSession(sessionId);
     if (!Sesh) {
@@ -33,9 +36,15 @@ let checkIfInSessionAndOrg = async (req, res, next) => {
             error_route: req.session.currentPage,
         });
     }
+} catch(e) {
+    return res.status(400).render("error.handlebars", { title: "Error Page", error_class: "input_error", message: e, error_route: req.session.currentPage });
+}
     next();
 };
 let checkIfInOrg = async (req, res, next) => {
+    if (!req.session.currentPage) {
+        req.session.currentPage = "/";
+    }
     if (!req.session.user) {
         return res.status(403).render("error.handlebars", { title: "Error Page", error_class: "input_error", message: "You must sign in to access this page!", error_route: req.session.currentPage });
     }
@@ -59,7 +68,7 @@ let checkIfInOrg = async (req, res, next) => {
         });
     }
 }catch(e) {
-    return res.status(403).render("error.handlebars", { title: "Error Page", error_class: "input_error", message: e, error_route: req.session.currentPage });
+    return res.status(400).render("error.handlebars", { title: "Error Page", error_class: "input_error", message: e, error_route: req.session.currentPage });
 }
     next();
 };
