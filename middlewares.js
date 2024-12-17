@@ -39,7 +39,7 @@ let checkIfInOrg = async (req, res, next) => {
     if (!req.session.user) {
         return res.status(403).render("error.handlebars", { title: "Error Page", error_class: "input_error", message: "You must sign in to access this page!", error_route: req.session.currentPage });
     }
-
+    try {
     let sessionId = validation.checkId(req.params.sessionId).toString();
     let Sesh = await sessionData.getSession(sessionId);
     if (!Sesh) {
@@ -58,6 +58,9 @@ let checkIfInOrg = async (req, res, next) => {
             error_route: req.session.currentPage,
         });
     }
+}catch(e) {
+    return res.status(403).render("error.handlebars", { title: "Error Page", error_class: "input_error", message: e, error_route: req.session.currentPage });
+}
     next();
 };
 
