@@ -298,6 +298,12 @@ form.signup {
     background-color: #555;
 }
 
+.action-li{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .mod-action-buttons {
   display: flex;
   gap: 15px;
@@ -323,4 +329,12 @@ form.signup {
     border-radius: 5px;
     padding: 10px;
     margin: 10px 0;
+}
+
+.delete-action-button:hover {
+    background-color: #ab190e;
+}
+
+.call-vote-button:hover {
+    background-color: #45a049;
 }

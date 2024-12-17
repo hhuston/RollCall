@@ -124,6 +124,7 @@ const refreshActionLogs = async () => {
     actionQueue.innerHTML = "";
     for (let action of data.queue) {
         const li = document.createElement('li');
+        li.className = 'action-li';
         const callVote = document.createElement('form');
         callVote.innerHTML = 
             `<form method="PATCH" action="/action/callvote/${action._id}">
@@ -156,9 +157,10 @@ const refreshActionLogs = async () => {
         buttonHolder = document.createElement('div');
         buttonHolder.className = 'mod-action-buttons';
         if (isModerator) {
-            li.appendChild(buttonHolder);
-            buttonHolder.appendChild(callVote);
-            buttonHolder.appendChild(deleteAction);
+            li.appendChild(callVote);
+            li.appendChild(deleteAction);
+            // buttonHolder.appendChild(callVote);
+            // buttonHolder.appendChild(deleteAction);
         }
         actionQueue.appendChild(li);
     }
