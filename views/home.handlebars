@@ -6,9 +6,9 @@
     {{#if orgList}}
     <div id="user_orgs">
         <h2>Your Organizations</h2>
-        <ul id="user_orgs">
+        <ul id="user_orgs" class = "org-list">
             {{#each orgList}}
-            <li>
+            <li class="org-list-item">
                 <a href="/organization/{{this.orgName}}">{{this.orgName}}</a>
             </li>
             {{/each}}
