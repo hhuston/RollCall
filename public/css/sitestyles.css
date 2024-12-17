@@ -166,3 +166,161 @@ form.signup {
 .organization-page ul li a:hover {
   background-color: #e9e9e9;
 }
+
+.session-page {
+  width: 90%;
+  font-family: sans-serif;
+  margin: 20px auto;
+  padding: 20px;
+}
+
+.current-vote,
+.session-log,
+.queue-and-buttons {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  padding: 20px;
+}
+
+.queue-and-buttons,
+.current-vote-and-log {
+  margin: 20px 0;
+}
+
+.live-panes-container {
+  display: flex;
+  width: 100%;
+  gap: 20px;
+}
+
+.current-vote-and-log {
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.current-vote,
+.session-log {
+  height: 50%;
+}
+
+.queue-and-buttons {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+}
+
+.action-buttons-container {
+  display: flex;
+  gap: 15px;
+}
+
+.action-buttons-container a {
+  text-decoration: none;
+  width: 100%;
+}
+
+.action-button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 5px;
+  border: none;
+  background-color: #4caf50;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.action-button:hover {
+  background-color: #45a049;
+}
+
+.leave-session-form-button, .end-session-form-button {
+  background-color: #bc170b;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  padding: 10px;
+  margin: 10px 0;
+}
+
+.leave-session-form-button:hover, .end-session-form-button:hover {
+  background-color: #ab190e;
+}
+
+.vote-buttons {
+  display: flex;
+  gap: 15px;
+}
+
+.yay-button,
+.nay-button,
+.abs-button {
+  width: 100%;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  padding: 10px;
+  margin: 10px 0;
+}
+
+.yay-button {
+  background-color: #4caf50;
+}
+
+.yay-button:hover {
+  background-color: #45a049;
+}
+
+.nay-button {
+  background-color: #bc170b;
+}
+
+.nay-button:hover {
+  background-color: #ab190e;
+}
+
+.abs-button {
+    background-color: #666;
+}
+
+.abs-button:hover {
+    background-color: #555;
+}
+
+.mod-action-buttons {
+  display: flex;
+  gap: 15px;
+}
+
+.delete-action-button {
+    background-color: #bc170b;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px 0;
+}
+
+.call-vote-button {
+    background-color: #4caf50;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px 0;
+}
