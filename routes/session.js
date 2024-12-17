@@ -153,7 +153,6 @@ router
             if (role == "observer") {
                 observer = "true";
             }
-            req.session.currentPage = `/session/${Sesh._id.toString()}`;
             let actions = await actionData.getListofActions(Sesh.actionQueue);
             let queuedActions = actions.filter((action) => action.status === "queued");
             let oncallActions = actions.filter((action) => action.status === "oncall");
