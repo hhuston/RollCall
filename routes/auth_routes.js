@@ -74,19 +74,17 @@ router.route("/home").get(async (req, res) => {
     if (!req.session.user) {
         return res.status(403).render("error.handlebars", { title: "Error Page", error_class: "input_error", message: "You must sign in to access this page!", error_route: req.session.currentPage });
     }
-    try {
     let orgNames = [];
     for (let id of req.session.user.memberOrganizations) {
-        let Org = await organizationData.getOrganization(id);
-        if (!Org) {
-            throw "User belongs to an organization that does not exist";
+        let Org;
+        try {
+            Org = await organizationData.getOrganization(id);
+            orgNames.push(validation.str_format(Org.orgName));
+        } catch {
+            continue;
         }
-        orgNames.push(validation.str_format(Org.orgName));
     }
     req.session.currentPage = "/home";
-} catch(e) {
-    return res.status(400).render("error.handlebars", { title: "Error Page", error_class: "input_error", message: e, error_route: req.session.currentPage });
-}
     return res.status(200).render("home.handlebars", { title: "Organizations", orgList: orgNames });
 });
 
