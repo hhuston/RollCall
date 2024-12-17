@@ -128,7 +128,7 @@ const refreshActionLogs = async () => {
         callVote.innerHTML = 
             `<form method="PATCH" action="/action/callvote/${action._id}">
                 <input type="submit" value="Call Vote">
-            </form>`
+            </form>`;
         callVote.addEventListener("submit", async (event) => {
             event.preventDefault();
             await fetch(`/action/callvote/${action._id}/${onCallActionId}`, {
@@ -163,7 +163,12 @@ const refreshActionLogs = async () => {
     if (Object.keys(data.onCall).length !== 0) {
         const votingPrompt = document.getElementById("votingPrompt");
         let onCall = data.onCall
-        if (onCallActionId !== onCall._id) {
+        let hasVoted = false
+        for (let voteType in onCall.votingRecord) {
+            if (onCall.votingRecord[voteType].includes(userName))
+                hasVoted = true;
+        }
+        if (onCallActionId !== onCall._id && !hasVoted) {
             if (yayVote) yayVote.hidden = false;
             if (nayVote) nayVote.hidden = false;
             if (absVote) absVote.hidden = false;

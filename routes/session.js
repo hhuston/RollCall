@@ -160,7 +160,7 @@ router
             let no_moderator = Sesh.members.filter((mem) => mem.role !== "moderator")
             req.session.currentPage = `/session/${Sesh._id.toString()}`;
 
-            return res.render("session.handlebars", { title: "Session", sessionData: Sesh, Role: role, isModerator: moderator, isVoter: voter, isGuest: guest, isObserver: observer, members: no_moderator });
+            return res.render("session.handlebars", { title: "Session", sessionData: Sesh, Role: role, isModerator: moderator, isVoter: voter, isGuest: guest, isObserver: observer, members: no_moderator, userName: req.session.user.userName });
             }
             else {
                 let actions = await actionData.getListofActions(Sesh.actionQueue);
