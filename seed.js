@@ -31,7 +31,6 @@ for (let i in testUsers) {
     testUsers[i] = await userData.createUser(user.userName, user.password, user.firstName, user.lastname, user.email);
 }
 
-// Harrison is created as organization owner & moderator
 console.log("Inserting test organizations...");
 const testOrgs = [
     {_id: '', orgName: 'First Presbyterian Church of Ramsey', password: 'Password@1', userName: testUsers[4].userName},
@@ -42,6 +41,9 @@ for (let i in testOrgs) {
     testOrgs[i]._id = (await organizationData.createOrganization(org.orgName, org.password, org.userName))._id;
 }
 
+// hhuston (user i = 0) is left as organization moderator
+// shuston (user i = 4) is left as organization owner
+// all other users are added as organization members
 console.log("Adding users to organization...");
 const returnData = await organizationData.loginOrg(testUsers[0].userName, testOrgs[0].password, testOrgs[0].orgName, "Moderator");
 for (let i in testUsers) {
