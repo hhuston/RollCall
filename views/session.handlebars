@@ -23,9 +23,9 @@
             {{#if isVoter}}
             {{!-- Add button functionality with JS --}}
             <div>
-                <button id="yayVote">Yay</button>
-                <button id="nayVote">Nay</button>
-                <button id="absVote">Abstain</button>
+                <button id="yayVote" hidden>Yay</button>
+                <button id="nayVote" hidden>Nay</button>
+                <button id="absVote" hidden>Abstain</button>
             </div>
             <p id="voteCast" hidden></p>
             {{/if}}
@@ -90,6 +90,7 @@
     <script src="https://code.jquery.com/jquery-2.2.4.min.js"
         integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
     <script>
+        const userName = "{{userName}}";
         const sessionId = "{{sessionData._id}}";
         const isModerator = "{{isModerator}}";
     </script>
