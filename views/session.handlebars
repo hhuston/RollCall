@@ -31,7 +31,7 @@
             {{/if}}
         </div>
     </div>
-    <div id="sessionLog">
+    <div id="sessionLogDiv">
         <h3>Session Log</h3>
         <ul id="sessionLog" class="greyPanel">
             {{!-- Populate this with JS --}}
@@ -69,7 +69,7 @@
         </a>
         {{/if}}
         {{#if isModerator}}
-        <form method="PATCH" action="/session/endsession/{{sessionData._id}}">
+        <form method="POST" action="/session/endsession/{{sessionData._id}}">
             <input type="submit" value="End Session">
         </form>
         {{/if}}
@@ -83,7 +83,7 @@
             {{/each}}
         </ul>
     {{else}}
-    <form method="PATCH" action="/session/leavesession/{{sessionData._id}}">
+    <form method="POST" action="/session/leavesession/{{sessionData._id}}">
         <input type="submit" value="Leave Session">
     </form>
     {{/if}}
