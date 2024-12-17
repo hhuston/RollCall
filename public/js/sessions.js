@@ -127,7 +127,7 @@ const refreshActionLogs = async () => {
         const callVote = document.createElement('form');
         callVote.innerHTML = 
             `<form method="PATCH" action="/action/callvote/${action._id}">
-                <input type="submit" value="Call Vote" class="call-vote-button">
+                <input type="submit" value="Call Vote">
             </form>`;
         callVote.addEventListener("submit", async (event) => {
             event.preventDefault();
@@ -140,7 +140,7 @@ const refreshActionLogs = async () => {
         const deleteAction = document.createElement('form');
         deleteAction.innerHTML = 
             `<form method="PATCH" action="/action/delete/${action._id}">
-                <input type="submit" value="Delete ${action.type}" class="delete-action-button">
+                <input type="submit" value="Delete ${action.type}">
             </form>`
         deleteAction.addEventListener("submit", async (event) => {
             event.preventDefault();
@@ -153,12 +153,9 @@ const refreshActionLogs = async () => {
         li.innerHTML = 
             `<p>${strFormat(action.type)}: ${action.value}</p>
             <p>Creator: ${action.actionOwner}</p>`
-        buttonHolder = document.createElement('div');
-        buttonHolder.className = 'mod-action-buttons';
         if (isModerator) {
-            li.appendChild(buttonHolder);
-            buttonHolder.appendChild(callVote);
-            buttonHolder.appendChild(deleteAction);
+            li.appendChild(callVote);
+            li.appendChild(deleteAction);
         }
         actionQueue.appendChild(li);
     }
