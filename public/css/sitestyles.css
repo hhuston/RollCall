@@ -1,157 +1,168 @@
 .title {
-    width: 100%;
-    text-align: center;
-    font-size: xx-large;
-    color: #02542d;
-    font-family: sans-serif;
-    margin: 20px 0;
+  width: 100%;
+  text-align: center;
+  font-size: xx-large;
+  color: #02542d;
+  font-family: sans-serif;
+  margin: 20px 0;
 }
 
 form input {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border-radius: 5px;
-    box-sizing: border-box;
-    border: 1px solid #ccc;
-    background-color: #fff;
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 5px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  background-color: #fff;
 }
 
 form input:last-of-type {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 form button {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border-radius: 5px;
-    box-sizing: border-box;
-    border: none;
-    background-color: #4caf50;
-    color: white;
-    font-size: 16px;
-    cursor: pointer;
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 5px;
+  box-sizing: border-box;
+  border: none;
+  background-color: #4caf50;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
 }
 
 form button:hover {
-    background-color: #45a049;
+  background-color: #45a049;
 }
 
 form select {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border-radius: 5px;
-    box-sizing: border-box;
-    border: 1px solid #ccc;
-    background-color: #fff;
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 5px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  background-color: #fff;
 }
 
-.signin, .signup, .signout-page, .create-org-page, .join-session-page, .create-action-page, .create-sesh-page, .join-org-page, .delete-org-page, .leave-org-page, .error_body {
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #f9f9f9;
-    padding: 20px;
-    font-family: sans-serif;
-    width: 500px;
-    margin: 20px auto;
+.signin,
+.signup,
+.signout-page,
+.create-org-page,
+.join-session-page,
+.create-action-page,
+.create-sesh-page,
+.join-org-page,
+.delete-org-page,
+.leave-org-page,
+.error_body {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  padding: 20px;
+  font-family: sans-serif;
+  width: 500px;
+  margin: 20px auto;
 }
 
-form.signin, form.signup {
-    width: 100%;
-    max-width: 600px;
-    margin: 20px auto;
-    padding: 20px;
+form.signin,
+form.signup {
+  width: 100%;
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 20px;
 }
 
-.signout-page, .delete-org-page, .error_body {
-    text-align: center;
-    font-size: large;
+.signout-page,
+.delete-org-page,
+.error_body {
+  text-align: center;
+  font-size: large;
 }
 
 .homepage {
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #f9f9f9;
-    width: 90%;
-    text-align: left;
-    font-size: large;
-    font-family: sans-serif;
-    margin: 20px auto;
-    padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  width: 90%;
+  text-align: left;
+  font-size: large;
+  font-family: sans-serif;
+  margin: 20px auto;
+  padding: 20px;
 }
 
-#user_orgs {
-    list-style-type: none;
-    padding: 0;
+.org-list {
+  list-style-type: none;
+  padding: 0;
 }
 
-#user_orgs li {
-    display: inline-block; /* Adjust border size to text */
-    padding: 20px;
-    padding: 20px;
-    background-color: rgb(255, 255, 255);
-    border-radius: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
+.org-list-item a {
+  text-decoration: none;
+  color: #02542d;
+  display: inline-block;
+  padding: 20px;
+  padding: 20px;
+  background-color: rgb(255, 255, 255);
+  border-radius: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
 }
 
-#user_orgs li:hover {
-    background-color: #e9e9e9;
-}
-
-#user_orgs li a {
-    text-decoration: none;
-    color: #02542d;
+.org-list-item a:hover {
+  background-color: #e9e9e9;
 }
 
 .organization-page {
-    width: 90%;
-    text-align: left;
-    font-size: large;
-    font-family: sans-serif;
-    margin: 20px auto;
-    padding: 20px;
+  width: 90%;
+  text-align: left;
+  font-size: large;
+  font-family: sans-serif;
+  margin: 20px auto;
+  padding: 20px;
 }
 
 .organization-page h3 {
-    margin: 0;
+  margin: 0;
 }
 
-.sessions-container, .members-container {
-    text-align: left;
-    font-size: large;
-    font-family: sans-serif;
-    margin: 20px auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #f9f9f9;
+.sessions-container,
+.members-container {
+  text-align: left;
+  font-size: large;
+  font-family: sans-serif;
+  margin: 20px auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
 }
 
 .organization-page ul {
-    list-style-type: none;
-    padding: 0;
+  list-style-type: none;
+  padding: 0;
 }
 
 .organization-page ul li {
-    display: inline-block;
-    padding: 10px;
-    background-color: #fff;
-    border-radius: 5px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-}
-
-.organization-page ul li:hover {
-    background-color: #e9e9e9;
+  display: inline-block;
 }
 
 .organization-page ul li a {
-    text-decoration: none;
-    color: #02542d;
+  text-decoration: none;
+  color: #02542d;
+  padding: 10px;
+  background-color: #fff;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+}
+
+.organization-page ul li a:hover {
+  background-color: #e9e9e9;
 }
