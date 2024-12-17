@@ -113,9 +113,6 @@ router
         }
         try {
             orgName = validation.checkOrgName(req.params.orgName);
-        } catch (e) {
-            return res.status(400).render("error.handlebars", { title: "Error Page", error_class: "input_error", message: e, error_route: req.session.currentPage });
-        }
 
         const Org = await organizationData.getOrganizationByName(orgName);
         if (!Org) {
@@ -131,6 +128,9 @@ router
             req.session.currentPage = `/signinorganization/${orgName}`;
             return res.status(200).render("signinorganization.handlebars", { title: `${validation.str_format(orgName)} Register`, orgName: validation.str_format(orgName) });
         }
+      } catch (e) {
+          return res.status(400).render("error.handlebars", { title: "Error Page", error_class: "input_error", message: e, error_route: req.session.currentPage });
+      }
     })
     .post(async (req, res) => {
         //code here for POST
