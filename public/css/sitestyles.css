@@ -51,7 +51,7 @@ form select {
     background-color: #fff;
 }
 
-.signin, .signup, .signout-page, .create-org-page, .join-session-page, .create-action-page, .create-sesh-page, .join-org-page, .delete-org-page, .leave-org-page {
+.signin, .signup, .signout-page, .create-org-page, .join-session-page, .create-action-page, .create-sesh-page, .join-org-page, .delete-org-page, .leave-org-page, .error_body {
     border: 1px solid #ccc;
     border-radius: 5px;
     background-color: #f9f9f9;
@@ -68,7 +68,7 @@ form.signin, form.signup {
     padding: 20px;
 }
 
-.signout-page, .delete-org-page {
+.signout-page, .delete-org-page, .error_body {
     text-align: center;
     font-size: large;
 }
